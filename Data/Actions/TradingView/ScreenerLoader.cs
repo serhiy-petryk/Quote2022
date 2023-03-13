@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Threading;
 using Data.Helpers;
 using Data.Models;
 using Newtonsoft.Json;

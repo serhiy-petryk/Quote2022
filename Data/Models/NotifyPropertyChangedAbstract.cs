@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Data.Helpers
+namespace Data.Models
 {
     public abstract class NotifyPropertyChangedAbstract : INotifyPropertyChanged
     {

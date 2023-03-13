@@ -17,8 +17,9 @@ namespace Data.Models
         public static BindingList<LoaderItem> DataGridLoaderItems = new BindingList<LoaderItem>
         {
             new LoaderItem {Id = "ScreenerTradingView", Name = "TradingView Screener", Action = Actions.TradingView.ScreenerLoader.Start},
-            new LoaderItem {Id = "ScreenerNasdaqStock", Name = "Nasdaq Stock Screener", Status = ItemStatus.None},
-            new LoaderItem {Id = "ScreenerNasdaqEtf", Name = "Nasdaq Etf Screener", Status = ItemStatus.None}
+            new LoaderItem {Id = "ScreenerNasdaq", Name = "Nasdaq Stock/Etf Screeners", Action = Actions.Nasdaq.ScreenerLoader.Start},
+            new LoaderItem {Id = "SymbolsEoddata", Name = "Eoddata Symbols", Action = Actions.Eoddata.SymbolsLoader.Start},
+            new LoaderItem {Id = "ProfileYahoo", Name = "Yahoo Profiles", Status = ItemStatus.None}
         };
         
         public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);

@@ -19,27 +19,25 @@ namespace Data.Actions.Nasdaq
         public static void Start(Action<string> showStatus)
         {
             var timeStamp = csUtils.GetTimeStamp();
+            var folder = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}\";
 
             // Download data
-            var stockFile =  $@"E:\Quote\Screener_{timeStamp}.json";
+            var stockFile =  folder + $@"ScreenerStock_{timeStamp.Item2}.json";
             showStatus($"Nasdaq.ScreenerLoader. Download STOCK data from {stockUrl} to {stockFile}");
             Helpers.Download.DownloadPage(stockUrl, stockFile, true);
 
-            var etfFile = $@"E:\Quote\EtfScreener_{timeStamp}.json";
+            var etfFile = folder + $@"ScreenerEtf_{timeStamp.Item2}.json";
             showStatus($"Nasdaq.ScreenerLoader. Download ETF data from {etfUrl} to {etfFile}");
             Helpers.Download.DownloadPage(etfUrl, etfFile, true);
-
-            // Zip data
-            var zipFilename = csUtils.ZipFiles(new[] {stockFile, etfFile});
 
             // Parse and save data to database
             showStatus($"Nasdaq.ScreenerLoader. Parse and save files to database");
             Parse(stockFile, timeStamp.Item1);
             Parse(etfFile, timeStamp.Item1);
 
-            // Remove text files
-            File.Delete(stockFile);
-            File.Delete(etfFile);
+            // Zip data and remove text files
+            var zipFilename = csUtils.ZipFolder(folder);
+            Directory.Delete(folder);
 
             showStatus($"Nasdaq.ScreenerLoader finished. Filename: {zipFilename}");
         }
@@ -89,7 +87,7 @@ namespace Data.Actions.Nasdaq
                 etfItems = oEtf.data.data.rows.ToList();
             }
             else
-                throw new Exception($"ScreenerNasdaq_Parse. '{Path.GetFileName(filename)}' file is invalid");
+                throw new Exception($"Nasdaq.ScreenerLoader.Parse. '{Path.GetFileName(filename)}' file is invalid");
 
             if (stockItems.Count > 0)
             {

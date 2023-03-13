@@ -46,6 +46,7 @@
     <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\Eoddata\SymbolsLoader.cs" />
     <Compile Include="Actions\Nasdaq\ScreenerLoader.cs" />
     <Compile Include="Actions\TradingView\ScreenerLoader.cs" />
     <Compile Include="Helpers\csUtils.cs" />

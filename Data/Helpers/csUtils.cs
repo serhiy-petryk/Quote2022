@@ -10,6 +10,11 @@ namespace Data.Helpers
 {
     public static class csUtils
     {
+        /// <summary>
+        /// Zip folder
+        /// </summary>
+        /// <param name="folderName">Folder to zip</param>
+        /// <returns>Zip filename</returns>
         public static string ZipFolder(string folderName)
         {
             var zipFn = Path.GetDirectoryName(folderName) + @"\" + Path.GetFileNameWithoutExtension(folderName) + ".zip";
@@ -20,22 +25,11 @@ namespace Data.Helpers
             return zipFn;
         }
 
-        public static string ZipFiles(string[] filenames)
-        {
-            if (filenames.Length == 0)
-                return null;
-
-            var zipFn = Path.GetDirectoryName(filenames[0]) + @"\" + Path.GetFileNameWithoutExtension(filenames[0]) + ".zip";
-            if (File.Exists(zipFn))
-                File.Delete(zipFn);
-
-            using (var zip = System.IO.Compression.ZipFile.Open(zipFn, ZipArchiveMode.Create))
-                foreach (var filename in filenames)
-                    zip.CreateEntryFromFile(filename, Path.GetFileName(filename), CompressionLevel.Optimal);
-
-            return zipFn;
-        }
-
+        /// <summary>
+        /// Zip file
+        /// </summary>
+        /// <param name="filename">File to zip</param>
+        /// <returns>Zip filename</returns>
         public static string ZipFile(string filename)
         {
             var zipFn = Path.GetDirectoryName(filename) + @"\" + Path.GetFileNameWithoutExtension(filename) + ".zip";

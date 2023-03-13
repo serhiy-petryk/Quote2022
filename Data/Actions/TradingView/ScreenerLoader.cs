@@ -16,24 +16,28 @@ namespace Data.Actions.TradingView
 
         public static void Start(Action<string> showStatus)
         {
-            showStatus($"TradingView.ScreenerLoader.Download started");
+            showStatus($"TradingView.ScreenerLoader started");
 
             // Download
             var timeStamp = Helpers.csUtils.GetTimeStamp();
             var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp.Item2}.json";
+
+            showStatus($"TradingView.ScreenerLoader. Download data to {filename}");
             if (!File.Exists(filename))
               Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
 
-            // Zip & parse & save to db
-                var zipFilename = csUtils.ZipFile(filename);
-                Parse(showStatus, File.ReadAllText(filename), File.GetCreationTime(filename));
+            // Parse and save data to database
+            showStatus($"TradingView.ScreenerLoader. Parse and save files to database");
+            Parse(File.ReadAllText(filename), File.GetCreationTime(filename));
 
-                File.Delete(filename);
+            // Zip data and remove text files
+            var zipFilename = csUtils.ZipFile(filename);
+            File.Delete(filename);
 
             showStatus($"TradingView.ScreenerLoader finished. Filename: {zipFilename}");
         }
 
-        private static void Parse(Action<string> showStatus, string content, DateTime timeStamp)
+        private static void Parse(string content, DateTime timeStamp)
         {
             var o = JsonConvert.DeserializeObject<ScreenerTradingView>(content);
             var items = o.data.Select(a => a.GetDbItem(timeStamp)).ToArray();

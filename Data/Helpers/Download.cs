@@ -9,23 +9,16 @@ namespace Data.Helpers
 {
     public static class Download
     {
-        public static string DownloadPage(string url, string filename, bool isXMLHttpRequest = false)
+        public static string DownloadPage(string url, string filename, bool isXmlHttpRequest = false, CookieContainer cookies = null)
         {
             string response = null;
             using (var wc = new WebClientEx())
             {
-                /*if (ServicePointManager.DefaultConnectionLimit != int.MaxValue)
-                {
-                    ServicePointManager.DefaultConnectionLimit = int.MaxValue;
-                    WebRequest.DefaultWebProxy = null;
-                }
-                wc.Proxy = null;*/
                 wc.Encoding = System.Text.Encoding.UTF8;
+                wc.Cookies = cookies;
+                wc.IsXmlHttpRequest = isXmlHttpRequest;
                 try
                 {
-                    // wc.Headers.Add("Cache-Control", "no-cache");
-                    if (isXMLHttpRequest)
-                        wc.Headers.Add("X-Requested-With", "XMLHttpRequest");
                     var bb = wc.DownloadData(url);
                     response = Encoding.UTF8.GetString(bb);
                     if (!string.IsNullOrEmpty(filename))
@@ -37,7 +30,6 @@ namespace Data.Helpers
                             Directory.CreateDirectory(folder);
 
                         File.WriteAllText(filename, response, Encoding.UTF8);
-                        //                File.WriteAllText(filename, response);
                     }
                 }
                 catch (Exception ex)
@@ -64,6 +56,9 @@ namespace Data.Helpers
         public class WebClientEx : WebClient
         {
             public int? TimeoutInMilliseconds;
+            public CookieContainer Cookies;
+            public bool IsXmlHttpRequest;
+
             protected override WebRequest GetWebRequest(Uri address)
             {
                 var request = (HttpWebRequest)base.GetWebRequest(address);
@@ -71,6 +66,13 @@ namespace Data.Helpers
                 request.AllowAutoRedirect = true;
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+                if (IsXmlHttpRequest)
+                    request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+
+                if (Cookies != null)
+                    request.CookieContainer = Cookies;
+
                 if (TimeoutInMilliseconds.HasValue)
                     request.Timeout = TimeoutInMilliseconds.Value;
                 return request;

@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
+using SQLitePCL;
 
 namespace Data.Helpers
 {
@@ -26,13 +27,15 @@ namespace Data.Helpers
 
             var whereString = string.Join("' or host_key = '", hostKey);
 
-            var ChromeCookiePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Google\Chrome\User Data\Default\Network\Cookies";
+            var chromeCookiePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Google\Chrome\User Data\Default\Network\Cookies";
             var data = new List<Cookie>();
-            if (File.Exists(ChromeCookiePath))
+
+            SQLitePCL.raw.SetProvider(new SQLite3Provider_e_sqlite3());
+            if (File.Exists(chromeCookiePath))
             {
                 try
                 {
-                    using (var conn = new SqliteConnection($"Data Source={ChromeCookiePath}"))
+                    using (var conn = new SqliteConnection($"Data Source={chromeCookiePath}"))
                     using (var cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = $"SELECT name,encrypted_value,host_key FROM cookies WHERE host_key = '{whereString}'";

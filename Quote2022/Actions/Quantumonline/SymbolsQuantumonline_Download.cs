@@ -94,7 +94,7 @@ namespace Quote2022.Actions.Quantumonline
                     keys.Clear();
                     foreach (var urlKey in urlKeys)
                     {
-                        var items = Parse.SymbolsQuantumonlineContent_Parse(File.ReadAllText(urlKey.Value), urlKey.Value, File.GetCreationTime(urlKey.Value));
+                        var items = Parse.SymbolsQuantumonlineContent_Parse(File.ReadAllText(urlKey.Value), urlKey.Value, File.GetLastWriteTime(urlKey.Value));
                         var checkedItems = items.Where(a => (a.HtmlName + " ").IndexOf(urlKey.Key, StringComparison.InvariantCultureIgnoreCase) == -1).ToArray();
                         if (checkedItems.Length != 0)
                         {

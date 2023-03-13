@@ -176,7 +176,7 @@ namespace Quote2022.Actions.StockAnalysis
             {
                 ShowStatus($"StockAnalysis.WebArchiveActions. Processing file {Path.GetFileName(file)}");
                 var timeStamp =
-                    File.GetCreationTime(file); // Path.GetFileNameWithoutExtension(file).Split('_')[1].Substring(0, 8);
+                    File.GetLastWriteTime(file); // Path.GetFileNameWithoutExtension(file).Split('_')[1].Substring(0, 8);
                 var content = File.ReadAllText(file);
 
                 var i1 = content.IndexOf(">Action</th>", StringComparison.InvariantCultureIgnoreCase);

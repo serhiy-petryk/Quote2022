@@ -59,7 +59,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                 if (lines.Length == 1)
                     continue;
 
-                var fileCreated = File.GetCreationTime(file);
+                var fileCreated = File.GetLastWriteTime(file);
                 var symbol = fileShortName.Split('_')[0];
                 var i = symbol.IndexOf('.');
                 if (i != -1)
@@ -79,7 +79,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                     {
                         SaveQuotesToFile(symbol, lastDate, linesToSave, fileCreated);
                         linesToSave.Clear();
-                        linesToSave.Add($"# File {fileShortName}. Created at {File.GetCreationTime(file):yyyy-MM-dd HH:mm:ss}");
+                        linesToSave.Add($"# File {fileShortName}. Created at {File.GetLastWriteTime(file):yyyy-MM-dd HH:mm:ss}");
                         lastDate = date;
                     }
                     linesToSave.Add(line);

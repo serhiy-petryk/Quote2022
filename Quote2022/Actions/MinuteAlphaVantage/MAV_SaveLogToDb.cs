@@ -108,7 +108,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
             void Check(string file)
             {
                 var fileId = folderId + Path.GetFileName(file);
-                var fileCreated = File.GetCreationTime(file);
+                var fileCreated = File.GetLastWriteTime(file);
 
                 cnt++;
                 if (cnt % 100 == 0)
@@ -141,7 +141,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
 
                 if (context.Length == 1)
                 {
-                    blankFiles.Add(new BlankFile { File = fileId, FileCreated = File.GetCreationTime(file), Symbol = symbol });
+                    blankFiles.Add(new BlankFile { File = fileId, FileCreated = File.GetLastWriteTime(file), Symbol = symbol });
                 }
 
                 LogEntry logEntry = null;
@@ -273,7 +273,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                     void Check(string file)
                     {
                         var fileId = folderId + Path.GetFileName(file);
-                        var fileCreated = File.GetCreationTime(file);
+                        var fileCreated = File.GetLastWriteTime(file);
 
                         cnt++;
                         if (cnt % 100 == 0)
@@ -306,7 +306,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
 
                         if (context.Length == 1)
                         {
-                            blankFiles.Add(new BlankFile { File = fileId, FileCreated = File.GetCreationTime(file), Symbol = symbol });
+                            blankFiles.Add(new BlankFile { File = fileId, FileCreated = File.GetLastWriteTime(file), Symbol = symbol });
                         }
 
                         LogEntry logEntry = null;

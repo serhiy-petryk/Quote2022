@@ -47,7 +47,7 @@ namespace Quote2022.Actions.ScreenerStockAnalysis
             {
                 var filename = string.Format(fileTemplate, kvp.Key, timeStamp);
                 var oo = JsonConvert.DeserializeObject<Models.ScreenerStockAnalysis.cRawData>(File.ReadAllText(filename));
-                var fileTimeStamp = File.GetCreationTime(filename);
+                var fileTimeStamp = File.GetLastWriteTime(filename);
                 foreach (var o in oo.data.data)
                 {
                     var symbol = (string) o[0];

@@ -20,7 +20,7 @@ namespace Quote2022.Actions
             var oo = JsonConvert.DeserializeObject<string[,]>(File.ReadAllText(filename));
             var items = new List<SymbolsStockanalysisExchanges>();
             for (var i = 0; i < oo.GetLength(0); i++)
-                items.Add(new SymbolsStockanalysisExchanges(oo[i, 0], oo[i, 1], File.GetCreationTime(filename)));
+                items.Add(new SymbolsStockanalysisExchanges(oo[i, 0], oo[i, 1], File.GetLastWriteTime(filename)));
 
             SaveToDb.ClearAndSaveToDbTable(items, "Bfr_SymbolsStockanalysisStockExchanges", "Symbol", "Exchange",
                 "Created");
@@ -29,7 +29,7 @@ namespace Quote2022.Actions
             oo = JsonConvert.DeserializeObject<string[,]>(File.ReadAllText(filename));
             items = new List<SymbolsStockanalysisExchanges>();
             for (var i = 0; i < oo.GetLength(0); i++)
-                items.Add(new SymbolsStockanalysisExchanges(oo[i, 0], oo[i, 1], File.GetCreationTime(filename)));
+                items.Add(new SymbolsStockanalysisExchanges(oo[i, 0], oo[i, 1], File.GetLastWriteTime(filename)));
 
             SaveToDb.ClearAndSaveToDbTable(items, "Bfr_SymbolsStockanalysisEtfExchanges", "Symbol", "Exchange",
                 "Created");
@@ -99,7 +99,7 @@ namespace Quote2022.Actions
                     }
                     else
                     {
-                        var newItems = SymbolsQuantumonlineContent_Parse(file.Content, file.FileNameWithoutExtension, File.GetCreationTime(zipFile));
+                        var newItems = SymbolsQuantumonlineContent_Parse(file.Content, file.FileNameWithoutExtension, File.GetLastWriteTime(zipFile));
                         cnt += newItems.Count;
                         foreach (var item in newItems)
                         {

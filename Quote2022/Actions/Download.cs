@@ -484,7 +484,7 @@ namespace Quote2022.Actions
                     {
                         if (file.FileNameWithoutExtension.Replace("%", "[%]").Substring(1).Length <= 20)
                         {
-                            var newItems = Parse.SymbolsQuantumonlineContent_Parse(file.Content, file.FileNameWithoutExtension, File.GetCreationTime(zipFile));
+                            var newItems = Parse.SymbolsQuantumonlineContent_Parse(file.Content, file.FileNameWithoutExtension, File.GetLastWriteTime(zipFile));
                             foreach (var item in newItems)
                                 if (!items.ContainsKey(item.ToString()))
                                     items.Add(item.ToString(), item);

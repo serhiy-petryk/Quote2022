@@ -18,7 +18,7 @@ namespace Quote2022.Actions.Barchart
             };
 
             var oo = JsonConvert.DeserializeObject<cRoot>(File.ReadAllText(filename), settings);
-            var timeStamp = File.GetCreationTime(filename);
+            var timeStamp = File.GetLastWriteTime(filename);
             var key = Path.GetFileName(Path.GetDirectoryName(filename));
             foreach (var o in oo.data.Select(a => a.raw))
             {
@@ -40,7 +40,7 @@ namespace Quote2022.Actions.Barchart
             };
 
             var oo = JsonConvert.DeserializeObject<cRoot>(File.ReadAllText(filename), settings);
-            var timeStamp = File.GetCreationTime(filename);
+            var timeStamp = File.GetLastWriteTime(filename);
             foreach (var o in oo.data.Select(a => a.raw))
             {
                 o.Screener = "Russell3000";
@@ -67,7 +67,7 @@ namespace Quote2022.Actions.Barchart
                 var o1 = oo.data.Where(a => a.symbolCode != "STK").ToList();
                 var o2 = oo.data.Where(a => a.symbolType != 1).ToList();
 
-                var timeStamp = File.GetCreationTime(filename);
+                var timeStamp = File.GetLastWriteTime(filename);
                 foreach (var o in oo.data.Select(a => a.raw))
                 {
                     o.Screener = "Screener";

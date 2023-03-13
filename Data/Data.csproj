@@ -85,6 +85,7 @@
     <Compile Include="Models\LoaderItem.cs" />
     <Compile Include="Models\NotifyPropertyChangedAbstract.cs" />
     <Compile Include="Models\ScreenerTradingView.cs" />
+    <Compile Include="Models\SymbolsEoddata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>

@@ -26,7 +26,7 @@ namespace Data.Actions.TradingView
 
             // Parse and save data to database
             showStatus($"TradingView.ScreenerLoader. Parse and save files to database");
-            Parse(File.ReadAllText(filename), File.GetCreationTime(filename));
+            Parse(File.ReadAllText(filename), File.GetLastWriteTime(filename));
 
             // Zip data and remove text files
             var zipFilename = csUtils.ZipFile(filename);

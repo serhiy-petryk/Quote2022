@@ -28,7 +28,7 @@ namespace Data.Helpers
         /// <returns>Zip filename</returns>
         public static string ZipFile(string filename)
         {
-            var zipFn = Path.GetDirectoryName(filename) + @"\" + Path.GetFileNameWithoutExtension(filename) + ".zip";
+            var zipFn = Path.ChangeExtension(filename, ".zip");
             if (File.Exists(zipFn))
                 File.Delete(zipFn);
 

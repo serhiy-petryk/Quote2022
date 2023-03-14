@@ -7,15 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Data.Helpers;
-using Data.Models;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Quote2022.Actions;
 using Quote2022.Actions.MinuteAlphaVantage;
 using Quote2022.Actions.Nasdaq;
 using Quote2022.Helpers;
 using Quote2022.Models;
-using CsUtils = Quote2022.Helpers.CsUtils;
 
 namespace Quote2022
 {
@@ -23,14 +20,14 @@ namespace Quote2022
     {
         private object _lock = new object();
 
-        private readonly Data.Helpers.Logger _logger = new Logger();
+        private readonly Data.Helpers.Logger _logger = new Data.Helpers.Logger();
 
         public Form1()
         {
             InitializeComponent();
 
             dataGridView1.Paint += new PaintEventHandler(dataGridView1_Paint);
-            dataGridView1.DataSource = LoaderItem.DataGridLoaderItems;
+            dataGridView1.DataSource = Data.Models.LoaderItem.DataGridLoaderItems;
 
             //=========================
             StatusLabel.Text = "";
@@ -55,7 +52,7 @@ namespace Quote2022
         }
         private void StartImageAnimation()
         {
-            var image = LoaderItem.GetAnimatedImage();
+            var image = Data.Models.LoaderItem.GetAnimatedImage();
             ImageAnimator.Animate(image, new EventHandler(this.OnFrameChanged));
         }
         private void OnFrameChanged(object o, EventArgs e)
@@ -816,7 +813,7 @@ namespace Quote2022
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var item = LoaderItem.DataGridLoaderItems[1];
+            var item = Data.Models.LoaderItem.DataGridLoaderItems[1];
             /*if (item.Status == LoaderItem.ItemStatus.Working)
                 item.Finished();
             else if (item.Status == LoaderItem.ItemStatus.Done)
@@ -830,10 +827,10 @@ namespace Quote2022
             ((Control)sender).Enabled = false;
             dataGridView1.ReadOnly = true;
 
-            foreach (var item in LoaderItem.DataGridLoaderItems)
+            foreach (var item in Data.Models.LoaderItem.DataGridLoaderItems)
                 item.Reset();
 
-            foreach (var item in LoaderItem.DataGridLoaderItems.Where(a => a.Checked))
+            foreach (var item in Data.Models.LoaderItem.DataGridLoaderItems.Where(a => a.Checked))
                 await item.Start(_logger);
 
             dataGridView1.ReadOnly = false;

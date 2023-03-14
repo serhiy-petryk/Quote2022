@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Eoddata\EoddataDailyLoader.cs" />
+    <Compile Include="Actions\Eoddata\EoddataSplitsLoader.cs" />
     <Compile Include="Actions\Eoddata\EoddataSymbolsLoader.cs" />
     <Compile Include="Actions\Nasdaq\NasdaqScreenerLoader.cs" />
     <Compile Include="Actions\TradingView\TvScreenerLoader.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Models\LoaderItem.cs" />
     <Compile Include="Models\NotifyPropertyChangedAbstract.cs" />
     <Compile Include="Models\ScreenerTradingView.cs" />
+    <Compile Include="Models\SplitModel.cs" />
     <Compile Include="Models\SymbolsEoddata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />

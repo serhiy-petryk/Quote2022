@@ -82,5 +82,24 @@ namespace Data.Helpers
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public static object ExecuteScalar(string sql, Dictionary<string, object> paramaters = null)
+        {
+            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandText = sql;
+                cmd.CommandTimeout = 150;
+                cmd.CommandType = CommandType.Text;
+                if (paramaters != null)
+                {
+                    foreach (var kvp in paramaters)
+                        cmd.Parameters.AddWithValue(kvp.Key, kvp.Value);
+                }
+                var o = cmd.ExecuteScalar();
+                return o;
+            }
+        }
     }
 }

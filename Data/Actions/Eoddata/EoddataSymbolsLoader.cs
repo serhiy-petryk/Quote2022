@@ -13,6 +13,8 @@ namespace Data.Actions.Eoddata
 
         public static void Start(Action<string> logEvent)
         {
+            logEvent($"EoddataSymbolsLoader started");
+
             var timeStamp = CsUtils.GetTimeStamp();
             var folder = $@"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{timeStamp.Item2}\";
 
@@ -25,7 +27,7 @@ namespace Data.Actions.Eoddata
             // Download data
             foreach (var exchange in _exchanges)
             {
-                logEvent($"Eoddata.SymbolsLoader. Download Symbols data for {exchange}");
+                logEvent($"EoddataSymbolsLoader. Download Symbols data for {exchange}");
                 var url = string.Format(_urlTemplate, exchange);
                 var filename = $"{folder}{exchange}_{timeStamp.Item2}.txt";
                 Helpers.Download.DownloadPage(url, filename, false, cookieContainer);
@@ -34,8 +36,8 @@ namespace Data.Actions.Eoddata
             // Parse and save data to database
             foreach (var filename in Directory.GetFiles(folder))
             {
-                logEvent($"Eoddata.SymbolsLoader. '{Path.GetFileName(filename)}' file is parsing");
-                Parse(filename, timeStamp.Item1);
+                logEvent($"EoddataSymbolsLoader. '{Path.GetFileName(filename)}' file is parsing");
+                Parse(filename);
             }
             Helpers.DbUtils.RunProcedure("pUpdateSymbolsXref");
 
@@ -44,10 +46,10 @@ namespace Data.Actions.Eoddata
             var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
-            logEvent($"Eoddata.SymbolsLoader finished. Filename: {zipFilename}");
+            logEvent($"EoddataSymbolsLoader finished. Filename: {zipFilename}");
         }
 
-        private static void Parse(string filename, DateTime timeStamp)
+        private static void Parse(string filename)
         {
             var items = new List<SymbolsEoddata>();
             var ss = Path.GetFileNameWithoutExtension(filename).Split('_');
@@ -70,8 +72,8 @@ namespace Data.Actions.Eoddata
             }
 
             // Save data to buffer table of data server
-            // Helpers.DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name", "Created");
-            // Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata", new Dictionary<string, object> { { "@Exchange", exchange }, { "@Date", date } });
+            Helpers.DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name", "Created");
+            Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata", new Dictionary<string, object> { { "@Exchange", exchange }, { "@Date", date } });
         }
 
     }

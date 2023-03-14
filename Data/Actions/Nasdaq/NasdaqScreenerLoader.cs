@@ -15,20 +15,22 @@ namespace Data.Actions.Nasdaq
 
         public static void Start(Action<string> logEvent)
         {
+            logEvent($"NasdaqScreenerLoader started");
+
             var timeStamp = CsUtils.GetTimeStamp();
             var folder = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}\";
 
             // Download data
             var stockFile =  folder + $@"ScreenerStock_{timeStamp.Item2}.json";
-            logEvent($"Nasdaq.ScreenerLoader. Download STOCK data from {stockUrl} to {stockFile}");
+            logEvent($"NasdaqScreenerLoader. Download STOCK data from {stockUrl} to {stockFile}");
             Helpers.Download.DownloadPage(stockUrl, stockFile, true);
 
             var etfFile = folder + $@"ScreenerEtf_{timeStamp.Item2}.json";
-            logEvent($"Nasdaq.ScreenerLoader. Download ETF data from {etfUrl} to {etfFile}");
+            logEvent($"NasdaqScreenerLoader. Download ETF data from {etfUrl} to {etfFile}");
             Helpers.Download.DownloadPage(etfUrl, etfFile, true);
 
             // Parse and save data to database
-            logEvent($"Nasdaq.ScreenerLoader. Parse and save files to database");
+            logEvent($"NasdaqScreenerLoader. Parse and save files to database");
             Parse(stockFile, timeStamp.Item1);
             Parse(etfFile, timeStamp.Item1);
 
@@ -36,7 +38,7 @@ namespace Data.Actions.Nasdaq
             var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
-            logEvent($"Nasdaq.ScreenerLoader finished. Filename: {zipFilename}");
+            logEvent($"NasdaqScreenerLoader finished. Filename: {zipFilename}");
         }
 
         private static void Parse(string filename, DateTime timeStamp)

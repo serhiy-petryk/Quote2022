@@ -20,6 +20,8 @@ namespace Data.Actions.Eoddata
 
         public static void Start(Action<string> logEvent)
         {
+            logEvent($"EoddataDailyLoader started");
+
             var timeStamp = CsUtils.GetTimeStamp();
             var tempFolder =  FILE_FOLDER + timeStamp.Item2 + @"\";
             var tempZipFileNameTemplate = tempFolder + @"{0}_{1}.zip";
@@ -105,7 +107,7 @@ namespace Data.Actions.Eoddata
             }
 
             // Get missing quotes in database
-            logEvent($"DayEoddata. Get existing data in database");
+            logEvent($"EoddataDailyLoader. Get existing data in database");
             var existingQuotes = new Dictionary<string, object>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             {
@@ -129,30 +131,7 @@ namespace Data.Actions.Eoddata
                 {
                     newFileCount++;
                     logEvent($"EoddataDailyLoader. Save to database quotes from file {Path.GetFileName(file)}");
-
-                    var exchange = Path.GetFileNameWithoutExtension(file).Split('_')[0].Trim().ToUpper();
-                    var quotes = new List<DayEoddata>();
-                    IEnumerable<string> lines = null;
-                    using (var _zip = new ZipReader(file))
-                    {
-                        var fileContents = _zip.Select(a => a.AllLines.ToArray()).ToArray();
-                        if (fileContents.Length == 1)
-                            lines = fileContents[0];
-                        else
-                            throw new Exception($"Error in zip file structure: {file}");
-                    }
-
-                    string prevLine = null; // To ignore duplicates
-                    foreach (var line in lines)
-                    {
-                        if (!string.Equals(line, prevLine))
-                        {
-                            prevLine = line;
-                            quotes.Add(new DayEoddata(exchange, line.Split(',')));
-                        }
-                    }
-
-                    Helpers.DbUtils.SaveToDbTable(quotes, "DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
+                    Parse(file);
                 }
             }
 
@@ -162,11 +141,35 @@ namespace Data.Actions.Eoddata
                 Helpers.DbUtils.RunProcedure("pUpdateDayEoddata");
             }
 
-            logEvent($"EoddataDailyLoader finished");
+            logEvent($"EoddataDailyLoader finished. Loaded data from {newFileCount} files");
         }
 
-        private static void Parse(string filename, DateTime timeStamp)
+        private static void Parse(string filename)
         {
+            var exchange = Path.GetFileNameWithoutExtension(filename).Split('_')[0].Trim().ToUpper();
+            var quotes = new List<DayEoddata>();
+            IEnumerable<string> lines = null;
+            using (var _zip = new ZipReader(filename))
+            {
+                var fileContents = _zip.Select(a => a.AllLines.ToArray()).ToArray();
+                if (fileContents.Length == 1)
+                    lines = fileContents[0];
+                else
+                    throw new Exception($"Error in zip file structure: {filename}");
+            }
+
+            string prevLine = null; // To ignore duplicates
+            foreach (var line in lines)
+            {
+                if (!string.Equals(line, prevLine))
+                {
+                    prevLine = line;
+                    quotes.Add(new DayEoddata(exchange, line.Split(',')));
+                }
+            }
+
+            Helpers.DbUtils.SaveToDbTable(quotes, "DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
+
         }
 
     }

@@ -29,7 +29,7 @@ namespace Data.Models
         private static Dictionary<string, Bitmap> _imgResources;
         private static string[] _itemStatusImageName = new[] {"Blank", "Blank", "Wait", "Done", "Error"};
 
-        private static void TestAction(Action<string> logEvent)
+        private static void TestLogEvent(Action<string> logEvent)
         {
             logEvent("Started");
             Thread.Sleep(1200);
@@ -74,7 +74,7 @@ namespace Data.Models
             : (Started.HasValue ? Convert.ToInt64((DateTime.Now - Started.Value).TotalSeconds) : (long?) null);
 
         public string Name { get; private set; }
-        public Action<Action<string>> Action = TestAction;
+        public Action<Action<string>> Action = TestLogEvent;
 
         public ItemStatus Status { get; set; } = ItemStatus.None;
 

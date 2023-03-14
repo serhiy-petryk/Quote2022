@@ -18,6 +18,8 @@ namespace Data.Actions.Yahoo
 
         public static void Start(Action<string> logEvent)
         {
+            logEvent($"YahooIndicesLoader started");
+
             var maxDate = new DateTime(2000, 1, 1);
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())

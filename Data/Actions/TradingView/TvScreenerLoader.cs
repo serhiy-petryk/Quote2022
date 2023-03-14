@@ -14,25 +14,25 @@ namespace Data.Actions.TradingView
 
         public static void Start(Action<string> logEvent)
         {
-            logEvent($"TradingView.ScreenerLoader started");
+            logEvent($"TradingViewScreenerLoader started");
 
             // Download
             var timeStamp = Helpers.CsUtils.GetTimeStamp();
             var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp.Item2}.json";
 
-            logEvent($"TradingView.ScreenerLoader. Download data to {filename}");
+            logEvent($"TradingViewScreenerLoader. Download data to {filename}");
             if (!File.Exists(filename))
               Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
 
             // Parse and save data to database
-            logEvent($"TradingView.ScreenerLoader. Parse and save files to database");
+            logEvent($"TradingViewScreenerLoader. Parse and save files to database");
             Parse(File.ReadAllText(filename), File.GetLastWriteTime(filename));
 
             // Zip data and remove text files
             var zipFilename = CsUtils.ZipFile(filename);
             File.Delete(filename);
 
-            logEvent($"TradingView.ScreenerLoader finished. Filename: {zipFilename}");
+            logEvent($"TradingViewScreenerLoader finished. Filename: {zipFilename}");
         }
 
         private static void Parse(string content, DateTime timeStamp)

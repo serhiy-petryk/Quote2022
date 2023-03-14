@@ -17,7 +17,7 @@ namespace Data.Actions.TradingView
             showStatus($"TradingView.ScreenerLoader started");
 
             // Download
-            var timeStamp = Helpers.csUtils.GetTimeStamp();
+            var timeStamp = Helpers.CsUtils.GetTimeStamp();
             var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp.Item2}.json";
 
             showStatus($"TradingView.ScreenerLoader. Download data to {filename}");
@@ -29,7 +29,7 @@ namespace Data.Actions.TradingView
             Parse(File.ReadAllText(filename), File.GetLastWriteTime(filename));
 
             // Zip data and remove text files
-            var zipFilename = csUtils.ZipFile(filename);
+            var zipFilename = CsUtils.ZipFile(filename);
             File.Delete(filename);
 
             showStatus($"TradingView.ScreenerLoader finished. Filename: {zipFilename}");

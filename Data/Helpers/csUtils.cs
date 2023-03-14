@@ -4,7 +4,7 @@ using System.IO.Compression;
 
 namespace Data.Helpers
 {
-    public static class csUtils
+    public static class CsUtils
     {
         /// <summary>
         /// Zip folder

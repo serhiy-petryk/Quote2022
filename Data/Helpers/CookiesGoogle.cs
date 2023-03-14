@@ -17,7 +17,7 @@ namespace Data.Helpers
     public static class CookiesGoogle
     {
         // Source: https://stackoverflow.com/questions/68643057/decrypt-google-cookies-in-c-sharp-net-framework
-        public static List<Cookie> GetCookies(string hostname)
+        public static CookieContainer GetCookies(string hostname)
         {
             if (hostname.EndsWith("/")) hostname = hostname.Substring(0, hostname.Length - 1);
             if (hostname.StartsWith("https://")) hostname = hostname.Substring(8);
@@ -72,7 +72,10 @@ namespace Data.Helpers
                 }
             }
 
-            return data;
+            var container = new CookieContainer();
+            foreach(var cookie in data)
+                container.Add(cookie);
+            return container;
         }
 
         private static byte[] GetBytes(SqliteDataReader reader, int columnIndex)

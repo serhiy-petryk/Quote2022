@@ -15,7 +15,7 @@ namespace Data.Actions.Nasdaq
 
         public static void Start(Action<string> showStatus)
         {
-            var timeStamp = csUtils.GetTimeStamp();
+            var timeStamp = CsUtils.GetTimeStamp();
             var folder = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}\";
 
             // Download data
@@ -33,7 +33,7 @@ namespace Data.Actions.Nasdaq
             Parse(etfFile, timeStamp.Item1);
 
             // Zip data and remove text files
-            var zipFilename = csUtils.ZipFolder(folder);
+            var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
             showStatus($"Nasdaq.ScreenerLoader finished. Filename: {zipFilename}");

@@ -13,17 +13,14 @@ namespace Data.Actions.Eoddata
 
         public static void Start(Action<string> showStatus)
         {
-            var timeStamp = csUtils.GetTimeStamp();
+            var timeStamp = CsUtils.GetTimeStamp();
             var folder = $@"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{timeStamp.Item2}\";
 
             // Prepare cookies
             var urlForCookie = "https://www.eoddata.com/";
-            var cookies = Helpers.CookiesGoogle.GetCookies(urlForCookie);
-            if (cookies.Count == 0)
+            var cookieContainer = Helpers.CookiesGoogle.GetCookies(urlForCookie);
+            if (cookieContainer.Count == 0)
                 throw new Exception("Check login to www.eoddata.com in Chrome browser");
-            var cookieContainer = new System.Net.CookieContainer();
-            foreach (var cookie in cookies)
-                cookieContainer.Add(cookie);
 
             // Download data
             foreach (var exchange in _exchanges)
@@ -44,7 +41,7 @@ namespace Data.Actions.Eoddata
 
 
             // Zip data and remove text files
-            var zipFilename = csUtils.ZipFolder(folder);
+            var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
             showStatus($"Eoddata.SymbolsLoader finished. Filename: {zipFilename}");

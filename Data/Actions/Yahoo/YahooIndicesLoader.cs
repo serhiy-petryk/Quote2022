@@ -35,7 +35,7 @@ namespace Data.Actions.Yahoo
             var from = GetYahooTime(maxDate.AddDays(-10));
             var to = GetYahooTime(DateTime.Now);
 
-            var timeStamp = csUtils.GetTimeStamp();
+            var timeStamp = CsUtils.GetTimeStamp();
             var folder = $@"E:\Quote\WebData\Daily\Yahoo\Indices\YahooIndices_{timeStamp.Item2}\";
 
             // Download data

@@ -76,14 +76,16 @@
     <Compile Include="Actions\TradingView\TvScreenerLoader.cs" />
     <Compile Include="Actions\Yahoo\YahooIndicesLoader.cs" />
     <Compile Include="Helpers\CookiesGoogle.cs" />
-    <Compile Include="Helpers\csUtils.cs" />
+    <Compile Include="Helpers\CsUtils.cs" />
     <Compile Include="Helpers\DbUtils.cs" />
     <Compile Include="Helpers\Download.cs" />
+    <Compile Include="Helpers\ZipReader.cs" />
     <Compile Include="Images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="Models\DayEoddata.cs" />
     <Compile Include="Models\DayYahoo.cs" />
     <Compile Include="Models\LoaderItem.cs" />
     <Compile Include="Models\NotifyPropertyChangedAbstract.cs" />

@@ -16,7 +16,7 @@ namespace Data.Actions.Yahoo
         private const string urlTemplate = "https://query1.finance.yahoo.com/v7/finance/download/{2}?period1={0}&period2={1}&interval=1d&events=history&includeAdjustedClose=true";
         private static string[] symbols = new[] { "^DJI", "^GSPC" };
 
-        public static void Start(Action<string> showStatus)
+        public static void Start(Action<string> logEvent)
         {
             var maxDate = new DateTime(2000, 1, 1);
             using (var conn = new SqlConnection(Settings.DbConnectionString))
@@ -41,14 +41,14 @@ namespace Data.Actions.Yahoo
             // Download data
             foreach (var symbol in symbols)
             {
-                showStatus($"YahooIndicesLoader. Download data for {symbol}");
+                logEvent($"YahooIndicesLoader. Download data for {symbol}");
                 var url = string.Format(urlTemplate, from, to, symbol);
                 var filename = $"{folder}{symbol}_{timeStamp.Item2}.csv";
                 Helpers.Download.DownloadPage(url, filename);
             }
 
             // Parse and save data to database
-            showStatus($"YahooIndicesLoader. Parse and save files to database");
+            logEvent($"YahooIndicesLoader. Parse and save files to database");
             var data = new List<DayYahoo>();
             foreach(var filename in Directory.GetFiles(folder, "*.csv"))
                 Parse(filename, data);
@@ -63,14 +63,14 @@ namespace Data.Actions.Yahoo
                                            "left join DayYahooIndexes b on a.Symbol = b.Symbol and a.Date = b.Date " +
                                            "where b.Symbol is null");
 
-                showStatus($"YahooIndicesLoader. Update trading days");
+                logEvent($"YahooIndicesLoader. Update trading days");
                 Helpers.DbUtils.RunProcedure("pRefreshTradingDays");
             }
 
             // remove text files
             Directory.Delete(folder, true);
 
-            showStatus($"YahooIndicesLoader finished");
+            logEvent($"YahooIndicesLoader finished");
 
             long GetYahooTime(DateTime dt) => Convert.ToInt64((dt - new DateTime(1970, 1, 1)).TotalSeconds + 18000);
         }

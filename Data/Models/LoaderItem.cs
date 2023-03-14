@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using Data.Helpers;
 
 namespace Data.Models
 {
@@ -15,12 +16,12 @@ namespace Data.Models
 
         public static BindingList<LoaderItem> DataGridLoaderItems = new BindingList<LoaderItem>
         {
-            new LoaderItem {Id = "ScreenerTradingView", Name = "TradingView Screener", Action = Actions.TradingView.TvScreenerLoader.Start, Checked = false},
-            new LoaderItem {Id = "ScreenerNasdaq", Name = "Nasdaq Stock/Etf Screeners", Action = Actions.Nasdaq.NasdaqScreenerLoader.Start, Checked = false},
-            new LoaderItem {Id = "SymbolsEoddata", Name = "Eoddata Symbols", Action = Actions.Eoddata.EoddataSymbolsLoader.Start, Checked = false},
-            new LoaderItem {Id = "ProfileYahoo", Name = "Yahoo Profiles", Status = ItemStatus.None, Checked = false},
-            new LoaderItem {Id = "YahooIndices", Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start, Checked = false},
-            new LoaderItem {Id = "DailyEoddata", Name = "Eoddata Daily Quotes", Action = Actions.Eoddata.EoddataDailyLoader.Start},
+            new LoaderItem {Name = "TradingView Screener", Action = Actions.TradingView.TvScreenerLoader.Start, Checked = false},
+            new LoaderItem {Name = "Nasdaq Stock/Etf Screeners", Action = Actions.Nasdaq.NasdaqScreenerLoader.Start, Checked = false},
+            new LoaderItem {Name = "Eoddata Symbols", Action = Actions.Eoddata.EoddataSymbolsLoader.Start, Checked = false},
+            new LoaderItem {Name = "Yahoo Profiles", Action=Actions.Yahoo.YahooProfileLoader.Start},
+            new LoaderItem {Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start, Checked = false},
+            new LoaderItem {Name = "Eoddata Daily Quotes", Action = Actions.Eoddata.EoddataDailyLoader.Start},
         };
 
         public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);
@@ -28,11 +29,11 @@ namespace Data.Models
         private static Dictionary<string, Bitmap> _imgResources;
         private static string[] _itemStatusImageName = new[] {"Blank", "Blank", "Wait", "Done", "Error"};
 
-        private static void TestAction(Action<string> showStatus)
+        private static void TestAction(Action<string> logEvent)
         {
-            showStatus("Started");
+            logEvent("Started");
             Thread.Sleep(1200);
-            showStatus("Finished");
+            logEvent("Finished");
         }
 
         private static Bitmap GetImage(ItemStatus status)
@@ -51,8 +52,6 @@ namespace Data.Models
 
             return _imgResources[_itemStatusImageName[(int)status]];
         }
-
-        public string Id;
 
         private bool _checked = true;
         public bool Checked
@@ -86,14 +85,14 @@ namespace Data.Models
             Status = ItemStatus.None;
             UpdateUI();
         }
-        public async Task Start(Action<string> showStatus)
+        public async Task Start(Logger loger)
         {
             Started = DateTime.Now;
             _finished = null;
             Status = ItemStatus.Working;
             UpdateUI();
 
-            await Task.Factory.StartNew(() => Action?.Invoke(showStatus));
+            await Task.Factory.StartNew(() => Action?.Invoke(loger.AddMessage));
 
             _finished = DateTime.Now;
             Checked = false;

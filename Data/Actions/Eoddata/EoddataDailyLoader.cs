@@ -18,7 +18,7 @@ namespace Data.Actions.Eoddata
         private const string URL_HOME = "https://www.eoddata.com/download.aspx";
         private const string URL_TEMPLATE = "https://www.eoddata.com/data/filedownload.aspx?e={0}&sd={1}&ea=1&ed={1}&d=9&p=0&o=d&k={2}";
 
-        public static void Start(Action<string> showStatus)
+        public static void Start(Action<string> logEvent)
         {
             var timeStamp = CsUtils.GetTimeStamp();
             var tempFolder =  FILE_FOLDER + timeStamp.Item2 + @"\";
@@ -71,7 +71,7 @@ namespace Data.Actions.Eoddata
                 // Download text files
                 foreach (var fileId in missingFiles)
                 {
-                    showStatus($"EoddataDailyLoader. Download Eoddata daily data for {fileId.Item1} and {fileId.Item2}");
+                    logEvent($"EoddataDailyLoader. Download Eoddata daily data for {fileId.Item1} and {fileId.Item2}");
                     var url = string.Format(URL_TEMPLATE, fileId.Item1, fileId.Item2, kParameter.Substring(2));
                     var textFilename = string.Format(textFileNameTemplate, fileId.Item1, fileId.Item2);
                     Helpers.Download.DownloadPage(url, textFilename, false, cookieContainer);
@@ -89,7 +89,7 @@ namespace Data.Actions.Eoddata
                 /*// Download data
                 foreach (var exchange in _exchanges)
                 {
-                    showStatus($"EoddataDailyLoader. Download Symbols data for {exchange}");
+                    logEvent($"EoddataDailyLoader. Download Symbols data for {exchange}");
                     var url = string.Format(_urlTemplate, exchange);
                     var filename = $"{folder}{exchange}_{timeStamp.Item2}.txt";
                     Helpers.Download.DownloadPage(url, filename, false, cookieContainer);
@@ -98,14 +98,14 @@ namespace Data.Actions.Eoddata
                 // Parse and save data to database
                 foreach (var filename in Directory.GetFiles(folder))
                 {
-                    showStatus($"Eoddata.SymbolsLoader. '{Path.GetFileName(filename)}' file is parsing");
+                    logEvent($"Eoddata.SymbolsLoader. '{Path.GetFileName(filename)}' file is parsing");
                     Parse(filename, timeStamp.Item1);
                 }*/
 
             }
 
             // Get missing quotes in database
-            showStatus($"DayEoddata. Get existing data in database");
+            logEvent($"DayEoddata. Get existing data in database");
             var existingQuotes = new Dictionary<string, object>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             {
@@ -128,7 +128,7 @@ namespace Data.Actions.Eoddata
                 if (!existingQuotes.ContainsKey(file))
                 {
                     newFileCount++;
-                    showStatus($"EoddataDailyLoader. Save to database quotes from file {Path.GetFileName(file)}");
+                    logEvent($"EoddataDailyLoader. Save to database quotes from file {Path.GetFileName(file)}");
 
                     var exchange = Path.GetFileNameWithoutExtension(file).Split('_')[0].Trim().ToUpper();
                     var quotes = new List<DayEoddata>();
@@ -158,11 +158,11 @@ namespace Data.Actions.Eoddata
 
             if (newFileCount > 0)
             {
-                showStatus($"EoddataDailyLoader. Update data in database ('pUpdateDayEoddata' procedure)");
+                logEvent($"EoddataDailyLoader. Update data in database ('pUpdateDayEoddata' procedure)");
                 Helpers.DbUtils.RunProcedure("pUpdateDayEoddata");
             }
 
-            showStatus($"EoddataDailyLoader finished");
+            logEvent($"EoddataDailyLoader finished");
         }
 
         private static void Parse(string filename, DateTime timeStamp)

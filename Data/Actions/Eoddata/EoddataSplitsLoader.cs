@@ -24,15 +24,15 @@ namespace Data.Actions.Eoddata
             Helpers.Download.DownloadPage(URL, htmlFileName);
 
             // Split and save to dabase
-            var zipFileName= ParseAndSaveToDb(htmlFileName);
+            var items = new List<SplitModel>();
+            var zipFileName = ParseAndSaveToDb(htmlFileName, items);
 
-            logEvent($"EoddataSplitsLoader finished. Filename: {zipFileName}");
+            logEvent($"EoddataSplitsLoader finished. Filename: {zipFileName} with {items.Count} items");
         }
 
-        private static string ParseAndSaveToDb(string htmlFileName)
+        private static string ParseAndSaveToDb(string htmlFileName, List<SplitModel> items)
         {
             var timeStamp = File.GetLastWriteTime(htmlFileName);
-            var items = new List<SplitModel>();
             var fileLines = new List<string>{ "Exchange\tSymbol\tDate\tRatio" };
 
             var content = File.ReadAllText(htmlFileName);

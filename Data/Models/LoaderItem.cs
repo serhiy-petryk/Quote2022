@@ -15,10 +15,11 @@ namespace Data.Models
 
         public static BindingList<LoaderItem> DataGridLoaderItems = new BindingList<LoaderItem>
         {
-            new LoaderItem {Id = "ScreenerTradingView", Name = "TradingView Screener", Action = Actions.TradingView.ScreenerLoader.Start, Checked = false},
-            new LoaderItem {Id = "ScreenerNasdaq", Name = "Nasdaq Stock/Etf Screeners", Action = Actions.Nasdaq.ScreenerLoader.Start, Checked = false},
-            new LoaderItem {Id = "SymbolsEoddata", Name = "Eoddata Symbols", Action = Actions.Eoddata.SymbolsLoader.Start},
-            new LoaderItem {Id = "ProfileYahoo", Name = "Yahoo Profiles", Status = ItemStatus.None}
+            new LoaderItem {Id = "ScreenerTradingView", Name = "TradingView Screener", Action = Actions.TradingView.TvScreenerLoader.Start, Checked = false},
+            new LoaderItem {Id = "ScreenerNasdaq", Name = "Nasdaq Stock/Etf Screeners", Action = Actions.Nasdaq.NasdaqScreenerLoader.Start, Checked = false},
+            new LoaderItem {Id = "SymbolsEoddata", Name = "Eoddata Symbols", Action = Actions.Eoddata.EoddataSymbolsLoader.Start, Checked = false},
+            new LoaderItem {Id = "ProfileYahoo", Name = "Yahoo Profiles", Status = ItemStatus.None, Checked = false},
+            new LoaderItem {Id = "YahooIndices", Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start},
         };
         
         public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);

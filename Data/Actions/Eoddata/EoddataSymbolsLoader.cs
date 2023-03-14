@@ -6,7 +6,7 @@ using Data.Models;
 
 namespace Data.Actions.Eoddata
 {
-    public class SymbolsLoader
+    public class EoddataSymbolsLoader
     {
         private static string[] _exchanges = new string[] {"AMEX", "NASDAQ", "NYSE", "OTCBB"};
         private static string _urlTemplate = @"https://www.eoddata.com/Data/symbollist.aspx?e={0}";
@@ -40,6 +40,8 @@ namespace Data.Actions.Eoddata
                 showStatus($"Eoddata.SymbolsLoader. '{Path.GetFileName(filename)}' file is parsing");
                 Parse(filename, timeStamp.Item1);
             }
+            Helpers.DbUtils.RunProcedure("pUpdateSymbolsXref");
+
 
             // Zip data and remove text files
             var zipFilename = csUtils.ZipFolder(folder);

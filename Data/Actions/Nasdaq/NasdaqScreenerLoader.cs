@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Data.Actions.Nasdaq
 {
-    public class ScreenerLoader
+    public class NasdaqScreenerLoader
     {
         private static string stockUrl = @"https://api.nasdaq.com/api/screener/stocks?tableonly=true&download=true";
         private static string etfUrl = @"https://api.nasdaq.com/api/screener/etf?tableonly=true&download=true";

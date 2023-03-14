@@ -71,7 +71,7 @@ namespace Data.Models
 
         public long? Duration => Started.HasValue && _finished.HasValue
             ? Convert.ToInt64((_finished.Value - Started.Value).TotalSeconds)
-            : (Started.HasValue ? Convert.ToInt64((DateTime.Now - Started.Value).TotalMilliseconds) : (long?) null);
+            : (Started.HasValue ? Convert.ToInt64((DateTime.Now - Started.Value).TotalSeconds) : (long?) null);
 
         public string Name { get; private set; }
         public Action<Action<string>> Action = TestAction;

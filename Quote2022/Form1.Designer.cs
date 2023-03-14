@@ -78,7 +78,7 @@ namespace Quote2022
             this.btnSymbolsEoddataParse = new System.Windows.Forms.Button();
             this.btnDayEoddataParse = new System.Windows.Forms.Button();
             this.btnNanexSymbols = new System.Windows.Forms.Button();
-            this.btnDayYahooIndexesParse = new System.Windows.Forms.Button();
+            this.btnDayYahooIndicesParse = new System.Windows.Forms.Button();
             this.btnDayYahooParse = new System.Windows.Forms.Button();
             this.tabLayers = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
@@ -313,7 +313,7 @@ namespace Quote2022
             this.tabLoader.Controls.Add(this.btnSymbolsEoddataParse);
             this.tabLoader.Controls.Add(this.btnDayEoddataParse);
             this.tabLoader.Controls.Add(this.btnNanexSymbols);
-            this.tabLoader.Controls.Add(this.btnDayYahooIndexesParse);
+            this.tabLoader.Controls.Add(this.btnDayYahooIndicesParse);
             this.tabLoader.Controls.Add(this.btnDayYahooParse);
             this.tabLoader.Location = new System.Drawing.Point(4, 22);
             this.tabLoader.Name = "tabLoader";
@@ -670,15 +670,15 @@ namespace Quote2022
             this.btnNanexSymbols.UseVisualStyleBackColor = true;
             this.btnNanexSymbols.Click += new System.EventHandler(this.btnSymbolsNanex_Click);
             // 
-            // btnDayYahooIndexesParse
+            // btnDayYahooIndicesParse
             // 
-            this.btnDayYahooIndexesParse.Location = new System.Drawing.Point(214, 252);
-            this.btnDayYahooIndexesParse.Name = "btnDayYahooIndexesParse";
-            this.btnDayYahooIndexesParse.Size = new System.Drawing.Size(146, 23);
-            this.btnDayYahooIndexesParse.TabIndex = 13;
-            this.btnDayYahooIndexesParse.Text = "DayYahoo Indexes Parse";
-            this.btnDayYahooIndexesParse.UseVisualStyleBackColor = true;
-            this.btnDayYahooIndexesParse.Click += new System.EventHandler(this.btnDayYahooIndexesParse_Click);
+            this.btnDayYahooIndicesParse.Location = new System.Drawing.Point(214, 252);
+            this.btnDayYahooIndicesParse.Name = "btnDayYahooIndicesParse";
+            this.btnDayYahooIndicesParse.Size = new System.Drawing.Size(146, 23);
+            this.btnDayYahooIndicesParse.TabIndex = 13;
+            this.btnDayYahooIndicesParse.Text = "DayYahoo Indices Parse";
+            this.btnDayYahooIndicesParse.UseVisualStyleBackColor = true;
+            this.btnDayYahooIndicesParse.Click += new System.EventHandler(this.btnDayYahooIndicesParse_Click);
             // 
             // btnDayYahooParse
             // 
@@ -1516,7 +1516,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnSymbolsEoddataParse;
         private System.Windows.Forms.Button btnDayEoddataParse;
         private System.Windows.Forms.Button btnNanexSymbols;
-        private System.Windows.Forms.Button btnDayYahooIndexesParse;
+        private System.Windows.Forms.Button btnDayYahooIndicesParse;
         private System.Windows.Forms.Button btnDayYahooParse;
         private System.Windows.Forms.Button btnSplitEoddataParse;
         private System.Windows.Forms.Button btnAlgorithm1;

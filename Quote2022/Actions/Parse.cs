@@ -303,13 +303,13 @@ namespace Quote2022.Actions
         }
         #endregion
 
-        #region ========  Yahoo indexes parse + save to db  ========
+        #region ========  Yahoo indices parse + save to db  ========
 
-        public static void IndexesYahoo(Action<string> showStatusAction)
+        public static void IndicesYahoo(Action<string> showStatusAction)
         {
             var data = new List<DayYahoo>();
             var cnt = 0;
-            var files = Directory.GetFiles(Settings.DayYahooIndexesFolder);
+            var files = Directory.GetFiles(Settings.DayYahooIndicesFolder);
             foreach (var file in files)
             {
                 showStatusAction($"Yahoo index file is parsing: {Path.GetFileName(file)}");
@@ -339,7 +339,7 @@ namespace Quote2022.Actions
 
             if (data.Count > 0)
             {
-                SaveToDb.IndexesYahoo_SaveToDb(data);
+                SaveToDb.IndicesYahoo_SaveToDb(data);
                 data.Clear();
             }
 

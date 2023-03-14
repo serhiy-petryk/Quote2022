@@ -136,8 +136,8 @@ namespace Quote2022.Actions
         }
         #endregion
 
-        #region ===============  Yahoo Indexes  ==================
-        public static void IndexesYahoo_SaveToDb(IEnumerable<DayYahoo> items)
+        #region ===============  Yahoo Indices  ==================
+        public static void IndicesYahoo_SaveToDb(IEnumerable<DayYahoo> items)
         {
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())

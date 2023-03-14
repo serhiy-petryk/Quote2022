@@ -62,17 +62,6 @@ namespace Quote2022
 
         #region ==========  EventHandlers of controls  ===========
         private void dataGridView1_SelectionChanged(object sender, EventArgs e) => dataGridView1.ClearSelection();
-
-        private void dataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.ColumnIndex == dataGridView1.Columns["Duration"].Index)
-            {
-                var cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                if (string.IsNullOrEmpty(cell.ToolTipText))
-                    cell.ToolTipText = "Action duration in seconds";
-            }
-
-        }
         #endregion
 
         private void cbIntradayStopInPercent_CheckedChanged(object sender, EventArgs e)
@@ -109,7 +98,7 @@ namespace Quote2022
                 Actions.Parse.DayYahoo_Parse(fn, ShowStatus);
         }
 
-        private void btnDayYahooIndexesParse_Click(object sender, EventArgs e) => Actions.Parse.IndexesYahoo(ShowStatus);
+        private void btnDayYahooIndicesParse_Click(object sender, EventArgs e) => Actions.Parse.IndicesYahoo(ShowStatus);
 
         private void btnSymbolsNanex_Click(object sender, EventArgs e)
         {

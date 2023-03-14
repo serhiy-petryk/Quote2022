@@ -17,6 +17,7 @@ namespace Data.Helpers
                 wc.Encoding = System.Text.Encoding.UTF8;
                 wc.Cookies = cookies;
                 wc.IsXmlHttpRequest = isXmlHttpRequest;
+                wc.Headers.Add(HttpRequestHeader.Referer, new Uri(url).Host);
                 try
                 {
                     var bb = wc.DownloadData(url);

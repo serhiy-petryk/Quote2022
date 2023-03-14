@@ -19,7 +19,8 @@ namespace Data.Models
             new LoaderItem {Id = "ScreenerNasdaq", Name = "Nasdaq Stock/Etf Screeners", Action = Actions.Nasdaq.NasdaqScreenerLoader.Start, Checked = false},
             new LoaderItem {Id = "SymbolsEoddata", Name = "Eoddata Symbols", Action = Actions.Eoddata.EoddataSymbolsLoader.Start, Checked = false},
             new LoaderItem {Id = "ProfileYahoo", Name = "Yahoo Profiles", Status = ItemStatus.None, Checked = false},
-            new LoaderItem {Id = "YahooIndices", Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start},
+            new LoaderItem {Id = "YahooIndices", Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start, Checked = false},
+            new LoaderItem {Id = "DailyEoddata", Name = "Eoddata Daily Quotes", Action = Actions.Eoddata.EoddataDailyLoader.Start},
         };
 
         public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);

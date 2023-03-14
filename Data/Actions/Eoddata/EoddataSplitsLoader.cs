@@ -25,12 +25,12 @@ namespace Data.Actions.Eoddata
 
             // Split and save to dabase
             var items = new List<SplitModel>();
-            var zipFileName = ParseAndSaveToDb(htmlFileName, items);
+            var zipFileName = ParseAndSaveToDb(htmlFileName, items, timeStamp.Item1);
 
             logEvent($"EoddataSplitsLoader finished. Filename: {zipFileName} with {items.Count} items");
         }
 
-        private static string ParseAndSaveToDb(string htmlFileName, List<SplitModel> items)
+        private static string ParseAndSaveToDb(string htmlFileName, List<SplitModel> items, DateTime maxDate)
         {
             var timeStamp = File.GetLastWriteTime(htmlFileName);
             var fileLines = new List<string>{ "Exchange\tSymbol\tDate\tRatio" };
@@ -68,7 +68,7 @@ namespace Data.Actions.Eoddata
             File.Delete(txtFileName);
 
             // Save data to database
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= a.TimeStamp), "Bfr_SplitEoddata",
+            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= maxDate), "Bfr_SplitEoddata",
                 "Exchange", "Symbol", "Date", "Ratio", "K", "TimeStamp");
             Helpers.DbUtils.ExecuteSql("INSERT INTO SplitEoddata (Exchange,Symbol,[Date],Ratio,K,[TimeStamp]) " +
                                        "SELECT a.Exchange, a.Symbol, a.[Date], a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitEoddata a " +

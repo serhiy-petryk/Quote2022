@@ -21,9 +21,8 @@ namespace Data.Models
             new LoaderItem {Id = "ProfileYahoo", Name = "Yahoo Profiles", Status = ItemStatus.None, Checked = false},
             new LoaderItem {Id = "YahooIndices", Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start},
         };
-        
-        public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);
 
+        public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);
 
         private static Dictionary<string, Bitmap> _imgResources;
         private static string[] _itemStatusImageName = new[] {"Blank", "Blank", "Wait", "Done", "Error"};
@@ -69,7 +68,10 @@ namespace Data.Models
 
         public DateTime? Started { get; private set; }
         private DateTime? _finished;
-        public long? Duration => Started.HasValue && _finished.HasValue ? Convert.ToInt64((_finished.Value - Started.Value).TotalSeconds) : (long?)null;
+
+        public long? Duration => Started.HasValue && _finished.HasValue
+            ? Convert.ToInt64((_finished.Value - Started.Value).TotalSeconds)
+            : (Started.HasValue ? Convert.ToInt64((DateTime.Now - Started.Value).TotalMilliseconds) : (long?) null);
 
         public string Name { get; private set; }
         public Action<Action<string>> Action = TestAction;

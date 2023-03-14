@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Data;
 using Data.Models;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Quote2022.Actions;
@@ -58,7 +55,8 @@ namespace Quote2022
         private void OnFrameChanged(object o, EventArgs e)
         {
             //Force a call to the Paint event handler.
-            this.dataGridView1.Invalidate();
+            dataGridView1.InvalidateColumn(1);
+            dataGridView1.InvalidateColumn(4);
         }
         #endregion
 

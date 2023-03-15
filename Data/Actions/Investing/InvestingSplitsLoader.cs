@@ -28,7 +28,7 @@ namespace Data.Actions.Investing
             // Download data to html file
             Helpers.Download.DownloadPage_POST(URL, jsonFileName, postData, true);
 
-            // Split and save to dabase
+            // Split and save to database
             var items = new List<SplitModel>();
             ParseAndSaveToDb(jsonFileName, items);
 

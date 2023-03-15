@@ -23,7 +23,7 @@ namespace Data.Actions.Eoddata
             // Download data to html file
             Helpers.Download.DownloadPage(URL, htmlFileName);
 
-            // Split and save to dabase
+            // Split and save to database
             var items = new List<SplitModel>();
             var zipFileName = ParseAndSaveToDb(htmlFileName, items, timeStamp.Item1);
 

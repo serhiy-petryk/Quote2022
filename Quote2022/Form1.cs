@@ -875,9 +875,7 @@ namespace Quote2022
 
             // Actions.Github.NasdaqScreener(ShowStatus);
 
-            // Helpers.TestCookie.Test();
-
-            var folder = @"E:\Quote\WebData\Splits\StockAnalysis\Actions";
+            /*var folder = @"E:\Quote\WebData\Splits\StockAnalysis\Actions";
             var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a);
             foreach (var file in files)
             {
@@ -885,7 +883,7 @@ namespace Quote2022
                 var items = new List<Data.Models.ActionStockAnalysis>();
                 Data.Actions.StockAnaysis.StockAnalysisActions.ParseAndSaveToDb(file, items);
                 items.Clear();
-            }
+            }*/
         }
     }
 }

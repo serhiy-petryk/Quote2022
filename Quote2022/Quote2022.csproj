@@ -108,7 +108,6 @@
     <Compile Include="Actions\SaveToDb.Splits.cs" />
     <Compile Include="Helpers\ExcelHelper.cs" />
     <Compile Include="Helpers\QuoteLoader.cs" />
-    <Compile Include="Helpers\TestCookie.cs" />
     <Compile Include="Helpers\WebArchive.cs" />
     <Compile Include="Helpers\ZipReader.cs" />
     <Compile Include="Models\Indices.cs" />

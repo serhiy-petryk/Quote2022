@@ -41,7 +41,7 @@ namespace Quote2022.Actions.StockAnalysis
                 if (items.Count > 0)
                 {
                     SaveToDb.ClearAndSaveToDbTable(items.Where(a => !a.IsBad), "dbQuote2023..Bfr_ActionsStockAnalysis",
-                        "Date", "Type", "Symbol", "OtherSymbolOrName", "Description", "SplitRatio", "SplitK",
+                        "Date", "Type", "Symbol", "OtherSymbolOrName", "Name", "Description", "SplitRatio", "SplitK",
                         "TimeStamp");
 
                     SaveToDb.ClearAndSaveToDbTable(items.Where(a => a.IsBad),

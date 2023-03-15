@@ -11,93 +11,98 @@ namespace Data.Actions.StockAnaysis
 {
     public class StockAnalysisActions
     {
-        private const string URL = @"https://stockanalysis.com/actions/";
-        private const string FOLDER = @"E:\Quote\WebData\Splits\StockAnalysis\Actions\";
-        private const string POST_DATA_TEMPLATE = @"country%5B%5D=5&dateFrom={0}&dateTo={1}&currentTab=custom&limit_from=0";
+        private const string Url = @"https://stockanalysis.com/actions/";
+        private const string PostDataTemplate = @"country%5B%5D=5&dateFrom={0}&dateTo={1}&currentTab=custom&limit_from=0";
+        private const string Folder = @"E:\Quote\WebData\Splits\StockAnalysis\Actions\";
 
         public static void Start(Action<string> logEvent)
         {
             logEvent($"StockAnalysisActions started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var htmlFileName = FOLDER + $@"StockAnalysisActions_{timeStamp.Item2}.html";
+            var htmlFileName = Folder + $"StockAnalysisActions_{timeStamp.Item2}.html";
+            var zipFileName = Folder + $"StockAnalysisActions_{timeStamp.Item2}.zip";
 
             // Download data to html file
-            // Helpers.Download.DownloadPage(URL, htmlFileName);
-
-            // Split and save to database
-            // var items = new List<SplitModel>();
-            ParseAndSaveToDb(htmlFileName);
+            // Helpers.Download.DownloadPage(Url, htmlFileName);
 
             // Zip data
-            var zipFileName = Helpers.CsUtils.ZipFile(htmlFileName);
-            File.Delete(htmlFileName);
+           // Helpers.CsUtils.ZipFile(htmlFileName, zipFileName);
+
+            // Parse and save to database
+            var items = new List<Models.ActionStockAnalysis>();
+            ParseAndSaveToDb(zipFileName, items);
+
+            // File.Delete(HTML_FILE_NAME);
 
             // logEvent($"!StockAnalysisActions finished. Filename: {zipFileName} with {items.Count} items");*/
         }
 
-        private static void ParseAndSaveToDb(string htmlFileName)
+        public static void ParseAndSaveToDb(string zipFileName, List<Models.ActionStockAnalysis> items)
         {
-            var timeStamp = File.GetLastWriteTime(htmlFileName);
+            using (var zip = new ZipReader(zipFileName))
+                foreach (var zipItem in zip)
+                    if (zipItem.Length > 0)
+                        Parse(zipItem.Content, items, zipItem.Created);
 
-            var content = File.ReadAllText(htmlFileName);
+            // Save data to database
+            if (items.Count > 0)
+            {
+                DbUtils.ClearAndSaveToDbTable(items.Where(a => !a.IsBad), "dbQuote2023..Bfr_ActionsStockAnalysis",
+                    "Date", "Type", "Symbol", "OtherSymbolOrName", "Name", "Description", "SplitRatio", "SplitK",
+                    "TimeStamp");
+
+                DbUtils.ClearAndSaveToDbTable(items.Where(a => a.IsBad),
+                    "dbQuote2023..Bfr_ActionsStockAnalysisError", "Date", "Type", "Symbol", "OtherSymbolOrName",
+                    "Description", "TimeStamp");
+
+                DbUtils.RunProcedure("dbQuote2023..pUpdateActionsStockAnalysis");
+            }
+        }
+
+        #region ==========  Private section  ==========
+        private static void Parse(string content, List<Models.ActionStockAnalysis> items, DateTime fileTimeStamp)
+        {
+            if (!TryToParseAsJson(content, items, fileTimeStamp))
+                ParseAsHtml(content, items, fileTimeStamp);
+        }
+
+        private static bool TryToParseAsJson(string content, List<Models.ActionStockAnalysis> items, DateTime fileTimeStamp)
+        {
             var i1 = content.IndexOf("const data =", StringComparison.InvariantCulture);
+            if (i1 == -1) return false;
             var i2 = content.IndexOf("}}]", i1 + 12, StringComparison.InvariantCulture);
             var s = content.Substring(i1 + 12, i2 - i1 - 12 + 3).Trim();
             var i12 = s.IndexOf("{\"type\":", StringComparison.InvariantCulture);
-            i12 = s.IndexOf("{\"type\":", i12+8, StringComparison.InvariantCulture);
+            i12 = s.IndexOf("{\"type\":", i12 + 8, StringComparison.InvariantCulture);
             var s2 = s.Substring(i12, s.Length - i12 - 1);
 
-            var o = JsonConvert.DeserializeObject<cRoot>(s2);
+            var oo = JsonConvert.DeserializeObject<cRoot>(s2);
+            foreach (var item in oo.data.data)
+                items.Add(new ActionStockAnalysis(item, fileTimeStamp));
 
-            var f = 0;
-            /*var rows = o.data.Trim().Split(new[] { "</tr>" }, StringSplitOptions.RemoveEmptyEntries);
-
-            string lastDate = null;
-            for (var k=0; k<rows.Length; k++) 
-            {
-                var row = rows[k];
-                var cells = row.Trim().Split(new[] { "</td>" }, StringSplitOptions.RemoveEmptyEntries);
-                var sDateOriginal = GetCellValue(cells[0]);
-                var sDate = string.IsNullOrEmpty(sDateOriginal) ? lastDate : sDateOriginal;
-                var date = DateTime.Parse(sDate, CultureInfo.InvariantCulture);
-
-                cells[1] = System.Net.WebUtility.HtmlDecode(cells[1]).Trim();
-                if (cells[1].EndsWith(")"))
-                    cells[1] = cells[1].Substring(0, cells[1].Length - 1);
-                else
-                    throw new Exception("Check StockAnalysisActions parser");
-                var symbol = GetCellValue(cells[1]);
-                
-                var i2 = cells[1].LastIndexOf("</span>", StringComparison.InvariantCulture);
-                var i1 = cells[1].LastIndexOf(">", i2-7, StringComparison.InvariantCulture);
-                var name = cells[1].Substring(i1 + 1, i2 - i1 - 1).Trim();
-
-                var ratio = GetCellValue(cells[2]);
-
-                var item = new SplitModel(symbol, date, name, ratio, null, timeStamp);
-                items.Add(item);
-
-                lastDate = sDate;
-            }
-
-            // Save data to database
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= a.TimeStamp), "Bfr_SplitInvesting",
-                "Symbol", "Date", "Name", "Ratio", "K", "TimeStamp");
-
-            Helpers.DbUtils.ExecuteSql("INSERT INTO SplitInvesting (Symbol,[Date],Name,Ratio,K,[TimeStamp]) " +
-                                       "SELECT a.Symbol, a.[Date], a.Name, a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitInvesting a " +
-                                       "LEFT JOIN SplitInvesting b ON a.Symbol = b.Symbol AND a.Date = b.Date " +
-                                       "WHERE b.Symbol IS NULL");
-
-            string GetCellValue(string cell)
-            {
-                var s = cell.Replace("</a>", "").Trim();
-                var i1 = s.LastIndexOf('>');
-                s = System.Net.WebUtility.HtmlDecode(s.Substring(i1 + 1)).Trim();
-                return s;
-            }*/
+            return true;
         }
+
+        private static void ParseAsHtml(string content, List<Models.ActionStockAnalysis> items, DateTime fileTimeStamp)
+        {
+            var i1 = content.IndexOf(">Action</th>", StringComparison.InvariantCultureIgnoreCase);
+            if (i1 == -1)
+                throw new Exception("Check StockAnalysis.WebArchiveActions parser");
+            var i2 = content.IndexOf("</tbody>", i1 + 12, StringComparison.InvariantCultureIgnoreCase);
+
+            var rows = content.Substring(i1 + 12, i2 - i1 - 12).Replace("</thead>", "").Replace("<tbody>", "")
+                .Replace("</tr>", "").Replace("<!-- HTML_TAG_START -->", "").Replace("<!-- HTML_TAG_END -->", "")
+                .Split(new[] { "<tr>", "<tr " }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var row in rows)
+            {
+                if (string.IsNullOrWhiteSpace(row)) continue;
+                var item = new Data.Models.ActionStockAnalysis(row.Trim(), fileTimeStamp);
+                items.Add(item);
+            }
+        }
+        #endregion
 
         #region =======  Json subclasses  =============
         public class cRoot
@@ -121,6 +126,16 @@ namespace Data.Actions.StockAnaysis
             public string name;
             public string other;
             public string text;
+
+            public DateTime Date => DateTime.Parse(date, CultureInfo.InvariantCulture);
+            public string Symbol => symbol.StartsWith("$") ? symbol.Substring(1) : symbol;
+            public string Other => other == "N/A" || string.IsNullOrEmpty(other) ? null : other;
+            public string Name => string.IsNullOrEmpty(name) ? null : name;
+
+            public override string ToString()
+            {
+                return $"{Date:yyyy-MM-dd}, {Symbol}, {type}, {Other}, {text}";
+            }
         }
         #endregion
     }

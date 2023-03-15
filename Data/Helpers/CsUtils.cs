@@ -25,17 +25,21 @@ namespace Data.Helpers
         /// Zip file
         /// </summary>
         /// <param name="filename">File to zip</param>
+        /// <param name="zipFileName"></param>
         /// <returns>Zip filename</returns>
-        public static string ZipFile(string filename)
+        public static string ZipFile(string filename, string zipFileName = null)
         {
-            var zipFn = Path.ChangeExtension(filename, ".zip");
-            if (File.Exists(zipFn))
-                File.Delete(zipFn);
+            if (zipFileName == null)
+            {
+                zipFileName = Path.ChangeExtension(filename, ".zip");
+                // if (File.Exists(zipFileName))
+                   // File.Delete(zipFileName);
+            }
 
-            using (var zip = System.IO.Compression.ZipFile.Open(zipFn, ZipArchiveMode.Create))
+            using (var zip = System.IO.Compression.ZipFile.Open(zipFileName, ZipArchiveMode.Create))
                 zip.CreateEntryFromFile(filename, Path.GetFileName(filename), CompressionLevel.Optimal);
 
-            return zipFn;
+            return zipFileName;
         }
 
         public static Tuple<DateTime, string> GetTimeStamp(int hourOffset = -9) => new Tuple<DateTime, string>(DateTime.Now.AddHours(hourOffset),

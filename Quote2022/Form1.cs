@@ -877,15 +877,14 @@ namespace Quote2022
 
             // Helpers.TestCookie.Test();
 
-            var folder = @"E:\Quote\WebData\Minute\AlphaVantage\DataBuffer\MinuteAlphaVantage_20230312";
-            var files = Directory.GetFiles(folder, "*.csv");
+            var folder = @"E:\Quote\WebData\Splits\StockAnalysis\Actions";
+            var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a);
             foreach (var file in files)
             {
-                var ss = Path.GetFileNameWithoutExtension(file).Split('_');
-                if (ss.Length != 3)
-                    throw new Exception("Check file");
-                var newFn = Path.GetDirectoryName(file) + @"\" + ss[2] + "_" + ss[1] + Path.GetExtension(file);
-                File.Move(file, newFn);
+
+                var items = new List<Data.Models.ActionStockAnalysis>();
+                Data.Actions.StockAnaysis.StockAnalysisActions.ParseAndSaveToDb(file, items);
+                items.Clear();
             }
         }
     }

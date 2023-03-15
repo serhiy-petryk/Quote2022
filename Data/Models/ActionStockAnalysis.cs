@@ -23,12 +23,23 @@ namespace Data.Models
         public Action Type;
         public string Symbol;
         public string OtherSymbolOrName = "";
+        public string Name;
         public string Description;
         public string SplitRatio;
         public double? SplitK;
         public DateTime TimeStamp;
         public bool IsBad;
         public Action DescriptionAction;
+
+        public ActionStockAnalysis(Actions.StockAnaysis.StockAnalysisActions.cItem item, DateTime timestamp)
+        {
+            TimeStamp = timestamp;
+            Date = item.Date;
+            Name = item.Name;
+            Description = item.text;
+
+            SetProperties(item.Symbol, item.type);
+        }
 
         public ActionStockAnalysis(string row, DateTime timestamp)
         {
@@ -43,7 +54,32 @@ namespace Data.Models
             var action = GetCellContent(cells[cells.Length - 2]);
             Description = GetCellContent(cells[cells.Length - 1]);
 
-            if (Description == "") DescriptionAction = Action.None;
+            SetProperties(symbol, action);
+
+            // ====  local methods
+            string GetCellContent(string cell)
+            {
+                cell = cell.Replace("</a>", "");
+                var i1 = cell.IndexOf("<a", StringComparison.InvariantCultureIgnoreCase);
+                while (i1 != -1)
+                {
+                    var i2 = cell.IndexOf(">", i1 + 2);
+                    cell = cell.Substring(0, i1) + cell.Substring(i2 + 1);
+                    i1 = cell.IndexOf("<a", StringComparison.InvariantCultureIgnoreCase);
+                }
+
+                i1 = cell.LastIndexOf(">", StringComparison.InvariantCultureIgnoreCase);
+                return System.Net.WebUtility.HtmlDecode(cell.Substring(i1 + 1).Trim());
+            }
+        }
+
+        private void SetProperties(string symbol, string action)
+        {
+            if (Description == "")
+            {
+                Description = null;
+                DescriptionAction = Action.None;
+            }
             else
             {
                 foreach (var kvp in _keys)
@@ -63,18 +99,47 @@ namespace Data.Models
             else if (action == "Listed")
             {
                 Type = Action.Listed;
-                if (Description.IndexOf(" was listed", StringComparison.InvariantCulture) == -1)
-                    Symbol = GetFirstWord(Description);
-                else
+                if (Description.EndsWith(" was listed"))
+                {
                     Symbol = symbol;
+                    if (string.IsNullOrEmpty(Name))
+                        Name = Description.Substring(0, Description.Length - 11).Trim();
+                }
+                else if (Description.Contains(" Listed - "))
+                {
+                    Symbol = GetFirstWord(Description);
+                    if (string.IsNullOrEmpty(Name))
+                    {
+                        var ss = Description.Split(new[] {" Listed - "}, StringSplitOptions.None);
+                        if (!string.IsNullOrEmpty(ss[1].Trim()))
+                            Name = ss[1].Trim();
+                    }
+                }
+                else
+                    throw new Exception("Check Models.ActionStockAnalysis parser");
+
             }
             else if (action == "Delisted")
             {
                 Type = Action.Delisted;
-                if (Description.IndexOf(" was delisted", StringComparison.InvariantCulture) == -1)
-                    Symbol = GetFirstWord(Description);
-                else
+                if (Description.EndsWith(" was delisted"))
+                {
                     Symbol = symbol;
+                    if (string.IsNullOrEmpty(Name))
+                        Name = Description.Substring(0, Description.Length - 13).Trim();
+                }
+                else if (Description.Contains(" Delisted - "))
+                {
+                    Symbol = GetFirstWord(Description);
+                    if (string.IsNullOrEmpty(Name))
+                    {
+                        var ss = Description.Split(new[] { " Delisted - " }, StringSplitOptions.None);
+                        if (!string.IsNullOrEmpty(ss[1].Trim()))
+                            Name = ss[1].Trim();
+                    }
+                }
+                else
+                    throw new Exception("Check Models.ActionStockAnalysis parser");
             }
             else if (action == "Stock Split")
             {
@@ -134,32 +199,18 @@ namespace Data.Models
 
                 throw new Exception("Check symbol");
             }
-        }
 
-        string GetCellContent(string cell)
-        {
-            cell = cell.Replace("</a>", "");
-            var i1 = cell.IndexOf("<a", StringComparison.InvariantCultureIgnoreCase);
-            while (i1 != -1)
+            // =======  Local methods
+            string GetFirstWord(string s)
             {
-                var i2 = cell.IndexOf(">", i1 + 2);
-                cell = cell.Substring(0, i1) + cell.Substring(i2 + 1);
-                i1 = cell.IndexOf("<a", StringComparison.InvariantCultureIgnoreCase);
+                var i1 = s.IndexOf(' ');
+                return s.Substring(0, i1).Trim();
             }
-
-            i1 = cell.LastIndexOf(">", StringComparison.InvariantCultureIgnoreCase);
-            return System.Net.WebUtility.HtmlDecode(cell.Substring(i1 + 1).Trim());
-        }
-
-        string GetFirstWord(string s)
-        {
-            var i1 = s.IndexOf(' ');
-            return s.Substring(0, i1).Trim();
-        }
-        string GetLastWord(string s)
-        {
-            var i1 = s.LastIndexOf(' ');
-            return s.Substring(i1).Trim();
+            string GetLastWord(string s)
+            {
+                var i1 = s.LastIndexOf(' ');
+                return s.Substring(i1).Trim();
+            }
         }
     }
 }

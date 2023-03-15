@@ -38,7 +38,7 @@ namespace Data.Helpers
             return zipFn;
         }
 
-        public static Tuple<DateTime, string> GetTimeStamp() => new Tuple<DateTime, string>(DateTime.Now.AddHours(-9),
-            DateTime.Now.Date.AddHours(-9).ToString("yyyyMMdd"));
+        public static Tuple<DateTime, string> GetTimeStamp(int hourOffset = -9) => new Tuple<DateTime, string>(DateTime.Now.AddHours(hourOffset),
+            DateTime.Now.Date.AddHours(hourOffset).ToString("yyyyMMdd"));
     }
 }

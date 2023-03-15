@@ -18,7 +18,7 @@ namespace Data.Actions.Investing
         {
             logEvent($"InvestingSplitsLoader started");
 
-            var timeStamp = CsUtils.GetTimeStamp();
+            var timeStamp = CsUtils.GetTimeStamp(-9 - 24);
             var postData = string.Format(POST_DATA_TEMPLATE,
                 timeStamp.Item1.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                 timeStamp.Item1.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));

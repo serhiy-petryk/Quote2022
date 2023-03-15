@@ -44,21 +44,11 @@ namespace Data.Actions.StockAnaysis
             var i1 = content.IndexOf("const data =", StringComparison.InvariantCulture);
             var i2 = content.IndexOf("}}]", i1 + 12, StringComparison.InvariantCulture);
             var s = content.Substring(i1 + 12, i2 - i1 - 12 + 3).Trim();
-            var o = JsonConvert.DeserializeObject<object[]>(s.Replace("void 0", "\"void0\""));
-
-            //data:[{
-            var i11 = content.IndexOf("data:[{", StringComparison.InvariantCulture);
-            var i21 = content.IndexOf("]", i11 + 7, StringComparison.InvariantCulture);
-            var s1 = "{" + content.Substring(i11, i21 - i11 + 1).Trim() + "}";
-
-            var o1 = JsonConvert.DeserializeObject<cRoot>(s1);
-
             var i12 = s.IndexOf("{\"type\":", StringComparison.InvariantCulture);
             i12 = s.IndexOf("{\"type\":", i12+8, StringComparison.InvariantCulture);
-            // var i22 = content.IndexOf("]", i11 + 7, StringComparison.InvariantCulture);
-            var s2 = s.Substring(i12, s.Length-i12-1);
+            var s2 = s.Substring(i12, s.Length - i12 - 1);
 
-            var o2 = JsonConvert.DeserializeObject<cRoot1>(s2);
+            var o = JsonConvert.DeserializeObject<cRoot>(s2);
 
             var f = 0;
             /*var rows = o.data.Trim().Split(new[] { "</tr>" }, StringSplitOptions.RemoveEmptyEntries);
@@ -110,22 +100,18 @@ namespace Data.Actions.StockAnaysis
         }
 
         #region =======  Json subclasses  =============
-        public class cRoot1
+        public class cRoot
         {
             public string type;
-            public cRoot2 data;
+            public cData data;
         }
-        public class cRoot2
+        public class cData
         {
             public string action;
             public string type;
             public object props;
             public cItem[] data;
             public int fullCount;
-        }
-        public class cRoot
-        {
-            public cItem[] data;
         }
         public class cItem
         {
@@ -135,18 +121,6 @@ namespace Data.Actions.StockAnaysis
             public string name;
             public string other;
             public string text;
-        }
-        public class cI1
-        {
-            public cItem[] data;
-            public int fullCount;
-
-        }
-        public class cI2
-        {
-            public cItem[] data;
-            public object uses;
-
         }
         #endregion
     }

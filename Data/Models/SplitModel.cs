@@ -5,6 +5,12 @@ namespace Data.Models
 {
     public class SplitModel
     {
+        public static void RefreshSplitData(Action<string> logEvent)
+        {
+            Helpers.DbUtils.RunProcedure("pRefreshSplits");
+            logEvent($"Run RefreshSplitData");
+        }
+
         public string Key => Symbol + Date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
         public string EoddataKey => Exchange + Symbol + Date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
         public string Exchange;

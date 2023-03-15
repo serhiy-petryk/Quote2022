@@ -23,7 +23,8 @@ namespace Data.Models
             new LoaderItem {Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start, Checked = false},
             new LoaderItem {Name = "Eoddata Daily Quotes", Action = Actions.Eoddata.EoddataDailyLoader.Start, Checked = false},
             new LoaderItem {Name = "Eoddata Splits", Action = Actions.Eoddata.EoddataSplitsLoader.Start, Checked = false},
-            new LoaderItem {Name = "Investing Splits", Action = Actions.Investing.InvestingSplitsLoader.Start},
+            new LoaderItem {Name = "Investing Splits", Action = Actions.Investing.InvestingSplitsLoader.Start, Checked = false},
+            new LoaderItem {Name = "Refresh Split data", Action = Models.SplitModel.RefreshSplitData},
         };
 
         public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);

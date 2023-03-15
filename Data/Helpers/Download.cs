@@ -54,44 +54,22 @@ namespace Data.Helpers
             return response;
         }
 
-        public class WebClientEx : WebClient
-        {
-            public int? TimeoutInMilliseconds;
-            public CookieContainer Cookies;
-            public bool IsXmlHttpRequest;
-
-            protected override WebRequest GetWebRequest(Uri address)
-            {
-                var request = (HttpWebRequest)base.GetWebRequest(address);
-                request.UserAgent = @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36";
-                request.AllowAutoRedirect = true;
-                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
-                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-                if (IsXmlHttpRequest)
-                    request.Headers.Add("X-Requested-With", "XMLHttpRequest");
-
-                if (Cookies != null)
-                    request.CookieContainer = Cookies;
-
-                if (TimeoutInMilliseconds.HasValue)
-                    request.Timeout = TimeoutInMilliseconds.Value;
-                return request;
-            }
-        }
-
-        public static string DownloadPage_POST(string url, string filename, object parameters)
+        public static string DownloadPage_POST(string url, string filename, object parameters, bool isXmlHttpRequest = false)
         {
             // see https://stackoverflow.com/questions/5401501/how-to-post-data-to-specific-url-using-webclient-in-c-sharp
             string response = null;
-            using (var wc = new WebClient())
+            using (var wc = new WebClientEx())
             {
-                if (ServicePointManager.DefaultConnectionLimit != int.MaxValue)
+                /*if (ServicePointManager.DefaultConnectionLimit != int.MaxValue)
                 {
                     ServicePointManager.DefaultConnectionLimit = int.MaxValue;
                     WebRequest.DefaultWebProxy = null;
                 }
-                wc.Proxy = null;
+                wc.Proxy = null;*/
+                wc.Encoding = System.Text.Encoding.UTF8;
+                wc.IsXmlHttpRequest = isXmlHttpRequest;
+                wc.Headers.Add(HttpRequestHeader.Referer, new Uri(url).Host);
+                wc.Headers.Add(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded"); // for post
 
                 try
                 {
@@ -124,6 +102,32 @@ namespace Data.Helpers
             }
 
             return response;
+        }
+
+        public class WebClientEx : WebClient
+        {
+            public int? TimeoutInMilliseconds;
+            public CookieContainer Cookies;
+            public bool IsXmlHttpRequest;
+
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                var request = (HttpWebRequest)base.GetWebRequest(address);
+                request.UserAgent = @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36";
+                request.AllowAutoRedirect = true;
+                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
+                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+                if (IsXmlHttpRequest)
+                    request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+
+                if (Cookies != null)
+                    request.CookieContainer = Cookies;
+
+                if (TimeoutInMilliseconds.HasValue)
+                    request.Timeout = TimeoutInMilliseconds.Value;
+                return request;
+            }
         }
 
 

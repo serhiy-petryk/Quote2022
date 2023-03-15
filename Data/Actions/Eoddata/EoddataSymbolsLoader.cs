@@ -34,10 +34,11 @@ namespace Data.Actions.Eoddata
             }
 
             // Parse and save data to database
+            var itemsCount = 0;
             foreach (var filename in Directory.GetFiles(folder))
             {
                 logEvent($"EoddataSymbolsLoader. '{Path.GetFileName(filename)}' file is parsing");
-                Parse(filename);
+                itemsCount += Parse(filename);
             }
             Helpers.DbUtils.RunProcedure("pUpdateSymbolsXref");
 
@@ -46,10 +47,10 @@ namespace Data.Actions.Eoddata
             var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
-            logEvent($"EoddataSymbolsLoader finished. Filename: {zipFilename}");
+            logEvent($"!EoddataSymbolsLoader finished. Filename: {zipFilename} with {itemsCount} items");
         }
 
-        private static void Parse(string filename)
+        private static int Parse(string filename)
         {
             var items = new List<SymbolsEoddata>();
             var ss = Path.GetFileNameWithoutExtension(filename).Split('_');
@@ -74,6 +75,8 @@ namespace Data.Actions.Eoddata
             // Save data to buffer table of data server
             Helpers.DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name", "Created");
             Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata", new Dictionary<string, object> { { "@Exchange", exchange }, { "@Date", date } });
+
+            return items.Count;
         }
 
     }

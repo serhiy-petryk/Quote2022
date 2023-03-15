@@ -31,17 +31,17 @@ namespace Data.Actions.Nasdaq
 
             // Parse and save data to database
             logEvent($"NasdaqScreenerLoader. Parse and save files to database");
-            Parse(stockFile, timeStamp.Item1);
-            Parse(etfFile, timeStamp.Item1);
+            var itemsCount = Parse(stockFile, timeStamp.Item1);
+            itemsCount += Parse(etfFile, timeStamp.Item1);
 
             // Zip data and remove text files
             var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
-            logEvent($"NasdaqScreenerLoader finished. Filename: {zipFilename}");
+            logEvent($"!NasdaqScreenerLoader finished. Filename: {zipFilename} with {itemsCount} items");
         }
 
-        private static void Parse(string filename, DateTime timeStamp)
+        private static int Parse(string filename, DateTime timeStamp)
         {
             var deserializerSettings = new JsonSerializerSettings
             {
@@ -106,6 +106,8 @@ namespace Data.Actions.Nasdaq
                     "LastSale", "netChange", "Change", "TimeStamp");
                 DbUtils.RunProcedure("pUpdateScreenerNasdaqEtf", new Dictionary<string, object> { { "@Date", timeStamp } });
             }
+
+            return stockItems.Count + etfItems.Count;
         }
 
         #region =========  Json classes  ============

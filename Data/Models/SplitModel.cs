@@ -8,7 +8,7 @@ namespace Data.Models
         public static void RefreshSplitData(Action<string> logEvent)
         {
             Helpers.DbUtils.RunProcedure("pRefreshSplits");
-            logEvent($"Run RefreshSplitData");
+            logEvent($"!Run RefreshSplitData");
         }
 
         public string Key => Symbol + Date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);

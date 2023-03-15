@@ -27,7 +27,7 @@ namespace Data.Actions.Eoddata
             var items = new List<SplitModel>();
             var zipFileName = ParseAndSaveToDb(htmlFileName, items, timeStamp.Item1);
 
-            logEvent($"EoddataSplitsLoader finished. Filename: {zipFileName} with {items.Count} items");
+            logEvent($"!EoddataSplitsLoader finished. Filename: {zipFileName} with {items.Count} items");
         }
 
         private static string ParseAndSaveToDb(string htmlFileName, List<SplitModel> items, DateTime maxDate)

@@ -34,7 +34,7 @@ namespace Data.Actions.Yahoo
                     }
             }
 
-            var from = GetYahooTime(maxDate.AddDays(-10));
+            var from = GetYahooTime(maxDate.AddDays(-30));
             var to = GetYahooTime(DateTime.Now);
 
             var timeStamp = CsUtils.GetTimeStamp();
@@ -72,7 +72,7 @@ namespace Data.Actions.Yahoo
             // remove text files
             Directory.Delete(folder, true);
 
-            logEvent($"YahooIndicesLoader finished");
+            logEvent($"!YahooIndicesLoader finished. Last trade date: {data.Max(a=>a.Date):yyyy-MM-dd}");
 
             long GetYahooTime(DateTime dt) => Convert.ToInt64((dt - new DateTime(1970, 1, 1)).TotalSeconds + 18000);
         }

@@ -36,7 +36,7 @@ namespace Data.Actions.Investing
             var zipFileName = Helpers.CsUtils.ZipFile(jsonFileName);
             File.Delete(jsonFileName);
 
-            logEvent($"InvestingSplitsLoader finished. Filename: {zipFileName} with {items.Count} items");
+            logEvent($"!InvestingSplitsLoader finished. Filename: {zipFileName} with {items.Count} items");
         }
 
         private static void ParseAndSaveToDb(string jsonFileName, List<SplitModel> items)

@@ -26,16 +26,16 @@ namespace Data.Actions.TradingView
 
             // Parse and save data to database
             logEvent($"TradingViewScreenerLoader. Parse and save files to database");
-            Parse(File.ReadAllText(filename), File.GetLastWriteTime(filename));
+            var itemCount = Parse(File.ReadAllText(filename), File.GetLastWriteTime(filename));
 
             // Zip data and remove text files
             var zipFilename = CsUtils.ZipFile(filename);
             File.Delete(filename);
 
-            logEvent($"TradingViewScreenerLoader finished. Filename: {zipFilename}");
+            logEvent($"!TradingViewScreenerLoader finished. Filename: {zipFilename} with {itemCount} items");
         }
 
-        private static void Parse(string content, DateTime timeStamp)
+        private static int Parse(string content, DateTime timeStamp)
         {
             var o = JsonConvert.DeserializeObject<ScreenerTradingView>(content);
             var items = o.data.Select(a => a.GetDbItem(timeStamp)).ToArray();
@@ -47,6 +47,8 @@ namespace Data.Actions.TradingView
                     "TimeStamp");
                 DbUtils.RunProcedure("pUpdateScreenerTradingView", new Dictionary<string, object> { { "@Date", timeStamp } });
             }
+
+            return items.Length;
         }
     }
 }

@@ -6,6 +6,8 @@ namespace Data.Helpers
 {
     public static class CsUtils
     {
+        public static int GetFileSizeInKB(string filename) => Convert.ToInt32(new FileInfo(filename).Length / 1024.0);
+
         /// <summary>
         /// Zip folder
         /// </summary>

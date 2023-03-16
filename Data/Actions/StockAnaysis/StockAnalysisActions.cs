@@ -12,7 +12,6 @@ namespace Data.Actions.StockAnaysis
     public class StockAnalysisActions
     {
         private const string Url = @"https://stockanalysis.com/actions/";
-        private const string PostDataTemplate = @"country%5B%5D=5&dateFrom={0}&dateTo={1}&currentTab=custom&limit_from=0";
         private const string Folder = @"E:\Quote\WebData\Splits\StockAnalysis\Actions\";
 
         public static void Start(Action<string> logEvent)
@@ -24,40 +23,45 @@ namespace Data.Actions.StockAnaysis
             var zipFileName = Folder + $"StockAnalysisActions_{timeStamp.Item2}.zip";
 
             // Download data to html file
-            // Helpers.Download.DownloadPage(Url, htmlFileName);
+            Helpers.Download.DownloadPage(Url, htmlFileName);
 
             // Zip data
-           // Helpers.CsUtils.ZipFile(htmlFileName, zipFileName);
+            Helpers.CsUtils.ZipFile(htmlFileName, zipFileName);
 
             // Parse and save to database
-            var items = new List<Models.ActionStockAnalysis>();
-            ParseAndSaveToDb(zipFileName, items);
+            var itemCount = ParseAndSaveToDb(zipFileName);
 
-            // File.Delete(HTML_FILE_NAME);
+            File.Delete(htmlFileName);
 
-            // logEvent($"!StockAnalysisActions finished. Filename: {zipFileName} with {items.Count} items");*/
+            logEvent($"!StockAnalysisActions finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
-        public static void ParseAndSaveToDb(string zipFileName, List<Models.ActionStockAnalysis> items)
+        public static int ParseAndSaveToDb(string zipFileName)
         {
+            var itemCount = 0;
             using (var zip = new ZipReader(zipFileName))
                 foreach (var zipItem in zip)
                     if (zipItem.Length > 0)
+                    {
+                        var items = new List<Models.ActionStockAnalysis>();
                         Parse(zipItem.Content, items, zipItem.Created);
+                        itemCount += items.Count;
+                        // Save data to database
+                        if (items.Count > 0)
+                        {
+                            DbUtils.ClearAndSaveToDbTable(items.Where(a => !a.IsBad), "dbQuote2023..Bfr_ActionsStockAnalysis",
+                                "Date", "Type", "Symbol", "OtherSymbolOrName", "Name", "Description", "SplitRatio", "SplitK",
+                                "TimeStamp");
 
-            // Save data to database
-            if (items.Count > 0)
-            {
-                DbUtils.ClearAndSaveToDbTable(items.Where(a => !a.IsBad), "dbQuote2023..Bfr_ActionsStockAnalysis",
-                    "Date", "Type", "Symbol", "OtherSymbolOrName", "Name", "Description", "SplitRatio", "SplitK",
-                    "TimeStamp");
+                            DbUtils.ClearAndSaveToDbTable(items.Where(a => a.IsBad),
+                                "dbQuote2023..Bfr_ActionsStockAnalysisError", "Date", "Type", "Symbol", "OtherSymbolOrName",
+                                "Description", "TimeStamp");
 
-                DbUtils.ClearAndSaveToDbTable(items.Where(a => a.IsBad),
-                    "dbQuote2023..Bfr_ActionsStockAnalysisError", "Date", "Type", "Symbol", "OtherSymbolOrName",
-                    "Description", "TimeStamp");
+                            DbUtils.RunProcedure("dbQuote2023..pUpdateActionsStockAnalysis");
+                        }
+                    }
 
-                DbUtils.RunProcedure("dbQuote2023..pUpdateActionsStockAnalysis");
-            }
+            return itemCount;
         }
 
         #region ==========  Private section  ==========

@@ -875,14 +875,12 @@ namespace Quote2022
 
             // Actions.Github.NasdaqScreener(ShowStatus);
 
-            /*var folder = @"E:\Quote\WebData\Splits\StockAnalysis\Actions";
+            /*var folder = @"E:\Quote\WebData\Splits\StockAnalysis\IPOs";
             var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a);
             foreach (var file in files)
             {
 
-                var items = new List<Data.Models.ActionStockAnalysis>();
-                Data.Actions.StockAnaysis.StockAnalysisActions.ParseAndSaveToDb(file, items);
-                items.Clear();
+                var i = Data.Actions.StockAnaysis.StockAnalysisIPOs.ParseAndSaveToDb(file);
             }*/
         }
     }

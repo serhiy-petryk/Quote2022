@@ -24,7 +24,8 @@ namespace Data.Models
             new LoaderItem {Name = "Eoddata Daily Quotes", Action = Actions.Eoddata.EoddataDailyLoader.Start, Checked = false},
             new LoaderItem {Name = "Eoddata Splits", Action = Actions.Eoddata.EoddataSplitsLoader.Start, Checked = false},
             new LoaderItem {Name = "Investing Splits", Action = Actions.Investing.InvestingSplitsLoader.Start, Checked = false},
-            new LoaderItem {Name = "StockAnalysis Corporate Actions", Action = Actions.StockAnaysis.StockAnalysisActions.Start},
+            new LoaderItem {Name = "StockAnalysis Corporate Actions", Action = Actions.StockAnaysis.StockAnalysisActions.Start, Checked = false},
+            new LoaderItem {Name = "StockAnalysis IPOs", Action = Actions.StockAnaysis.StockAnalysisIPOs.Start},
             new LoaderItem {Name = "Refresh Split data", Action = Models.SplitModel.RefreshSplitData, Checked = false},
         };
 

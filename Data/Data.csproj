@@ -75,6 +75,7 @@
     <Compile Include="Actions\Eoddata\EoddataSymbolsLoader.cs" />
     <Compile Include="Actions\Investing\InvestingSplitsLoader.cs" />
     <Compile Include="Actions\Nasdaq\NasdaqScreenerLoader.cs" />
+    <Compile Include="Actions\StockAnaysis\StockAnalysisIPOs.cs" />
     <Compile Include="Actions\StockAnaysis\StockAnalysisActions.cs" />
     <Compile Include="Actions\TradingView\TvScreenerLoader.cs" />
     <Compile Include="Actions\Yahoo\YahooIndicesLoader.cs" />

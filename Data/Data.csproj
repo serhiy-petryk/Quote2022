@@ -78,6 +78,7 @@
     <Compile Include="Actions\StockAnaysis\StockAnalysisIPOs.cs" />
     <Compile Include="Actions\StockAnaysis\StockAnalysisActions.cs" />
     <Compile Include="Actions\TradingView\TvScreenerLoader.cs" />
+    <Compile Include="Actions\Wikipedia\WikipediaIndexLoader.cs" />
     <Compile Include="Actions\Yahoo\YahooIndicesLoader.cs" />
     <Compile Include="Actions\Yahoo\YahooProfileLoader.cs" />
     <Compile Include="Helpers\CookiesGoogle.cs" />

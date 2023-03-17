@@ -594,7 +594,12 @@ namespace Quote2022
 
         private void btnMinuteAlphaVantageDownload_Click(object sender, EventArgs e)
         {
-            Task.Factory.StartNew(() => MAV_Download.Start(ShowStatus));
+            if (CsUtils.OpenTxtFileDialog(Settings.MinuteAlphaVantageFolder) is string symbolListFile)
+            {
+                var symbols = File.ReadAllLines(symbolListFile).Where(a => !a.StartsWith("#") && !string.IsNullOrEmpty(a.Trim())).ToArray();
+                Task.Factory.StartNew(() => MAV_Download.Start(symbols, ShowStatus));
+            }
+
             //Download.MinuteAlphaVantage_Download(ShowStatus);
         }
 

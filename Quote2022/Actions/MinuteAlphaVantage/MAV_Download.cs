@@ -23,7 +23,6 @@ namespace Quote2022.Actions.MinuteAlphaVantage
 
         private static string timeStamp = Helpers.CsUtils.GetTimeStamp().Item2;
         private static string DataFolder = $"E:\\Quote\\WebData\\Minute\\AlphaVantage\\DataBuffer\\MinuteAlphaVantage_{timeStamp}\\";
-        const string SymbolListFileName = @"E:\Quote\WebData\Minute\AlphaVantage\SymbolsToDownload.txt";
         const string ProxyListFileName = @"E:\Quote\WebData\ProxyList.txt";
         const string ApiKeysFileName = @"E:\Quote\WebData\Minute\AlphaVantage\ApiKeys.txt";
 
@@ -88,8 +87,14 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                 _showStatusAction($"MinuteAlphaVantage_Download. Proxy list refreshed. {uniqueProxy.Count} proxy items. {_apiKeys.Length} api keys.");
         }
 
-        public static void Start(Action<string> showStatusAction)
+        public static void Start(string[] symbols, Action<string> showStatusAction)
         {
+            if (symbols.Length == 0)
+            {
+                MessageBox.Show("No symbols in file");
+                return;
+            }
+
             if (_isBusy)
             {
                 MessageBox.Show("MinuteAlphaVantage_Download is working now .. Can't run it again.");
@@ -102,7 +107,11 @@ namespace Quote2022.Actions.MinuteAlphaVantage
             _apiKeys = File.ReadAllLines(ApiKeysFileName).Where(a => !string.IsNullOrEmpty(a) && !a.StartsWith("#"))
                 .Select(a => new ApiKey() {Key = a}).ToArray();
 
-            SetUrlsAndFilenames2();
+            SetUrlsAndFilenamesTwoYears(symbols);
+
+            if (MessageBox.Show($"Буде {_urlsAndFilenames.Count} завантажень для {symbols.Length} символів у папку {DataFolder}",
+                    "", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                return;
 
             RefreshProxyList();
             _totalItems = _urlsAndFilenames.Count;
@@ -176,7 +185,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
             }
         }
 
-        private static void SetUrlsAndFilenames()
+        private static void SetUrlsAndFilenamesTwoYears(string[] symbols)
         {
             _showStatusAction($"IntradayAlphaVantage_Download. Define urls and filenames to download.");
             var periodIds = new Dictionary<string, DateTime>();
@@ -187,18 +196,17 @@ namespace Quote2022.Actions.MinuteAlphaVantage
             for (var k = 12; k >= 1; k--)
                 periodIds.Add($"year1month{k}", DateTime.Today.AddDays(-30 * k));
 
-            var symbols = new Dictionary<string, object>();
-            var ss = File.ReadAllLines(SymbolListFileName).Where(a => !a.StartsWith("#"));
-            foreach (var s in ss)
+            var symbolKeys = new Dictionary<string, object>();
+            foreach (var s in symbols)
             {
                 if (string.IsNullOrEmpty(s)) continue;
                 var ss1 = s.Split('\t');
-                if (!symbols.ContainsKey(ss1[0].Trim()))
-                    symbols.Add(ss1[0].Trim(), null);
+                if (!symbolKeys.ContainsKey(ss1[0].Trim()))
+                    symbolKeys.Add(ss1[0].Trim(), null);
             }
 
             _urlsAndFilenames = new List<Tuple<string, string>>();
-            foreach (var kvp1 in symbols)
+            foreach (var kvp1 in symbolKeys)
                 foreach (var kvp2 in periodIds)
                 {
                     var filename = DataFolder + $"av{kvp2.Key.Replace("year", "Y").Replace("month", "M")}_{kvp1.Key}.csv";
@@ -212,13 +220,12 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                 }
         }
 
-        private static void SetUrlsAndFilenames2()
+        private static void SetUrlsAndFilenamesLastMonth(string[] symbolList)
         {
             _showStatusAction($"IntradayAlphaVantage_Download. Define urls and filenames to download.");
 
             var urls = new Dictionary<string, string[]>();
-            var ss = File.ReadAllLines(SymbolListFileName).Where(a => !a.StartsWith("#"));
-            foreach (var s in ss)
+            foreach (var s in symbolList)
             {
                 if (string.IsNullOrEmpty(s)) continue;
                 var ss1 = s.Split('\t');

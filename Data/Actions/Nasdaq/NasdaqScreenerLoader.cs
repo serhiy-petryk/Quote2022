@@ -13,24 +13,24 @@ namespace Data.Actions.Nasdaq
         private static string stockUrl = @"https://api.nasdaq.com/api/screener/stocks?tableonly=true&download=true";
         private static string etfUrl = @"https://api.nasdaq.com/api/screener/etf?tableonly=true&download=true";
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"NasdaqScreenerLoader started");
+            Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
             var folder = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}\";
 
             // Download data
             var stockFile =  folder + $@"ScreenerStock_{timeStamp.Item2}.json";
-            logEvent($"NasdaqScreenerLoader. Download STOCK data from {stockUrl} to {stockFile}");
+            Logger.AddMessage($"Download STOCK data from {stockUrl} to {stockFile}");
             Helpers.Download.DownloadPage(stockUrl, stockFile, true);
 
             var etfFile = folder + $@"ScreenerEtf_{timeStamp.Item2}.json";
-            logEvent($"NasdaqScreenerLoader. Download ETF data from {etfUrl} to {etfFile}");
+            Logger.AddMessage($"Download ETF data from {etfUrl} to {etfFile}");
             Helpers.Download.DownloadPage(etfUrl, etfFile, true);
 
             // Parse and save data to database
-            logEvent($"NasdaqScreenerLoader. Parse and save files to database");
+            Logger.AddMessage($"Parse and save files to database");
             var itemsCount = Parse(stockFile, timeStamp.Item1);
             itemsCount += Parse(etfFile, timeStamp.Item1);
 
@@ -38,7 +38,7 @@ namespace Data.Actions.Nasdaq
             var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
-            logEvent($"!NasdaqScreenerLoader finished. Filename: {zipFilename} with {itemsCount} items");
+            Logger.AddMessage($"!Finished. Filename: {zipFilename} with {itemsCount} items");
         }
 
         private static int Parse(string filename, DateTime timeStamp)

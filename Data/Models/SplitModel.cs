@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Globalization;
+using Data.Helpers;
 
 namespace Data.Models
 {
     public class SplitModel
     {
-        public static void RefreshSplitData(Action<string> logEvent)
+        public static void RefreshSplitData()
         {
             Helpers.DbUtils.RunProcedure("pRefreshSplits");
-            logEvent($"!Run RefreshSplitData");
+            Logger.AddMessage($"!Run RefreshSplitData");
         }
 
         public string Key => Symbol + Date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);

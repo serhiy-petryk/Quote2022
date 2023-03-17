@@ -7,20 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Data.Helpers;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Quote2022.Actions;
 using Quote2022.Actions.MinuteAlphaVantage;
 using Quote2022.Actions.Nasdaq;
 using Quote2022.Helpers;
 using Quote2022.Models;
+using CsUtils = Quote2022.Helpers.CsUtils;
 
 namespace Quote2022
 {
     public partial class Form1 : Form
     {
         private object _lock = new object();
-
-        private readonly Data.Helpers.Logger _logger = new Data.Helpers.Logger();
 
         public Form1()
         {
@@ -40,7 +40,7 @@ namespace Quote2022
 
             StartImageAnimation();
 
-            _logger.MessageAdded += (sender, args) => ShowStatus(args.Message);
+            Logger.MessageAdded += (sender, args) => StatusLabel.Text = args.FullMessage; 
         }
 
         #region ===========  Image Animation  ============
@@ -836,7 +836,7 @@ namespace Quote2022
                 item.Reset();
 
             foreach (var item in Data.Models.LoaderItem.DataGridLoaderItems.Where(a => a.Checked))
-                await item.Start(_logger);
+                await item.Start();
 
             dataGridView1.ReadOnly = false;
             ((Control)sender).Enabled = true;

@@ -11,9 +11,9 @@ namespace Data.Actions.Eoddata
         private static string[] _exchanges = new string[] {"AMEX", "NASDAQ", "NYSE", "OTCBB"};
         private static string _urlTemplate = @"https://www.eoddata.com/Data/symbollist.aspx?e={0}";
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"EoddataSymbolsLoader started");
+            Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
             var folder = $@"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{timeStamp.Item2}\";
@@ -27,7 +27,7 @@ namespace Data.Actions.Eoddata
             // Download data
             foreach (var exchange in _exchanges)
             {
-                logEvent($"EoddataSymbolsLoader. Download Symbols data for {exchange}");
+                Logger.AddMessage($"Download Symbols data for {exchange}");
                 var url = string.Format(_urlTemplate, exchange);
                 var filename = $"{folder}{exchange}_{timeStamp.Item2}.txt";
                 Helpers.Download.DownloadPage(url, filename, false, cookieContainer);
@@ -37,7 +37,7 @@ namespace Data.Actions.Eoddata
             var itemsCount = 0;
             foreach (var filename in Directory.GetFiles(folder))
             {
-                logEvent($"EoddataSymbolsLoader. '{Path.GetFileName(filename)}' file is parsing");
+                Logger.AddMessage($"'{Path.GetFileName(filename)}' file is parsing");
                 itemsCount += Parse(filename);
             }
             Helpers.DbUtils.RunProcedure("pUpdateSymbolsXref");
@@ -47,7 +47,7 @@ namespace Data.Actions.Eoddata
             var zipFilename = CsUtils.ZipFolder(folder);
             Directory.Delete(folder);
 
-            logEvent($"!EoddataSymbolsLoader finished. Filename: {zipFilename} with {itemsCount} items");
+            Logger.AddMessage($"!Finished. Filename: {zipFilename} with {itemsCount} items");
         }
 
         private static int Parse(string filename)

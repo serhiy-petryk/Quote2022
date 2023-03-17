@@ -14,9 +14,9 @@ namespace Data.Actions.Investing
         private const string URL = @"https://www.investing.com/stock-split-calendar/Service/getCalendarFilteredData";
         private const string POST_DATA_TEMPLATE = @"country%5B%5D=5&dateFrom={0}&dateTo={1}&currentTab=custom&limit_from=0";
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"InvestingSplitsLoader started");
+            Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp(-9 - 24);
             var postData = string.Format(POST_DATA_TEMPLATE,
@@ -36,7 +36,7 @@ namespace Data.Actions.Investing
             var zipFileName = Helpers.CsUtils.ZipFile(jsonFileName);
             File.Delete(jsonFileName);
 
-            logEvent($"!InvestingSplitsLoader finished. Filename: {zipFileName} with {items.Count} items");
+            Logger.AddMessage($"!Finished. Filename: {zipFileName} with {items.Count} items");
         }
 
         private static void ParseAndSaveToDb(string jsonFileName, List<SplitModel> items)

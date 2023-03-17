@@ -16,9 +16,9 @@ namespace Data.Actions.Yahoo
         private const string urlTemplate = "https://query1.finance.yahoo.com/v7/finance/download/{2}?period1={0}&period2={1}&interval=1d&events=history&includeAdjustedClose=true";
         private static string[] symbols = new[] { "^DJI", "^GSPC" };
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"YahooIndicesLoader started");
+            Logger.AddMessage($"Started");
 
             var maxDate = new DateTime(2000, 1, 1);
             using (var conn = new SqlConnection(Settings.DbConnectionString))
@@ -43,14 +43,14 @@ namespace Data.Actions.Yahoo
             // Download data
             foreach (var symbol in symbols)
             {
-                logEvent($"YahooIndicesLoader. Download data for {symbol}");
+                Logger.AddMessage($"Download data for {symbol}");
                 var url = string.Format(urlTemplate, from, to, symbol);
                 var filename = $"{folder}{symbol}_{timeStamp.Item2}.csv";
                 Helpers.Download.DownloadPage(url, filename);
             }
 
             // Parse and save data to database
-            logEvent($"YahooIndicesLoader. Parse and save files to database");
+            Logger.AddMessage($"Parse and save files to database");
             var data = new List<DayYahoo>();
             foreach(var filename in Directory.GetFiles(folder, "*.csv"))
                 Parse(filename, data);
@@ -65,14 +65,14 @@ namespace Data.Actions.Yahoo
                                            "left join DayYahooIndexes b on a.Symbol = b.Symbol and a.Date = b.Date " +
                                            "where b.Symbol is null");
 
-                logEvent($"YahooIndicesLoader. Update trading days");
+                Logger.AddMessage($"Update trading days");
                 Helpers.DbUtils.RunProcedure("pRefreshTradingDays");
             }
 
             // remove text files
             Directory.Delete(folder, true);
 
-            logEvent($"!YahooIndicesLoader finished. Last trade date: {data.Max(a=>a.Date):yyyy-MM-dd}");
+            Logger.AddMessage($"!Finished. Last trade date: {data.Max(a=>a.Date):yyyy-MM-dd}");
 
             long GetYahooTime(DateTime dt) => Convert.ToInt64((dt - new DateTime(1970, 1, 1)).TotalSeconds + 18000);
         }

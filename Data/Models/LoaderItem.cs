@@ -35,11 +35,11 @@ namespace Data.Models
         private static Dictionary<string, Bitmap> _imgResources;
         private static string[] _itemStatusImageName = new[] {"Blank", "Blank", "Wait", "Done", "Error"};
 
-        private static void TestLogEvent(Action<string> logEvent)
+        private static void TestLogEvent()
         {
-            logEvent("Started");
+            Logger.AddMessage("Started");
             Thread.Sleep(1200);
-            logEvent("Finished");
+            Logger.AddMessage("Finished");
         }
 
         private static Bitmap GetImage(ItemStatus status)
@@ -80,7 +80,7 @@ namespace Data.Models
             : (Started.HasValue ? Convert.ToInt64((DateTime.Now - Started.Value).TotalSeconds) : (long?) null);
 
         public string Name { get; private set; }
-        public Action<Action<string>> Action = TestLogEvent;
+        public Action Action = TestLogEvent;
 
         public ItemStatus Status { get; set; } = ItemStatus.None;
 
@@ -91,14 +91,14 @@ namespace Data.Models
             Status = ItemStatus.None;
             UpdateUI();
         }
-        public async Task Start(Logger loger)
+        public async Task Start()
         {
             Started = DateTime.Now;
             _finished = null;
             Status = ItemStatus.Working;
             UpdateUI();
 
-            await Task.Factory.StartNew(() => Action?.Invoke(loger.AddMessage));
+            await Task.Factory.StartNew(() => Action?.Invoke());
 
             _finished = DateTime.Now;
             Checked = false;

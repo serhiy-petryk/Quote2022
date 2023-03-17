@@ -12,27 +12,27 @@ namespace Data.Actions.TradingView
     {
         private const string parameters = @"{""filter"":[{""left"":""exchange"",""operation"":""in_range"",""right"":[""AMEX"",""NASDAQ"",""NYSE""]}],""options"":{""lang"":""en""},""markets"":[""america""],""symbols"":{""query"":{""types"":[]},""tickers"":[]},""columns"":[""minmov"",""name"",""close"",""change"",""change_abs"",""Recommend.All"",""volume"",""Value.Traded"",""market_cap_basic"",""price_earnings_ttm"",""earnings_per_share_basic_ttm"",""number_of_employees"",""sector"",""industry"",""description"",""type"",""subtype""],""sort"":{""sortBy"":""name"",""sortOrder"":""asc""},""range"":[0,20000]}";
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"TradingViewScreenerLoader started");
+            Logger.AddMessage($"Started");
 
             // Download
             var timeStamp = Helpers.CsUtils.GetTimeStamp();
             var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp.Item2}.json";
 
-            logEvent($"TradingViewScreenerLoader. Download data to {filename}");
+            Logger.AddMessage($"Download data to {filename}");
             if (!File.Exists(filename))
               Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
 
             // Parse and save data to database
-            logEvent($"TradingViewScreenerLoader. Parse and save files to database");
+            Logger.AddMessage($"Parse and save files to database");
             var itemCount = Parse(File.ReadAllText(filename), File.GetLastWriteTime(filename));
 
             // Zip data and remove text files
             var zipFilename = CsUtils.ZipFile(filename);
             File.Delete(filename);
 
-            logEvent($"!TradingViewScreenerLoader finished. Filename: {zipFilename} with {itemCount} items");
+            Logger.AddMessage($"!Finished. Filename: {zipFilename} with {itemCount} items");
         }
 
         private static int Parse(string content, DateTime timeStamp)

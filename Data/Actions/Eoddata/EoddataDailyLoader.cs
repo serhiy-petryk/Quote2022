@@ -18,9 +18,9 @@ namespace Data.Actions.Eoddata
         private const string URL_HOME = "https://www.eoddata.com/download.aspx";
         private const string URL_TEMPLATE = "https://www.eoddata.com/data/filedownload.aspx?e={0}&sd={1}&ea=1&ed={1}&d=9&p=0&o=d&k={2}";
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"EoddataDailyLoader started");
+            Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
             var tempFolder =  FILE_FOLDER + timeStamp.Item2 + @"\";
@@ -73,7 +73,7 @@ namespace Data.Actions.Eoddata
                 // Download text files
                 foreach (var fileId in missingFiles)
                 {
-                    logEvent($"EoddataDailyLoader. Download Eoddata daily data for {fileId.Item1} and {fileId.Item2}");
+                    Logger.AddMessage($"Download Eoddata daily data for {fileId.Item1} and {fileId.Item2}");
                     var url = string.Format(URL_TEMPLATE, fileId.Item1, fileId.Item2, kParameter.Substring(2));
                     var textFilename = string.Format(textFileNameTemplate, fileId.Item1, fileId.Item2);
                     Helpers.Download.DownloadPage(url, textFilename, false, cookieContainer);
@@ -88,11 +88,11 @@ namespace Data.Actions.Eoddata
                     File.Move(newZipFilename, destinationZipFileName);
                 }
 
-                logEvent($"!EoddataDailyLoader. Downloaded {missingFiles.Count} files");
+                Logger.AddMessage($"!Downloaded {missingFiles.Count} files");
             }
 
             // Get missing quotes in database
-            logEvent($"EoddataDailyLoader. Get existing data in database");
+            Logger.AddMessage($"Get existing data in database");
             var existingQuotes = new Dictionary<string, object>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             {
@@ -116,18 +116,18 @@ namespace Data.Actions.Eoddata
                 if (!existingQuotes.ContainsKey(file))
                 {
                     newFileCount++;
-                    logEvent($"EoddataDailyLoader. Save to database quotes from file {Path.GetFileName(file)}");
+                    Logger.AddMessage($"Save to database quotes from file {Path.GetFileName(file)}");
                     itemCount += Parse(file);
                 }
             }
 
             if (newFileCount > 0)
             {
-                logEvent($"EoddataDailyLoader. Update data in database ('pUpdateDayEoddata' procedure)");
+                Logger.AddMessage($"Update data in database ('pUpdateDayEoddata' procedure)");
                 Helpers.DbUtils.RunProcedure("pUpdateDayEoddata");
             }
 
-            logEvent($"!EoddataDailyLoader finished. Loaded data from {newFileCount} files into database. Total {itemCount:N0} quotes");
+            Logger.AddMessage($"!Finished. Loaded data from {newFileCount} files into database. Total {itemCount:N0} quotes");
         }
 
         private static int Parse(string filename)

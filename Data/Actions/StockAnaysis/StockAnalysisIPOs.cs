@@ -14,9 +14,9 @@ namespace Data.Actions.StockAnaysis
         private const string Url = @"https://stockanalysis.com/api/screener/s/f?m=ipoDate&s=desc&c=ipoDate,s,n,ipoPrice,ippc,exchange,sector,industry,employees&cn=5000&i=histip";
         private const string Folder = @"E:\Quote\WebData\Splits\StockAnalysis\IPOs\";
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"StockAnalysisIPOs started");
+            Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
             var jsonFileName = Folder + $"StockAnalysisIPOs_{timeStamp.Item2}.json";
@@ -33,7 +33,7 @@ namespace Data.Actions.StockAnaysis
 
             File.Delete(jsonFileName);
 
-            logEvent($"!StockAnalysisIPOs finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
         public static int ParseAndSaveToDb(string zipFileName)

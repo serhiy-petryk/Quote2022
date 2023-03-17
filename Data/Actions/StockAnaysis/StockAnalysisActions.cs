@@ -14,9 +14,9 @@ namespace Data.Actions.StockAnaysis
         private const string Url = @"https://stockanalysis.com/actions/";
         private const string Folder = @"E:\Quote\WebData\Splits\StockAnalysis\Actions\";
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"StockAnalysisActions started");
+            Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
             var htmlFileName = Folder + $"StockAnalysisActions_{timeStamp.Item2}.html";
@@ -33,7 +33,7 @@ namespace Data.Actions.StockAnaysis
 
             File.Delete(htmlFileName);
 
-            logEvent($"!StockAnalysisActions finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
         public static int ParseAndSaveToDb(string zipFileName)

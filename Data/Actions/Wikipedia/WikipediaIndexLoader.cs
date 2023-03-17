@@ -30,9 +30,9 @@ namespace Data.Actions.Wikipedia
             Folder + "IndexComponents_{0}\\Components_Nasdaq100_{0}.html",
         };
 
-        public static void Start(Action<string> logEvent)
+        public static void Start()
         {
-            logEvent($"WikipediaIndexLoader started");
+            Logger.AddMessage($"WikipediaIndexLoader started");
             var a1 = System.Reflection.MethodBase.GetCurrentMethod();
 
             StackFrame sf = new StackFrame(1);
@@ -55,6 +55,7 @@ namespace Data.Actions.Wikipedia
             File.Delete(jsonFileName);*/
 
             // logEvent($"!WikipediaIndexLoader finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+            Logger.AddMessage("XXXXXXXXXX");
         }
 
 

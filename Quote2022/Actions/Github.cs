@@ -11,10 +11,13 @@ namespace Quote2022.Actions
     public static class Github
     {
         private static string _rootUrl = "https://github.com/rreichel3/US-Stock-Symbols/";
+        // Github api: потрібно отримати апі ключ, дані дають по сторінкам - макс. 100 комітів на сторінку
+        private static string _githubApiCommits = "https://api.github.com/repos/rreichel3/US-Stock-Symbols/commits";
+
         public static void NasdaqScreener(Action<string> ShowStatus)
         {
             var commits = new List<Tuple<DateTime, string>>();
-            //GetCommitList(commits, ShowStatus);
+            GetCommitList(commits, ShowStatus);
             //DownloadFiles(commits, ShowStatus);
             ParseAndSaveFiles(ShowStatus);
 

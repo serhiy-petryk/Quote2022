@@ -32,6 +32,8 @@ namespace Data.Helpers
             {
                 Message = msg;
                 MethodName = methodName;
+                if (Message.StartsWith("!"))
+                    Debug.Print($"LOGGER: {FullMessage}");
             }
         }
     }

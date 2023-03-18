@@ -110,13 +110,15 @@ namespace Data.Actions.Eoddata
             var files = Directory.GetFiles(FILE_FOLDER, "*.zip", SearchOption.TopDirectoryOnly);
             var newFileCount = 0;
             var itemCount = 0;
+            var fileSize = 0;
             foreach (var file in files)
             {
                 if (!existingQuotes.ContainsKey(file))
                 {
                     newFileCount++;
                     Logger.AddMessage($"Save to database quotes from file {Path.GetFileName(file)}");
-                    itemCount += Parse(file);
+                    itemCount += ParseAndSaveToDb(file);
+                    fileSize += Helpers.CsUtils.GetFileSizeInKB(file);
                 }
             }
 
@@ -126,10 +128,10 @@ namespace Data.Actions.Eoddata
                 Helpers.DbUtils.RunProcedure("pUpdateDayEoddata");
             }
 
-            Logger.AddMessage($"!Finished. Loaded data from {newFileCount} files into database. Total {itemCount:N0} quotes");
+            Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {newFileCount}. Size of files: {fileSize:N0}KB");
         }
 
-        private static int Parse(string zipFileName)
+        private static int ParseAndSaveToDb(string zipFileName)
         {
             var exchange = Path.GetFileNameWithoutExtension(zipFileName).Split('_')[0].Trim().ToUpper();
             var quotes = new List<DayEoddata>();

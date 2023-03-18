@@ -31,7 +31,7 @@ namespace Data.Actions.Eoddata
 
         private static string ParseAndSaveToDb(string htmlFileName, List<SplitModel> items, DateTime maxDate)
         {
-            var timeStamp = File.GetLastWriteTime(htmlFileName);
+            var timeStamp = File.GetCreationTime(htmlFileName);
             var fileLines = new List<string>{ "Exchange\tSymbol\tDate\tRatio" };
 
             var content = File.ReadAllText(htmlFileName);

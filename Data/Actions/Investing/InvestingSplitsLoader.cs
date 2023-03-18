@@ -28,26 +28,66 @@ namespace Data.Actions.Investing
             // Download data to html file
             Helpers.Download.DownloadPage_POST(URL, jsonFileName, postData, true);
 
-            // Split and save to database
-            var items = new List<SplitModel>();
-            ParseAndSaveToDb(jsonFileName, items);
-
             // Zip data
             var zipFileName = Helpers.CsUtils.ZipFile(jsonFileName);
+
+            // Parse and save to database
+            var itemCount = ParseZipAndSaveToDb(zipFileName);
+
+            // Delete json file
             File.Delete(jsonFileName);
 
-            Logger.AddMessage($"!Finished. Filename: {zipFileName} with {items.Count} items");
+            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
-        private static void ParseAndSaveToDb(string jsonFileName, List<SplitModel> items)
+        public static int ParseTextFileAndSaveToDb(string txtFileName)
         {
-            var timeStamp = File.GetLastWriteTime(jsonFileName);
+            var content = File.ReadAllText(txtFileName);
+            var timeStamp = File.GetCreationTime(txtFileName);
+            var items = new List<SplitModel>();
 
-            var o = JsonConvert.DeserializeObject<cRoot>(File.ReadAllText(jsonFileName));
+            ParseTxt(Path.GetFileName(txtFileName), content, timeStamp, items);
+
+            if (items.Count > 0)
+                SaveToDb(items.Where(a => a.Date <= a.TimeStamp));
+
+            return items.Count;
+        }
+
+        private static int ParseZipAndSaveToDb(string zipFileName)
+        {
+            var itemCount = 0;
+            using (var zip = new ZipReader(zipFileName))
+                foreach (var zipItem in zip)
+                    if (zipItem.Length > 0)
+                    {
+                        var content = zipItem.Content;
+                        var timeStamp = zipItem.Created;
+                        var items = new List<SplitModel>();
+
+                        if (Path.GetExtension(zipItem.FullName) == ".json")
+                            ParseJson(content, timeStamp, items);
+                        else if (Path.GetExtension(zipItem.FullName) == ".txt")
+                            ParseTxt(zipItem.FullName, content, timeStamp, items);
+                        else
+                            throw new Exception($"InvestingSplitsLoader. Parse don't defined for '{Path.GetExtension(zipItem.FullName)}' file type");
+
+                        if (items.Count > 0)
+                            SaveToDb(items.Where(a => a.Date <= a.TimeStamp));
+
+                        itemCount += items.Count;
+                    }
+
+            return itemCount;
+        }
+
+        private static void ParseJson(string content, DateTime timeStamp, List<SplitModel> items)
+        {
+            var o = JsonConvert.DeserializeObject<cRoot>(content);
             var rows = o.data.Trim().Split(new[] { "</tr>" }, StringSplitOptions.RemoveEmptyEntries);
 
             string lastDate = null;
-            for (var k=0; k<rows.Length; k++) 
+            for (var k = 0; k < rows.Length; k++)
             {
                 var row = rows[k];
                 var cells = row.Trim().Split(new[] { "</td>" }, StringSplitOptions.RemoveEmptyEntries);
@@ -61,9 +101,9 @@ namespace Data.Actions.Investing
                 else
                     throw new Exception("Check InvestingSplitsLoader parser");
                 var symbol = GetCellValue(cells[1]);
-                
+
                 var i2 = cells[1].LastIndexOf("</span>", StringComparison.InvariantCulture);
-                var i1 = cells[1].LastIndexOf(">", i2-7, StringComparison.InvariantCulture);
+                var i1 = cells[1].LastIndexOf(">", i2 - 7, StringComparison.InvariantCulture);
                 var name = cells[1].Substring(i1 + 1, i2 - i1 - 1).Trim();
 
                 var ratio = GetCellValue(cells[2]);
@@ -74,15 +114,6 @@ namespace Data.Actions.Investing
                 lastDate = sDate;
             }
 
-            // Save data to database
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= a.TimeStamp), "Bfr_SplitInvesting",
-                "Symbol", "Date", "Name", "Ratio", "K", "TimeStamp");
-
-            Helpers.DbUtils.ExecuteSql("INSERT INTO SplitInvesting (Symbol,[Date],Name,Ratio,K,[TimeStamp]) " +
-                                       "SELECT a.Symbol, a.[Date], a.Name, a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitInvesting a " +
-                                       "LEFT JOIN SplitInvesting b ON a.Symbol = b.Symbol AND a.Date = b.Date " +
-                                       "WHERE b.Symbol IS NULL");
-
             string GetCellValue(string cell)
             {
                 var s = cell.Replace("</a>", "").Trim();
@@ -90,6 +121,53 @@ namespace Data.Actions.Investing
                 s = System.Net.WebUtility.HtmlDecode(s.Substring(i1 + 1)).Trim();
                 return s;
             }
+        }
+
+        private static void ParseTxt(string txtFileName, string content, DateTime timeStamp, List<SplitModel> items)
+        {
+            // var lines = File.ReadAllLines(txtFileName, System.Text.Encoding.Default); // or Encoding.UTF7
+            var lines = content.Split(new [] {"\n"}, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length == 0 || !Equals(lines[0], "Split date\tCompany\tSplit ratio"))
+                throw new Exception($"Invalid Investing.com split file structure! {txtFileName}");
+
+            var splits = new Dictionary<string, SplitModel>();
+            DateTime? lastDate = null;
+            for (var k = 1; k < lines.Length; k++)
+            {
+                var ss = lines[k].Split('\t');
+                if (ss.Length != 3)
+                    throw new Exception($"Invalid line of Investing.com split file! Line: {lines[k]}, file: {txtFileName}");
+                if (string.IsNullOrEmpty(ss[0]) && !lastDate.HasValue)
+                    throw new Exception($"Error: Empty first date in Investing.com split file! Line: {lines[k]}, file: {txtFileName}");
+                var date = string.IsNullOrEmpty(ss[0]) ? lastDate.Value : DateTime.ParseExact(ss[0], "MMM dd, yyyy", CultureInfo.InvariantCulture);
+                var s = ss[1].Trim();
+                if (!s.EndsWith(")"))
+                    throw new Exception($"Error: The line must be ended with ')'! Line: {lines[k]}, file: {txtFileName}");
+                var i = s.LastIndexOf("(", StringComparison.InvariantCultureIgnoreCase);
+                var symbol = s.Substring(i + 1, s.Length - i - 2).Trim().ToUpper();
+                var name = s.Substring(0, i).Trim();
+
+                if (String.Equals(symbol, "US90274X5529=UBSS") && string.Equals(name, "Whiting Petroleum"))
+                    symbol = "WLL";
+
+                var item = new SplitModel(symbol, date, name, ss[2].Trim(), null, timeStamp);
+                if (!splits.ContainsKey(item.Key))
+                    splits.Add(item.Key, item);
+                lastDate = date;
+            }
+
+            items.AddRange(splits.Values);
+        }
+
+        private static void SaveToDb(IEnumerable<SplitModel> items)
+        {
+            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= a.TimeStamp), "Bfr_SplitInvesting",
+                "Symbol", "Date", "Name", "Ratio", "K", "TimeStamp");
+
+            Helpers.DbUtils.ExecuteSql("INSERT INTO SplitInvesting (Symbol,[Date],Name,Ratio,K,[TimeStamp]) " +
+                                       "SELECT a.Symbol, a.[Date], a.Name, a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitInvesting a " +
+                                       "LEFT JOIN SplitInvesting b ON a.Symbol = b.Symbol AND a.Date = b.Date " +
+                                       "WHERE b.Symbol IS NULL");
         }
 
         #region =======  Json subclasses  =============

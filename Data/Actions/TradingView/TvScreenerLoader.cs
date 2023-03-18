@@ -21,34 +21,42 @@ namespace Data.Actions.TradingView
             var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp.Item2}.json";
 
             Logger.AddMessage($"Download data to {filename}");
-            if (!File.Exists(filename))
-              Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
+            Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
+
+            // Zip data
+            var zipFileName = CsUtils.ZipFile(filename);
 
             // Parse and save data to database
             Logger.AddMessage($"Parse and save files to database");
-            var itemCount = Parse(File.ReadAllText(filename), File.GetLastWriteTime(filename));
+            var itemCount = ParseAndSaveToDb(zipFileName);
 
-            // Zip data and remove text files
-            var zipFilename = CsUtils.ZipFile(filename);
+            // Remove text files
             File.Delete(filename);
 
-            Logger.AddMessage($"!Finished. Filename: {zipFilename} with {itemCount} items");
+            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
-        private static int Parse(string content, DateTime timeStamp)
+        private static int ParseAndSaveToDb(string zipFileName)
         {
-            var o = JsonConvert.DeserializeObject<ScreenerTradingView>(content);
-            var items = o.data.Select(a => a.GetDbItem(timeStamp)).ToArray();
+            var itemCount = 0;
+            using (var zip = new ZipReader(zipFileName))
+                foreach (var zipItem in zip)
+                    if (zipItem.Length > 0)
+                    {
+                        var content = zipItem.Content;
+                        var o = JsonConvert.DeserializeObject<ScreenerTradingView>(content);
+                        var items = o.data.Select(a => a.GetDbItem(zipItem.Created)).ToArray();
 
-            if (items.Length > 0)
-            {
-                DbUtils.ClearAndSaveToDbTable(items, "Bfr_ScreenerTradingView", "Symbol", "Exchange", "Name",
-                    "Type", "Subtype", "Sector", "Industry", "Close", "MarketCap", "Volume", "Recommend",
-                    "TimeStamp");
-                DbUtils.RunProcedure("pUpdateScreenerTradingView", new Dictionary<string, object> { { "@Date", timeStamp } });
-            }
+                        if (items.Length > 0)
+                        {
+                            DbUtils.ClearAndSaveToDbTable(items, "Bfr_ScreenerTradingView", "Symbol", "Exchange",
+                                "Name", "Type", "Subtype", "Sector", "Industry", "Close", "MarketCap", "Volume",
+                                "Recommend", "TimeStamp");
+                            DbUtils.RunProcedure("pUpdateScreenerTradingView");
+                        }
+                    }
 
-            return items.Length;
+            return itemCount;
         }
     }
 }

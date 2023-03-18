@@ -39,12 +39,12 @@ namespace Data.Actions.Nasdaq
 
             // Parse and save data to database
             Logger.AddMessage($"Parse and save files to database");
-            var itemsCount = ParseAndSaveToDb(zipFileName);
+            var itemCount = ParseAndSaveToDb(zipFileName);
 
             // Remove json files
             Directory.Delete(folder, true);
 
-            Logger.AddMessage($"!Finished. Items: {itemsCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
         public static int ParseAndSaveToDb(string zipFileName)

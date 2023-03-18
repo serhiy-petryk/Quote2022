@@ -48,11 +48,11 @@ namespace Quote2022.Actions
                     item.TimeStamp = timeStamp;
                 }
 
-                SaveToDb.ClearAndSaveToDbTable(items, "Bfr_ScreenerNasdaqStock2", "symbol", "Exchange", "Name",
+                SaveToDb.ClearAndSaveToDbTable(items, "Bfr_ScreenerNasdaqStock", "symbol", "Exchange", "Name",
                     "LastSale", "Volume", "netChange", "Change", "MarketCap", "Country", "ipoYear", "Sector",
                     "Industry", "TimeStamp");
 
-                SaveToDb.RunProcedure("pUpdateScreenerNasdaqStock2",
+                SaveToDb.RunProcedure("pUpdateScreenerNasdaqStock",
                     new Dictionary<string, object> {{"@Exchange", exchange}, {"@Date", timeStamp}});
             }
 

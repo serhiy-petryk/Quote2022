@@ -88,10 +88,10 @@ namespace Data.Actions.Nasdaq
 
                         if (stockItems.Count > 0)
                         {
-                            DbUtils.ClearAndSaveToDbTable(stockItems, "Bfr_ScreenerNasdaqStock2", "symbol", "Exchange",
+                            DbUtils.ClearAndSaveToDbTable(stockItems, "Bfr_ScreenerNasdaqStock", "symbol", "Exchange",
                                 "Name", "LastSale", "Volume", "netChange", "Change", "MarketCap", "Country", "ipoYear",
                                 "Sector", "Industry", "TimeStamp");
-                            DbUtils.RunProcedure("pUpdateScreenerNasdaqStock2");
+                            DbUtils.RunProcedure("pUpdateScreenerNasdaqStock");
                         }
 
                         if (etfItems.Count > 0)

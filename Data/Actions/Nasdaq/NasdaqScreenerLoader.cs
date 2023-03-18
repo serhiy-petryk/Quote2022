@@ -10,8 +10,9 @@ namespace Data.Actions.Nasdaq
 {
     public class NasdaqScreenerLoader
     {
-        private static string stockUrl = @"https://api.nasdaq.com/api/screener/stocks?tableonly=true&download=true";
-        private static string etfUrl = @"https://api.nasdaq.com/api/screener/etf?tableonly=true&download=true";
+        private static readonly string StockUrlTemplate = @"https://api.nasdaq.com/api/screener/stocks?tableonly=true&exchange={0}&download=true";
+        private static readonly string EtfUrl = @"https://api.nasdaq.com/api/screener/etf?tableonly=true&download=true";
+        private static readonly string[] Exchanges = new string[] { "AMEX", "NASDAQ", "NYSE" };
 
         public static void Start()
         {
@@ -21,93 +22,89 @@ namespace Data.Actions.Nasdaq
             var folder = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}\";
 
             // Download data
-            var stockFile =  folder + $@"ScreenerStock_{timeStamp.Item2}.json";
-            Logger.AddMessage($"Download STOCK data from {stockUrl} to {stockFile}");
-            Helpers.Download.DownloadPage(stockUrl, stockFile, true);
+            foreach (var exchange in Exchanges)
+            {
+                var stockFile = folder + $@"StockScreener_{exchange}_{timeStamp.Item2}.json";
+                var stockUrl = string.Format(StockUrlTemplate, exchange);
+                Logger.AddMessage($"Download STOCK data for {exchange} from {StockUrlTemplate} to {stockFile}");
+                Helpers.Download.DownloadPage(stockUrl, stockFile, true);
+            }
 
-            var etfFile = folder + $@"ScreenerEtf_{timeStamp.Item2}.json";
-            Logger.AddMessage($"Download ETF data from {etfUrl} to {etfFile}");
-            Helpers.Download.DownloadPage(etfUrl, etfFile, true);
+            var etfFile = folder + $@"EtfScreener_{timeStamp.Item2}.json";
+            Logger.AddMessage($"Download ETF data from {EtfUrl} to {etfFile}");
+            Helpers.Download.DownloadPage(EtfUrl, etfFile, true);
+
+            // Zip data
+            var zipFileName = Helpers.CsUtils.ZipFolder(folder);
 
             // Parse and save data to database
             Logger.AddMessage($"Parse and save files to database");
-            var itemsCount = Parse(stockFile, timeStamp.Item1);
-            itemsCount += Parse(etfFile, timeStamp.Item1);
+            var itemsCount = ParseAndSaveToDb(zipFileName);
 
-            // Zip data and remove text files
-            var zipFilename = CsUtils.ZipFolder(folder);
-            Directory.Delete(folder);
+            // Remove json files
+            Directory.Delete(folder, true);
 
-            Logger.AddMessage($"!Finished. Filename: {zipFilename} with {itemsCount} items");
+            Logger.AddMessage($"!Finished. Items: {itemsCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
-        private static int Parse(string filename, DateTime timeStamp)
+        public static int ParseAndSaveToDb(string zipFileName)
         {
-            var deserializerSettings = new JsonSerializerSettings
-            {
-                Culture = System.Globalization.CultureInfo.InvariantCulture
-            };
-
-            var stockItems = new List<cStockRow>();
-            var etfItems = new List<cEtfRow>();
-
-            if (Path.GetFileName(filename).EndsWith(".csv", StringComparison.InvariantCultureIgnoreCase))
-            {
-                string lastLine = null;
-                foreach (var line in File.ReadAllLines(filename))
-                {
-                    if (lastLine == null)
+            var itemCount = 0;
+            using (var zip = new ZipReader(zipFileName))
+                foreach (var zipItem in zip)
+                    if (zipItem.Length > 0)
                     {
-                        if (!Equals(line, "Symbol,Name,Last Sale,Net Change,% Change,Market Cap,Country,IPO Year,Volume,Sector,Industry"))
-                            throw new Exception($"Invalid Nasdaq stock screener file structure! {Path.GetFileName(filename)}");
-                        lastLine = line;
-                        continue;
+                        var content = zipItem.Content;
+
+                        if (zipItem.Created < new DateTime(2021, 2, 6)) // 3 very old files have old symbol format => don't save in database
+                            continue;
+
+                        var stockItems = new List<cStockRow>();
+                        var etfItems = new List<cEtfRow>();
+
+                        if (Path.GetExtension(zipItem.FullName) == ".json" && zipItem.FileNameWithoutExtension.IndexOf("Etf", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+                            var oEtf = JsonConvert.DeserializeObject<cEtfRoot>(content);
+                            etfItems = oEtf.data.data.rows.ToList();
+
+                            foreach (var item in etfItems)
+                                item.TimeStamp = zipItem.Created;
+                        }
+                        else if (Path.GetExtension(zipItem.FullName) == ".json" && zipItem.FileNameWithoutExtension.IndexOf("Stock", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+                            var ss = zipItem.FileNameWithoutExtension.Split('_');
+                            var exchange = ss[ss.Length - 2];
+                            stockItems = JsonConvert.DeserializeObject<cStockRow[]>(content).ToList();
+                            // stockItems = oStock.data.rows.ToList();
+
+                            foreach (var item in stockItems)
+                            {
+                                item.Exchange = exchange;
+                                item.TimeStamp = zipItem.Created;
+                            }
+                        }
+                        else
+                            throw new Exception($"NasdaqScreenerLoader.Parse. '{zipItem.FullName}' file is invalid in {zipFileName} zip file");
+
+                        if (stockItems.Count > 0)
+                        {
+                            DbUtils.ClearAndSaveToDbTable(stockItems, "Bfr_ScreenerNasdaqStock2", "symbol", "Exchange",
+                                "Name", "LastSale", "Volume", "netChange", "Change", "MarketCap", "Country", "ipoYear",
+                                "Sector", "Industry", "TimeStamp");
+                            DbUtils.RunProcedure("pUpdateScreenerNasdaqStock2");
+                        }
+
+                        if (etfItems.Count > 0)
+                        {
+                            DbUtils.ClearAndSaveToDbTable(etfItems, "Bfr_ScreenerNasdaqEtf", "symbol", "Name",
+                                "LastSale", "netChange", "Change", "TimeStamp");
+                            DbUtils.RunProcedure("pUpdateScreenerNasdaqEtf");
+                        }
+                        itemCount += stockItems.Count + etfItems.Count;
+
                     }
-                    if (Equals(lastLine, line)) continue;
 
-                    stockItems.Add(new cStockRow(line));
-                    lastLine = line;
-                }
-            }
-
-            else if (Path.GetFileNameWithoutExtension(filename)
-                         .IndexOf("stock", StringComparison.InvariantCultureIgnoreCase) != -1 &&
-                     Path.GetExtension(filename) == ".json")
-            {
-                var oStock = JsonConvert.DeserializeObject<cStockRoot>(File.ReadAllText(filename), deserializerSettings);
-                stockItems = oStock.data.rows.ToList();
-            }
-
-            else if (Path.GetFileNameWithoutExtension(filename)
-                         .IndexOf("etf", StringComparison.InvariantCultureIgnoreCase) != -1 &&
-                     Path.GetExtension(filename) == ".json")
-            {
-                var oEtf = JsonConvert.DeserializeObject<cEtfRoot>(File.ReadAllText(filename), deserializerSettings);
-                etfItems = oEtf.data.data.rows.ToList();
-            }
-            else
-                throw new Exception($"Nasdaq.ScreenerLoader.Parse. '{Path.GetFileName(filename)}' file is invalid");
-
-            if (stockItems.Count > 0)
-            {
-                foreach (var item in stockItems)
-                    item.TimeStamp = timeStamp;
-
-                DbUtils.ClearAndSaveToDbTable(stockItems, "Bfr_ScreenerNasdaqStock", "symbol", "Name", "LastSale",
-                    "Volume", "netChange", "Change", "MarketCap", "Country", "ipoYear", "Sector", "Industry", "TimeStamp");
-                DbUtils.RunProcedure("pUpdateScreenerNasdaqStock", new Dictionary<string, object> { { "@Date", timeStamp } });
-            }
-            if (etfItems.Count > 0)
-            {
-                foreach (var item in etfItems)
-                    item.TimeStamp = timeStamp;
-
-                DbUtils.ClearAndSaveToDbTable(etfItems, "Bfr_ScreenerNasdaqEtf", "symbol", "Name",
-                    "LastSale", "netChange", "Change", "TimeStamp");
-                DbUtils.RunProcedure("pUpdateScreenerNasdaqEtf", new Dictionary<string, object> { { "@Date", timeStamp } });
-            }
-
-            return stockItems.Count + etfItems.Count;
+            return itemCount;
         }
 
         #region =========  Json classes  ============

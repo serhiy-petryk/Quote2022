@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Data.Helpers;
 
 namespace Data.Actions.Wikipedia
@@ -32,7 +26,7 @@ namespace Data.Actions.Wikipedia
 
         public static void Start()
         {
-            Logger.AddMessage($"WikipediaIndexLoader started");
+            Logger.AddMessage($"Started");
             var a1 = System.Reflection.MethodBase.GetCurrentMethod();
 
             StackFrame sf = new StackFrame(1);
@@ -55,7 +49,7 @@ namespace Data.Actions.Wikipedia
             File.Delete(jsonFileName);*/
 
             // logEvent($"!WikipediaIndexLoader finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
-            Logger.AddMessage("XXXXXXXXXX");
+            Logger.AddMessage("!Finished");
         }
 
 

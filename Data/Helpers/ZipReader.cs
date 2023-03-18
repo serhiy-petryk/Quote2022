@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace Data.Helpers
 {
@@ -14,7 +15,7 @@ namespace Data.Helpers
 
         public IEnumerator<ZipReaderItem> GetEnumerator()
         {
-            foreach (var entry in _zip.Entries)
+            foreach (var entry in _zip.Entries.OrderBy(a => a.LastWriteTime))
             {
                 using (var entryStream = entry.Open())
                 using (var reader = new StreamReader(entryStream, System.Text.Encoding.UTF8, true))

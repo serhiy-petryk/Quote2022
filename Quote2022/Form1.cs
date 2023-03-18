@@ -887,6 +887,9 @@ namespace Quote2022
 
                 var i = Data.Actions.StockAnaysis.StockAnalysisIPOs.ParseAndSaveToDb(file);
             }*/
+
+            var filename = @"E:\Quote\WebData\Screener\Nasdaq\EtfScreenersBefore_20230317.zip";
+            var x = Data.Actions.Nasdaq.NasdaqScreenerLoader.ParseAndSaveToDb(filename);
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Data.Actions.Yahoo
 {
     public static class YahooIndicesLoader
     {
-        private const string urlTemplate = "https://query1.finance.yahoo.com/v7/finance/download/{2}?period1={0}&period2={1}&interval=1d&events=history&includeAdjustedClose=true";
-        private static string[] symbols = new[] { "^DJI", "^GSPC" };
+        private const string UrlTemplate = "https://query1.finance.yahoo.com/v7/finance/download/{2}?period1={0}&period2={1}&interval=1d&events=history&includeAdjustedClose=true";
+        private static readonly string[] Symbols = new[] { "^DJI", "^GSPC" };
 
         public static void Start()
         {
@@ -39,10 +39,10 @@ namespace Data.Actions.Yahoo
             var folder = $@"E:\Quote\WebData\Daily\Yahoo\Indices\YahooIndices_{timeStamp.Item2}\";
 
             // Download data
-            foreach (var symbol in symbols)
+            foreach (var symbol in Symbols)
             {
                 Logger.AddMessage($"Download data for {symbol}");
-                var url = string.Format(urlTemplate, from, to, symbol);
+                var url = string.Format(UrlTemplate, from, to, symbol);
                 var filename = $"{folder}{symbol}_{timeStamp.Item2}.csv";
                 Helpers.Download.DownloadPage(url, filename);
             }
@@ -70,7 +70,7 @@ namespace Data.Actions.Yahoo
             // remove text files
             Directory.Delete(folder, true);
 
-            Logger.AddMessage($"!Finished. Last trade date: {data.Max(a=>a.Date):yyyy-MM-dd}");
+            Logger.AddMessage($"!Finished. Last trade date: {data.Max(a => a.Date):yyyy-MM-dd}");
 
             long GetYahooTime(DateTime dt) => Convert.ToInt64((dt - new DateTime(1970, 1, 1)).TotalSeconds + 18000);
         }

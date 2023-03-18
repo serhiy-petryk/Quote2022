@@ -880,16 +880,13 @@ namespace Quote2022
 
             // Actions.Github.NasdaqScreener(ShowStatus);
 
-            /*var folder = @"E:\Quote\WebData\Splits\StockAnalysis\IPOs";
+            var folder = @"E:\Quote\WebData\Symbols\Eoddata";
             var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a);
             foreach (var file in files)
             {
-
-                var i = Data.Actions.StockAnaysis.StockAnalysisIPOs.ParseAndSaveToDb(file);
-            }*/
-
-            var filename = @"E:\Quote\WebData\Screener\Nasdaq\EtfScreenersBefore_20230317.zip";
-            var x = Data.Actions.Nasdaq.NasdaqScreenerLoader.ParseAndSaveToDb(filename);
+                var i = Data.Actions.Eoddata.EoddataSymbolsLoader.ParseAndSaveToDb(file);
+                Debug.Print($"{i:N0}\t{file}");
+            }
         }
     }
 }

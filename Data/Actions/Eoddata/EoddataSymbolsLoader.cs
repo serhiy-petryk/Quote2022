@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Data.Helpers;
 using Data.Models;
 
@@ -33,51 +34,50 @@ namespace Data.Actions.Eoddata
                 Helpers.Download.DownloadPage(url, filename, false, cookieContainer);
             }
 
+            // Zip data
+            var zipFileName = CsUtils.ZipFolder(folder);
+
             // Parse and save data to database
-            var itemsCount = 0;
-            foreach (var filename in Directory.GetFiles(folder))
-            {
-                Logger.AddMessage($"'{Path.GetFileName(filename)}' file is parsing");
-                itemsCount += Parse(filename);
-            }
+            Logger.AddMessage($"'{zipFileName}' file is parsing");
+            var itemCount = ParseAndSaveToDb(zipFileName);
+
+            Logger.AddMessage($"Run sql procedure: pUpdateSymbolsXref");
             Helpers.DbUtils.RunProcedure("pUpdateSymbolsXref");
 
+            // Zip data
+            Directory.Delete(folder, true);
 
-            // Zip data and remove text files
-            var zipFilename = CsUtils.ZipFolder(folder);
-            Directory.Delete(folder);
-
-            Logger.AddMessage($"!Finished. Filename: {zipFilename} with {itemsCount} items");
+            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
-        private static int Parse(string filename)
+        public static int ParseAndSaveToDb(string zipFileName)
         {
-            var items = new List<SymbolsEoddata>();
-            var ss = Path.GetFileNameWithoutExtension(filename).Split('_');
-            var exchange = ss[0].Trim().ToUpper();
-            var date = File.GetLastWriteTime(filename);
-            var lines = File.ReadAllLines(filename);
-            var firstLine = true;
+            var itemCount = 0;
+            using (var zip = new ZipReader(zipFileName))
+                foreach (var zipItem in zip)
+                    if (zipItem.Length > 0)
+                    {
+                        var lines = zipItem.AllLines.ToArray();
 
-            // Add data to array (items)
-            foreach (var line in lines)
-            {
-                if (firstLine)
-                {
-                    if (!string.Equals(line, "Symbol\tDescription"))
-                        throw new Exception($"SymbolsEoddata_Parse error! Please, check the first line of {filename} file");
-                    firstLine = false;
-                }
-                else if (!string.IsNullOrEmpty(line))
-                    items.Add(new SymbolsEoddata(exchange, date, line.Split('\t')));
-            }
+                        var ss = zipItem.FileNameWithoutExtension.Split('_');
+                        var exchange = ss[0].Trim().ToUpper();
+                        var date = zipItem.Created;
 
-            // Save data to buffer table of data server
-            Helpers.DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name", "Created");
-            Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata", new Dictionary<string, object> { { "@Exchange", exchange }, { "@Date", date } });
+                        if (lines.Length == 0 || !string.Equals(lines[0], "Symbol\tDescription"))
+                            throw new Exception($"SymbolsEoddata_Parse error! Please, check the first line of {zipItem.FileNameWithoutExtension} file in {zipFileName}");
+                        
+                        var items = lines.Skip(1).Select(line => new SymbolsEoddata(exchange, date, line.Split('\t')))
+                            .ToArray();
 
-            return items.Count;
+                        itemCount += items.Length;
+
+                        // Save data to buffer table of data server
+                        Helpers.DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name",
+                            "TimeStamp");
+                        Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata");
+                    }
+
+            return itemCount;
         }
-
     }
 }

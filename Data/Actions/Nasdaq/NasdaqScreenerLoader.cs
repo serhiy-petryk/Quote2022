@@ -10,9 +10,14 @@ namespace Data.Actions.Nasdaq
 {
     public class NasdaqScreenerLoader
     {
+        // Exchanges: 'AMEX','BAT','DUAL LISTED','NASDAQ','NASDAQ-CM','NASDAQ-GM','NASDAQ-GS','NYSE','PSE'
+        // 'NASDAQ-CM','NASDAQ-GM','NASDAQ-GS' are part of 'NASDAQ'
+        // 'PSE' is empty
+        // private static readonly string[] Exchanges = new string[] { "AMEX", "NASDAQ", "NYSE", "BAT", "DUAL LISTED" };
+        private static readonly string[] Exchanges = new string[] { "AMEX", "NASDAQ", "NYSE", "BAT" };
+
         private static readonly string StockUrlTemplate = @"https://api.nasdaq.com/api/screener/stocks?tableonly=true&exchange={0}&download=true";
         private static readonly string EtfUrl = @"https://api.nasdaq.com/api/screener/etf?tableonly=true&download=true";
-        private static readonly string[] Exchanges = new string[] { "AMEX", "NASDAQ", "NYSE" };
 
         public static void Start()
         {

@@ -131,7 +131,9 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                     return;
                 }
 
-                var symbol = Path.GetFileNameWithoutExtension(file).Split('_')[0];
+                var ss = Path.GetFileNameWithoutExtension(file).Split('_');
+                var symbol = char.IsDigit(ss[ss.Length - 1][0]) ? ss[ss.Length - 2] : ss[ss.Length - 1];
+
                 var i = symbol.IndexOf('.');
                 if (i != -1)
                 {

@@ -95,6 +95,7 @@
     <Compile Include="Models\ActionStockAnalysis.cs" />
     <Compile Include="Models\DayEoddata.cs" />
     <Compile Include="Models\DayYahoo.cs" />
+    <Compile Include="Models\Indices.cs" />
     <Compile Include="Models\LoaderItem.cs" />
     <Compile Include="Models\NotifyPropertyChangedAbstract.cs" />
     <Compile Include="Models\ScreenerTradingView.cs" />

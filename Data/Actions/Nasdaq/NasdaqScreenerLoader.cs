@@ -79,8 +79,13 @@ namespace Data.Actions.Nasdaq
                         {
                             var ss = zipItem.FileNameWithoutExtension.Split('_');
                             var exchange = ss[ss.Length - 2];
-                            stockItems = JsonConvert.DeserializeObject<cStockRow[]>(content).ToList();
-                            // stockItems = oStock.data.rows.ToList();
+                            if (content.StartsWith("[")) // Github version
+                                stockItems = JsonConvert.DeserializeObject<cStockRow[]>(content).ToList();
+                            else
+                            {
+                                var oo = JsonConvert.DeserializeObject<cStockRoot>(content);
+                                stockItems.AddRange(oo.data.rows);
+                            }
 
                             foreach (var item in stockItems)
                             {

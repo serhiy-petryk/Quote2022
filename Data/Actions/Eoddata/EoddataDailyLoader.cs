@@ -87,6 +87,9 @@ namespace Data.Actions.Eoddata
                     File.Move(newZipFilename, destinationZipFileName);
                 }
 
+                // Remove temp folder
+                Directory.Delete(tempFolder, true);
+
                 Logger.AddMessage($"!Downloaded {missingFiles.Count} files");
             }
 

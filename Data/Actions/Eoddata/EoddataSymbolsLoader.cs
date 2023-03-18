@@ -9,15 +9,16 @@ namespace Data.Actions.Eoddata
 {
     public class EoddataSymbolsLoader
     {
-        private static string[] _exchanges = new string[] {"AMEX", "NASDAQ", "NYSE", "OTCBB"};
-        private static string _urlTemplate = @"https://www.eoddata.com/Data/symbollist.aspx?e={0}";
+        private static readonly string[] Exchanges = new string[] {"AMEX", "NASDAQ", "NYSE", "OTCBB"};
+        private const string UrlTemplate = @"https://www.eoddata.com/Data/symbollist.aspx?e={0}";
+        private const  string FolderTemplate = @"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{0}\";
 
         public static void Start()
         {
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var folder = $@"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{timeStamp.Item2}\";
+            var folder = string.Format(FolderTemplate, timeStamp.Item2);
 
             // Prepare cookies
             var urlForCookie = "https://www.eoddata.com/";
@@ -26,10 +27,10 @@ namespace Data.Actions.Eoddata
                 throw new Exception("Check login to www.eoddata.com in Chrome browser");
 
             // Download data
-            foreach (var exchange in _exchanges)
+            foreach (var exchange in Exchanges)
             {
                 Logger.AddMessage($"Download Symbols data for {exchange}");
-                var url = string.Format(_urlTemplate, exchange);
+                var url = string.Format(UrlTemplate, exchange);
                 var filename = $"{folder}{exchange}_{timeStamp.Item2}.txt";
                 Helpers.Download.DownloadPage(url, filename, false, cookieContainer);
             }

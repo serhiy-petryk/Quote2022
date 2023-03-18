@@ -54,6 +54,8 @@ namespace Data.Actions.TradingView
                                 "Recommend", "TimeStamp");
                             DbUtils.RunProcedure("pUpdateScreenerTradingView");
                         }
+
+                        itemCount += items.Length;
                     }
 
             return itemCount;

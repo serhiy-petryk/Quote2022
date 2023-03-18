@@ -27,7 +27,7 @@ namespace Data.Models
             new LoaderItem {Name = "StockAnalysis Corporate Actions", Action = Actions.StockAnaysis.StockAnalysisActions.Start, Checked = false},
             new LoaderItem {Name = "StockAnalysis IPOs", Action = Actions.StockAnaysis.StockAnalysisIPOs.Start, Checked=false},
             new LoaderItem {Name = "Refresh Split data", Action = Models.SplitModel.RefreshSplitData, Checked = false},
-            new LoaderItem {Name = "Index components from Wikipedia", Action = Actions.Wikipedia.WikipediaIndexLoader.Start},
+            new LoaderItem {Name = "Index components from Wikipedia", Action = Actions.Wikipedia.WikipediaIndexLoader.Start, Checked = false},
         };
 
         public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);

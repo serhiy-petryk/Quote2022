@@ -107,7 +107,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
             _apiKeys = File.ReadAllLines(ApiKeysFileName).Where(a => !string.IsNullOrEmpty(a) && !a.StartsWith("#"))
                 .Select(a => new ApiKey() {Key = a}).ToArray();
 
-            SetUrlsAndFilenamesTwoYears(symbols);
+            SetUrlsAndFilenamesLastMonth(symbols);
 
             if (MessageBox.Show($"Буде {_urlsAndFilenames.Count} завантажень для {symbols.Length} символів у папку {DataFolder}",
                     "", MessageBoxButtons.OKCancel) == DialogResult.Cancel)

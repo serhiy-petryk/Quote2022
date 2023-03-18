@@ -880,13 +880,23 @@ namespace Quote2022
 
             // Actions.Github.NasdaqScreener(ShowStatus);
 
-            var folder = @"E:\Quote\WebData\Symbols\Eoddata";
+            /*var folder = @"E:\Quote\WebData\Symbols\Eoddata";
             var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a);
             foreach (var file in files)
             {
                 var i = Data.Actions.Eoddata.EoddataSymbolsLoader.ParseAndSaveToDb(file);
                 Debug.Print($"{i:N0}\t{file}");
+            }*/
+            var folder = @"E:\Quote\WebData\Indices\Wikipedia\IndexComponents";
+            var files = Directory.GetFiles(folder, "*.zip").OrderBy(a => File.GetCreationTime(a)).ToArray();
+            foreach (var file in files)
+            {
+                Data.Actions.Wikipedia.WikipediaIndexLoader.ParseAndSaveToDb(file);
             }
+            /*var file = @"E:\Quote\WebData\Indices\Wikipedia\IndexComponents\WebArchive.Wikipedia.Indices.zip";
+            File.SetCreationTime(file, new DateTime(2023, 3, 1));
+            File.SetLastWriteTime(file, new DateTime(2023, 3, 1));
+            Data.Actions.Wikipedia.WikipediaIndexLoader.ParseAndSaveToDb(file);*/
         }
     }
 }

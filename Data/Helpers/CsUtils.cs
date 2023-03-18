@@ -15,7 +15,10 @@ namespace Data.Helpers
         /// <returns>Zip filename</returns>
         public static string ZipFolder(string folderName)
         {
-            var zipFn = Path.GetDirectoryName(folderName) + @"\" + Path.GetFileNameWithoutExtension(folderName) + ".zip";
+            var zipFn = (folderName.EndsWith("\\") || folderName.EndsWith("/")
+                ? folderName.Substring(0, folderName.Length - 1)
+                : folderName) + ".zip";
+            // var zipFn = Path.GetDirectoryName(folderName) + @"\" + Path.GetFileNameWithoutExtension(folderName) + ".zip";
             if (File.Exists(zipFn))
                 File.Delete(zipFn);
 

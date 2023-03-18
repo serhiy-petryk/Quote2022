@@ -129,18 +129,18 @@ namespace Data.Actions.Eoddata
             Logger.AddMessage($"!Finished. Loaded data from {newFileCount} files into database. Total {itemCount:N0} quotes");
         }
 
-        private static int Parse(string filename)
+        private static int Parse(string zipFileName)
         {
-            var exchange = Path.GetFileNameWithoutExtension(filename).Split('_')[0].Trim().ToUpper();
+            var exchange = Path.GetFileNameWithoutExtension(zipFileName).Split('_')[0].Trim().ToUpper();
             var quotes = new List<DayEoddata>();
             string[] lines = null;
-            using (var _zip = new ZipReader(filename))
+            using (var _zip = new ZipReader(zipFileName))
             {
                 var fileContents = _zip.Select(a => a.AllLines.ToArray()).ToArray();
                 if (fileContents.Length == 1)
                     lines = fileContents[0];
                 else
-                    throw new Exception($"Error in zip file structure: {filename}");
+                    throw new Exception($"Error in zip file structure: {zipFileName}");
             }
 
             var itemCount = 0;

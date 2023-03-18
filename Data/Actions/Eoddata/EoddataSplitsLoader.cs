@@ -26,7 +26,7 @@ namespace Data.Actions.Eoddata
             var items = new List<SplitModel>();
             var zipFileName = ParseAndSaveToDb(htmlFileName, items, timeStamp.Item1);
 
-            Logger.AddMessage($"!Finished. Filename: {zipFileName} with {items.Count} items");
+            Logger.AddMessage($"!Finished. Items: {items.Count:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
         private static string ParseAndSaveToDb(string htmlFileName, List<SplitModel> items, DateTime maxDate)

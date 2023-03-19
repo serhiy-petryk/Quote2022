@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -887,16 +888,23 @@ namespace Quote2022
                 var i = Data.Actions.Eoddata.EoddataSymbolsLoader.ParseAndSaveToDb(file);
                 Debug.Print($"{i:N0}\t{file}");
             }*/
-            var folder = @"E:\Quote\WebData\Indices\Wikipedia\IndexComponents";
+            /*var folder = @"E:\Quote\WebData\Minute\Yahoo\Data";
             var files = Directory.GetFiles(folder, "*.zip").OrderBy(a => File.GetCreationTime(a)).ToArray();
-            foreach (var file in files)
+            Actions.MinuteYahoo_SaveLogToDb.Start(files, ShowStatus);*/
+
+            /*var folder = @"E:\Quote\WebData\Indices\Russell\Ru3000";
+            foreach (var f in Directory.GetFiles(folder))
             {
-                Data.Actions.Wikipedia.WikipediaIndexLoader.ParseAndSaveToDb(file);
+                var ss = Path.GetFileNameWithoutExtension(f).Split('_');
+                var t = ss[ss.Length - 1].Length == 8 ? ss[ss.Length - 1] : ss[ss.Length - 2];
+                var timeStamp = DateTime.ParseExact(t, "yyyyMMdd", CultureInfo.InvariantCulture);
+                File.SetCreationTime(f, timeStamp);
+                File.SetLastWriteTime(f, timeStamp);
             }
-            /*var file = @"E:\Quote\WebData\Indices\Wikipedia\IndexComponents\WebArchive.Wikipedia.Indices.zip";
-            File.SetCreationTime(file, new DateTime(2023, 3, 1));
-            File.SetLastWriteTime(file, new DateTime(2023, 3, 1));
-            Data.Actions.Wikipedia.WikipediaIndexLoader.ParseAndSaveToDb(file);*/
+            return;*/
+
+            var file = @"E:\Quote\WebData\Indices\Russell\Ru3000.zip";
+            var cnt = Data.Actions.Russell.RussellIndexLoader.Parse(file);
         }
     }
 }

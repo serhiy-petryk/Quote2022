@@ -40,11 +40,12 @@ namespace Quote2022.Actions
 
             _isBusy = true;
 
-            var log = new List<LogEntry>();
             var cnt = 0;
             foreach (var zipFile in zipFiles)
             {
                 showStatusAction($"MinuteYahoo_SaveLog is working for {Path.GetFileName(zipFile)}");
+
+                var log = new List<LogEntry>();
 
                 // delete old log in database
                 using (var conn = new SqlConnection(Settings.DbConnectionString))
@@ -52,7 +53,7 @@ namespace Quote2022.Actions
                 {
                     conn.Open();
                     cmd.CommandText =
-                        $"DELETE FileLogIntradayYahoo WHERE [file]='{Path.GetFileNameWithoutExtension(zipFile)}'";
+                        $"DELETE dbQuote2023..FileLogMinuteYahoo WHERE [file]='{Path.GetFileNameWithoutExtension(zipFile)}'";
                     cmd.ExecuteNonQuery();
                 }
 
@@ -109,7 +110,7 @@ namespace Quote2022.Actions
 
                 showStatusAction($"MinuteYahoo_SaveLogToDb. Save data to database ...");
                 // Save items to database table
-                SaveToDb.SaveToDbTable(log, "FileLogIntradayYahoo", "File", "Symbol", "Date", "MinTime", "MaxTime",
+                SaveToDb.SaveToDbTable(log, "dbQuote2023..FileLogMinuteYahoo", "File", "Symbol", "Date", "MinTime", "MaxTime",
                     "Count", "Open", "High", "Low", "Close", "Volume");
 
                 _isBusy = false;

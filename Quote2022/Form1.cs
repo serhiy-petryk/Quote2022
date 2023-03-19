@@ -906,6 +906,14 @@ namespace Quote2022
             var file = @"E:\Quote\WebData\Indices\Russell\Ru3000.zip";
             var cnt = Data.Actions.Russell.RussellIndexLoader.Parse(file);
         }
+
+        private async void btnRussellIndicesParseZipFile_Click(object sender, EventArgs e)
+        {
+            btnRussellIndicesParseZipFile.Enabled = false;
+            if (CsUtils.OpenZipFileDialog(Settings.IndicesRussellFolder) is string zipFileName && !string.IsNullOrEmpty(zipFileName))
+                await Task.Factory.StartNew(() => Data.Actions.Russell.RussellIndexLoader.Parse(zipFileName));
+            btnRussellIndicesParseZipFile.Enabled = true;
+        }
     }
 }
 

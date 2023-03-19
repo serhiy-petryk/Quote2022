@@ -16,8 +16,8 @@ namespace Data.Actions.Nasdaq
         // private static readonly string[] Exchanges = new string[] { "AMEX", "NASDAQ", "NYSE", "BAT", "DUAL LISTED" };
         private static readonly string[] Exchanges = new string[] { "AMEX", "NASDAQ", "NYSE", "BAT" };
 
-        private static readonly string StockUrlTemplate = @"https://api.nasdaq.com/api/screener/stocks?tableonly=true&exchange={0}&download=true";
-        private static readonly string EtfUrl = @"https://api.nasdaq.com/api/screener/etf?tableonly=true&download=true";
+        private const string StockUrlTemplate = @"https://api.nasdaq.com/api/screener/stocks?tableonly=true&exchange={0}&download=true";
+        private const string EtfUrl = @"https://api.nasdaq.com/api/screener/etf?tableonly=true&download=true";
 
         public static void Start()
         {

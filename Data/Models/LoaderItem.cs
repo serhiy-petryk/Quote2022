@@ -28,7 +28,7 @@ namespace Data.Models
             new LoaderItem {Name = "StockAnalysis IPOs", Action = Actions.StockAnaysis.StockAnalysisIPOs.Start, Checked=false},
             new LoaderItem {Name = "Refresh Split data", Action = Models.SplitModel.RefreshSplitData, Checked = false},
             new LoaderItem {Name = "Index components from Wikipedia", Action = Actions.Wikipedia.WikipediaIndexLoader.Start, Checked = false},
-            new LoaderItem {Name = "Yahoo Minute Quotes", Action = Actions.Yahoo.YahooMinuteQuotes.Start},
+            new LoaderItem {Name = "Yahoo Minute Quotes", Action = Actions.Yahoo.YahooMinuteQuotesLoader.Start},
         };
 
         public static Image GetAnimatedImage() => GetImage(ItemStatus.Working);

@@ -71,6 +71,8 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                 cmd.ExecuteNonQuery();
             }
 
+            var ss1 = Path.GetFileNameWithoutExtension(folder).Split('_');
+            var folderTimeStamp = ss1[ss1.Length-1];
             var errorCount = 0;
             var errorLog = new List<string>();
             var log = new ConcurrentBag<LogEntry>();
@@ -88,7 +90,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
             SaveToDb.SaveToDbTable(blankFiles, "dbQuote2023..FileLogMinuteAlphaVantage_BlankFiles", "File", "FileCreated", "Symbol");
 
             // var errorFileName = Directory.GetParent(folder) + $"\\ErrorLog_{Path.GetFileName(folder)}_Y{year}M{month}.txt";
-            var errorFileName = folder + $"\\Logs\\ErrorLog.txt";
+            var errorFileName = folder + $"\\Logs\\ErrorLog_{folderTimeStamp}.txt";
             if (!Directory.Exists(Path.GetDirectoryName(errorFileName)))
                 Directory.CreateDirectory(Path.GetDirectoryName(errorFileName));
             if (File.Exists(errorFileName))

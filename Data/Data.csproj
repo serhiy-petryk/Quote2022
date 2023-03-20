@@ -81,7 +81,7 @@
     <Compile Include="Actions\TradingView\TvScreenerLoader.cs" />
     <Compile Include="Actions\Wikipedia\WikipediaIndexLoader.cs" />
     <Compile Include="Actions\Yahoo\YahooIndicesLoader.cs" />
-    <Compile Include="Actions\Yahoo\YahooMinuteQuotes.cs" />
+    <Compile Include="Actions\Yahoo\YahooMinuteQuotesLoader.cs" />
     <Compile Include="Actions\Yahoo\YahooProfileLoader.cs" />
     <Compile Include="Helpers\CookiesGoogle.cs" />
     <Compile Include="Helpers\CsUtils.cs" />

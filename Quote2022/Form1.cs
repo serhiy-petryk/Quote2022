@@ -292,7 +292,7 @@ namespace Quote2022
 
         private void btnMinuteYahooLog_Click(object sender, EventArgs e)
         {
-            if (CsUtils.OpenFileDialogGeneric(Settings.MinuteYahooDataFolder, @"YahooMinute_202?????.zip file (*.zip)|YahooMinute_202?????.zip") is string fn && !string.IsNullOrEmpty(fn))
+            if (CsUtils.OpenZipFileDialog(Settings.MinuteYahooDataFolder) is string fn && !string.IsNullOrEmpty(fn))
                 Check.MinuteYahoo_SaveLog(new [] {fn}, ShowStatus);
         }
 
@@ -581,7 +581,7 @@ namespace Quote2022
         {
             var sw = new Stopwatch();
             sw.Start();
-            if (CsUtils.OpenFileDialogMultiselect(Settings.MinuteYahooDataFolder, @"YahooMinute_202*.zip file (*.zip)|YahooMinute_202*.zip") is string[] files && files.Length > 0)
+            if (CsUtils.OpenFileDialogMultiselect(Settings.MinuteYahooDataFolder, @"zip files (*.zip)|*.zip") is string[] files && files.Length > 0)
                 Check.MinuteYahoo_ErrorCheck(files, ShowStatus);
             sw.Stop();
             Debug.Print($"btnMinuteYahooErrorCheck_Click: {sw.ElapsedMilliseconds:N0} millisecs");
@@ -618,7 +618,7 @@ namespace Quote2022
 
         private void btnMinuteYahooSaveLogToDb_Click(object sender, EventArgs e)
         {
-            if (CsUtils.OpenFileDialogMultiselect(Settings.MinuteYahooDataFolder, @"YahooMinute_202*.zip file (*.zip)|YahooMinute_202*.zip") is string[] files && files.Length > 0)
+            if (CsUtils.OpenFileDialogMultiselect(Settings.MinuteYahooDataFolder, @"zip files (*.zip)|*.zip") is string[] files && files.Length > 0)
                 Actions.MinuteYahoo_SaveLogToDb.Start(files, ShowStatus);
         }
 

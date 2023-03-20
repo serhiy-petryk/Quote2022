@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Data.Helpers;
 
 namespace Data.Actions.Yahoo
 {
-    public static class YahooMinuteQuotes
+    public static class YahooMinuteQuotesLoader
     {
         private const string UrlTemplate = @"https://query2.finance.yahoo.com/v8/finance/chart/{0}?period1={1}&period2={2}&interval=1m&events=history";
 

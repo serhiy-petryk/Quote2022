@@ -60,7 +60,8 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                     continue;
 
                 var fileCreated = File.GetLastWriteTime(file);
-                var symbol = fileShortName.Split('_')[0];
+                var ss = fileShortName.Split('_');
+                var symbol = char.IsDigit(ss[ss.Length - 1][0]) ? ss[ss.Length - 2] : ss[ss.Length - 1];
                 var i = symbol.IndexOf('.');
                 if (i != -1)
                 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
+using System.Threading;
 using Data.Helpers;
 
 namespace Data.Actions.Yahoo
@@ -42,6 +43,7 @@ namespace Data.Actions.Yahoo
                     var error = Download.DownloadPage(url, filename);
                     if (error!=null)
                         downloadErrors.Add($"{symbol}\t{error}");
+                    Thread.Sleep(300);
                 }
             }
 

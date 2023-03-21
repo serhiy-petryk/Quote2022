@@ -12,6 +12,7 @@ namespace Quote2022
         [STAThread]
         static void Main()
         {
+            // Test.ZipTest.Start();
             /*ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = int.MaxValue;

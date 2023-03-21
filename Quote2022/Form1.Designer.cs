@@ -39,6 +39,7 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.btnMinuteAlphaVantageSaveLogToDb = new System.Windows.Forms.Button();
             this.btnRussellIndicesParseZipFile = new System.Windows.Forms.Button();
             this.btnTemp = new System.Windows.Forms.Button();
             this.btnRunMultiItemsLoader = new System.Windows.Forms.Button();
@@ -59,7 +60,7 @@ namespace Quote2022
             this.btnMinuteAlphaVantageSplitData = new System.Windows.Forms.Button();
             this.btnMinuteAlphaVantageDownloadStop = new System.Windows.Forms.Button();
             this.btnIntradayAlphaVantageRefreshProxyList = new System.Windows.Forms.Button();
-            this.btnMinuteAlphaVantageSaveLogToDb = new System.Windows.Forms.Button();
+            this.xxbtnMinuteAlphaVantageSaveLogToDb = new System.Windows.Forms.Button();
             this.btnMinuteAlphaVantageDownload = new System.Windows.Forms.Button();
             this.btnDayYahooDownload = new System.Windows.Forms.Button();
             this.btnSymbolsYahooLookupParse = new System.Windows.Forms.Button();
@@ -201,6 +202,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnMinuteAlphaVantageSaveLogToDb);
             this.tpLoaderNew.Controls.Add(this.btnRussellIndicesParseZipFile);
             this.tpLoaderNew.Controls.Add(this.btnTemp);
             this.tpLoaderNew.Controls.Add(this.btnRunMultiItemsLoader);
@@ -213,6 +215,16 @@ namespace Quote2022
             this.tpLoaderNew.TabIndex = 6;
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
+            // 
+            // btnMinuteAlphaVantageSaveLogToDb
+            // 
+            this.btnMinuteAlphaVantageSaveLogToDb.Location = new System.Drawing.Point(709, 18);
+            this.btnMinuteAlphaVantageSaveLogToDb.Name = "btnMinuteAlphaVantageSaveLogToDb";
+            this.btnMinuteAlphaVantageSaveLogToDb.Size = new System.Drawing.Size(195, 23);
+            this.btnMinuteAlphaVantageSaveLogToDb.TabIndex = 55;
+            this.btnMinuteAlphaVantageSaveLogToDb.Text = "MinuteAlphaVantage Save Log to DB";
+            this.btnMinuteAlphaVantageSaveLogToDb.UseVisualStyleBackColor = true;
+            this.btnMinuteAlphaVantageSaveLogToDb.Click += new System.EventHandler(this.btnMinuteAlphaVantageSaveLogToDb_Click);
             // 
             // btnRussellIndicesParseZipFile
             // 
@@ -355,7 +367,7 @@ namespace Quote2022
             this.tabLoader.Controls.Add(this.btnMinuteAlphaVantageSplitData);
             this.tabLoader.Controls.Add(this.btnMinuteAlphaVantageDownloadStop);
             this.tabLoader.Controls.Add(this.btnIntradayAlphaVantageRefreshProxyList);
-            this.tabLoader.Controls.Add(this.btnMinuteAlphaVantageSaveLogToDb);
+            this.tabLoader.Controls.Add(this.xxbtnMinuteAlphaVantageSaveLogToDb);
             this.tabLoader.Controls.Add(this.btnMinuteAlphaVantageDownload);
             this.tabLoader.Controls.Add(this.btnDayYahooDownload);
             this.tabLoader.Controls.Add(this.btnSymbolsYahooLookupParse);
@@ -473,15 +485,16 @@ namespace Quote2022
             this.btnIntradayAlphaVantageRefreshProxyList.UseVisualStyleBackColor = true;
             this.btnIntradayAlphaVantageRefreshProxyList.Click += new System.EventHandler(this.btnIntradayAlphaVantageRefreshProxyList_Click);
             // 
-            // btnMinuteAlphaVantageSaveLogToDb
+            // xxbtnMinuteAlphaVantageSaveLogToDb
             // 
-            this.btnMinuteAlphaVantageSaveLogToDb.Location = new System.Drawing.Point(3, 252);
-            this.btnMinuteAlphaVantageSaveLogToDb.Name = "btnMinuteAlphaVantageSaveLogToDb";
-            this.btnMinuteAlphaVantageSaveLogToDb.Size = new System.Drawing.Size(195, 23);
-            this.btnMinuteAlphaVantageSaveLogToDb.TabIndex = 50;
-            this.btnMinuteAlphaVantageSaveLogToDb.Text = "MinuteAlphaVantage Save Log to DB";
-            this.btnMinuteAlphaVantageSaveLogToDb.UseVisualStyleBackColor = true;
-            this.btnMinuteAlphaVantageSaveLogToDb.Click += new System.EventHandler(this.btnMinuteAlphaVantageSaveLogToDb_Click);
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Enabled = false;
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Location = new System.Drawing.Point(3, 252);
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Name = "xxbtnMinuteAlphaVantageSaveLogToDb";
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Size = new System.Drawing.Size(195, 23);
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.TabIndex = 50;
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Text = "MinuteAlphaVantage Save Log to DB";
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.UseVisualStyleBackColor = true;
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Click += new System.EventHandler(this.xxbtnMinuteAlphaVantageSaveLogToDb_Click);
             // 
             // btnMinuteAlphaVantageDownload
             // 
@@ -1600,7 +1613,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnMinuteYahooErrorCheck;
         private System.Windows.Forms.Button btnIntradayYahooQuotesSaveToDB;
         private System.Windows.Forms.Button btnMinuteAlphaVantageDownload;
-        private System.Windows.Forms.Button btnMinuteAlphaVantageSaveLogToDb;
+        private System.Windows.Forms.Button xxbtnMinuteAlphaVantageSaveLogToDb;
         private System.Windows.Forms.Button btnMinuteYahooSaveLogToDb;
         private System.Windows.Forms.Button btnMinuteAlphaVantageDownloadStop;
         private System.Windows.Forms.Button btnIntradayAlphaVantageRefreshProxyList;
@@ -1642,6 +1655,7 @@ namespace Quote2022
         private System.Windows.Forms.DataGridViewTextBoxColumn Started;
         private System.Windows.Forms.DataGridViewTextBoxColumn Duration;
         private System.Windows.Forms.Button btnRussellIndicesParseZipFile;
+        private System.Windows.Forms.Button btnMinuteAlphaVantageSaveLogToDb;
     }
 }
 

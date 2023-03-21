@@ -604,7 +604,7 @@ namespace Quote2022
             //Download.MinuteAlphaVantage_Download(ShowStatus);
         }
 
-        private void btnMinuteAlphaVantageSaveLogToDb_Click(object sender, EventArgs e)
+        private void xxbtnMinuteAlphaVantageSaveLogToDb_Click(object sender, EventArgs e)
         {
             var dialog = new CommonOpenFileDialog
             {
@@ -888,9 +888,6 @@ namespace Quote2022
                 var i = Data.Actions.Eoddata.EoddataSymbolsLoader.ParseAndSaveToDb(file);
                 Debug.Print($"{i:N0}\t{file}");
             }*/
-            /*var folder = @"E:\Quote\WebData\Minute\Yahoo\Data";
-            var files = Directory.GetFiles(folder, "*.zip").OrderBy(a => File.GetCreationTime(a)).ToArray();
-            Actions.MinuteYahoo_SaveLogToDb.Start(files, ShowStatus);*/
 
             /*var folder = @"E:\Quote\WebData\Indices\Russell\Ru3000";
             foreach (var f in Directory.GetFiles(folder))
@@ -913,6 +910,23 @@ namespace Quote2022
             if (CsUtils.OpenZipFileDialog(Settings.IndicesRussellFolder) is string zipFileName && !string.IsNullOrEmpty(zipFileName))
                 await Task.Factory.StartNew(() => Data.Actions.Russell.RussellIndexLoader.Parse(zipFileName));
             btnRussellIndicesParseZipFile.Enabled = true;
+        }
+
+        private void btnMinuteAlphaVantageSaveLogToDb_Click(object sender, EventArgs e)
+        {
+            btnMinuteAlphaVantageSaveLogToDb.Enabled = false;
+
+            var dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = @"E:\Quote\WebData\Minute\AlphaVantage\DataBuffer",
+                IsFolderPicker = true
+            };
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSaveLogToDb.Start(dialog.FileName));
+            }
+
+            btnMinuteAlphaVantageSaveLogToDb.Enabled = true;
         }
     }
 }

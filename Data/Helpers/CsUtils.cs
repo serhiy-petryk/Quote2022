@@ -6,6 +6,16 @@ namespace Data.Helpers
 {
     public static class CsUtils
     {
+        public static string GetString(object o)
+        {
+            if (o is DateTime dt)
+                return dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm");
+            else if (o is TimeSpan ts)
+                return ts.ToString("hh\\:mm");
+            else if (Equals(o, null)) return null;
+            return o.ToString();
+        }
+
         public static DateTime GetNextWeekday(DateTime start, DayOfWeek day)
         {
             // From https://stackoverflow.com/questions/6346119/compute-the-datetime-of-an-upcoming-weekday

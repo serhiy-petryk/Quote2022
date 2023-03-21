@@ -18,6 +18,7 @@ namespace Data.Actions.AlphaVantage
             var folderId = Path.GetFileName(folder) + @"\";
 
             // delete old log in database
+            Logger.AddMessage($"Started. Delete old log in database.");
             DbUtils.ExecuteSql($"DELETE dbQuote2023..FileLogMinuteAlphaVantage WHERE [file] like '{folderId}%'");
             DbUtils.ExecuteSql($"DELETE dbQuote2023..FileLogMinuteAlphaVantage_BlankFiles WHERE [file] like '{folderId}%'");
 
@@ -76,7 +77,6 @@ namespace Data.Actions.AlphaVantage
                 {
                     if (context.Length > 1 && context[1].Contains("Invalid API call"))
                         errorLog.Add($"{fileId}\tInvalid API call");
-                        // return;
                     else if (context.Length > 1 && context[1].Contains("Thank you for using Alpha"))
                         errorLog.Add($"{fileId}\tThank you for using");
                     else

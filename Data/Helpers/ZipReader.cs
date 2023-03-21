@@ -17,12 +17,28 @@ namespace Data.Helpers
         {
             foreach (var entry in _zip.Entries.OrderBy(a => a.LastWriteTime))
             {
+                    var item = new ZipReaderItem()
+                    {
+                        // Reader = reader,
+                        _entry = entry,
+                        Created = entry.LastWriteTime.DateTime,
+                        Length = entry.Length,
+                        FullName = entry.FullName
+                    };
+                    yield return item;
+            }
+        }
+
+        public IEnumerator<ZipReaderItem> GetEnumeratorX()
+        {
+            foreach (var entry in _zip.Entries.OrderBy(a => a.LastWriteTime))
+            {
                 using (var entryStream = entry.Open())
                 using (var reader = new StreamReader(entryStream, System.Text.Encoding.UTF8, true))
                 {
                     var item = new ZipReaderItem()
                     {
-                        Reader = reader,
+                       //  Reader = reader,
                         Created = entry.LastWriteTime.DateTime,
                         Length = entry.Length,
                         FullName = entry.FullName
@@ -37,17 +53,31 @@ namespace Data.Helpers
 
     public class ZipReaderItem
     {
-        public StreamReader Reader;
+        // public StreamReader Reader;
+        internal ZipArchiveEntry _entry;// { get; set; }
         public IEnumerable<string> AllLines
         {
             get
             {
                 string line;
-                while ((line = Reader.ReadLine()) != null)
-                    yield return line;
+                using (var entryStream = _entry.Open())
+                using (var reader = new StreamReader(entryStream, System.Text.Encoding.UTF8, true))
+                {
+                    while ((line = reader.ReadLine()) != null)
+                        yield return line;
+                }
             }
         }
-        public string Content => Reader.ReadToEnd();
+        public string Content
+        {
+            get
+            {
+                using (var entryStream = _entry.Open())
+                using (var reader = new StreamReader(entryStream, System.Text.Encoding.UTF8, true))
+                    return reader.ReadToEnd();
+            }
+        }
+
         public string FullName;
         public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(FullName);
         public long Length;

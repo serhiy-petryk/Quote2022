@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
 using Data.Models;
@@ -53,18 +54,18 @@ namespace Data.Actions.Eoddata
         public static int ParseAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
-            using (var zip = new ZipReader(zipFileName))
-                foreach (var zipItem in zip)
-                    if (zipItem.Length > 0)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries)
+                    if (entry.Length > 0)
                     {
-                        var lines = zipItem.AllLines.ToArray();
+                        var lines = entry.GetLinesOfZipEntry().ToArray();
 
-                        var ss = zipItem.FileNameWithoutExtension.Split('_');
+                        var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
                         var exchange = ss[0].Trim().ToUpper();
-                        var date = zipItem.Created;
+                        var date = entry.LastWriteTime.DateTime;
 
                         if (lines.Length == 0 || !string.Equals(lines[0], "Symbol\tDescription"))
-                            throw new Exception($"SymbolsEoddata_Parse error! Please, check the first line of {zipItem.FileNameWithoutExtension} file in {zipFileName}");
+                            throw new Exception($"SymbolsEoddata_Parse error! Please, check the first line of {entry.Name} file in {zipFileName}");
                         
                         var items = lines.Skip(1).Select(line => new SymbolsEoddata(exchange, date, line.Split('\t')))
                             .ToArray();

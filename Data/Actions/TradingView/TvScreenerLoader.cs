@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
 using Data.Models;
@@ -37,13 +38,12 @@ namespace Data.Actions.TradingView
         private static int ParseAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
-            using (var zip = new ZipReader(zipFileName))
-                foreach (var zipItem in zip)
-                    if (zipItem.Length > 0)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries)
+                    if (entry.Length > 0)
                     {
-                        var content = zipItem.Content;
-                        var o = JsonConvert.DeserializeObject<ScreenerTradingView>(content);
-                        var items = o.data.Select(a => a.GetDbItem(zipItem.Created)).ToArray();
+                        var o = JsonConvert.DeserializeObject<ScreenerTradingView>(entry.GetContentOfZipEntry());
+                        var items = o.data.Select(a => a.GetDbItem(entry.LastWriteTime.DateTime)).ToArray();
 
                         if (items.Length > 0)
                         {

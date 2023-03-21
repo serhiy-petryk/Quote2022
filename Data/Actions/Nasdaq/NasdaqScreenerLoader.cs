@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
 using Newtonsoft.Json;
@@ -55,29 +56,29 @@ namespace Data.Actions.Nasdaq
         public static int ParseAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
-            using (var zip = new ZipReader(zipFileName))
-                foreach (var zipItem in zip)
-                    if (zipItem.Length > 0)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries)
+                    if (entry.Length > 0)
                     {
-                        var content = zipItem.Content;
+                        var content = entry.GetContentOfZipEntry();
 
-                        if (zipItem.Created < new DateTime(2021, 2, 6)) // 3 very old files have old symbol format => don't save in database
+                        if (entry.LastWriteTime.DateTime < new DateTime(2021, 2, 6)) // 3 very old files have old symbol format => don't save in database
                             continue;
 
                         var stockItems = new List<cStockRow>();
                         var etfItems = new List<cEtfRow>();
 
-                        if (Path.GetExtension(zipItem.FullName) == ".json" && zipItem.FileNameWithoutExtension.IndexOf("Etf", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        if (Path.GetExtension(entry.FullName) == ".json" && entry.Name.IndexOf("Etf", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
                             var oEtf = JsonConvert.DeserializeObject<cEtfRoot>(content);
                             etfItems = oEtf.data.data.rows.ToList();
 
                             foreach (var item in etfItems)
-                                item.TimeStamp = zipItem.Created;
+                                item.TimeStamp = entry.LastWriteTime.DateTime;
                         }
-                        else if (Path.GetExtension(zipItem.FullName) == ".json" && zipItem.FileNameWithoutExtension.IndexOf("Stock", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        else if (Path.GetExtension(entry.FullName) == ".json" && entry.Name.IndexOf("Stock", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
-                            var ss = zipItem.FileNameWithoutExtension.Split('_');
+                            var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
                             var exchange = ss[ss.Length - 2];
                             if (content.StartsWith("[")) // Github version
                                 stockItems = JsonConvert.DeserializeObject<cStockRow[]>(content).ToList();
@@ -90,11 +91,11 @@ namespace Data.Actions.Nasdaq
                             foreach (var item in stockItems)
                             {
                                 item.Exchange = exchange;
-                                item.TimeStamp = zipItem.Created;
+                                item.TimeStamp = entry.LastWriteTime.DateTime;
                             }
                         }
                         else
-                            throw new Exception($"NasdaqScreenerLoader.Parse. '{zipItem.FullName}' file is invalid in {zipFileName} zip file");
+                            throw new Exception($"NasdaqScreenerLoader.Parse. '{entry.FullName}' file is invalid in {zipFileName} zip file");
 
                         if (stockItems.Count > 0)
                         {

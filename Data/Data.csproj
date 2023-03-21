@@ -90,7 +90,6 @@
     <Compile Include="Helpers\DbUtils.cs" />
     <Compile Include="Helpers\Download.cs" />
     <Compile Include="Helpers\Logger.cs" />
-    <Compile Include="Helpers\ZipReader.cs" />
     <Compile Include="Helpers\ZipUtils.cs" />
     <Compile Include="Images.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
 using Data.Models;
@@ -39,12 +40,12 @@ namespace Data.Actions.StockAnaysis
         public static int ParseAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
-            using (var zip = new ZipReader(zipFileName))
-                foreach (var zipItem in zip)
-                    if (zipItem.Length > 0)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries)
+                    if (entry.Length > 0)
                     {
                         var items = new List<Models.ActionStockAnalysis>();
-                        Parse(zipItem.Content, items, zipItem.Created);
+                        Parse(entry.GetContentOfZipEntry(), items, entry.LastWriteTime.DateTime);
                         itemCount += items.Count;
                         // Save data to database
                         if (items.Count > 0)

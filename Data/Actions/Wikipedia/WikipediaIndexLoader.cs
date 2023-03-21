@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
 using Data.Models;
@@ -60,18 +61,18 @@ namespace Data.Actions.Wikipedia
         public static int ParseAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
-            using (var zip = new ZipReader(zipFileName))
-                foreach (var zipItem in zip)
-                    if (zipItem.Length > 0)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries)
+                    if (entry.Length > 0)
                     {
-                        var content = zipItem.Content;
+                        var content = entry.GetContentOfZipEntry();
 
                         var items = new Dictionary<string, Models.IndexDbItem>();
                         var changes = new List<Models.IndexDbChangeItem>();
 
-                        var ss = zipItem.FileNameWithoutExtension.Split('_');
+                        var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
                         var indexName = ss[ss.Length - 2];
-                        var timeStamp = zipItem.Created;
+                        var timeStamp = entry.LastWriteTime.DateTime;
 
                         var i1 = content.IndexOf("id=\"constituents\"", StringComparison.InvariantCultureIgnoreCase);
                         if (i1 > 0)
@@ -79,7 +80,7 @@ namespace Data.Actions.Wikipedia
                             var i2 = content.IndexOf("</table", i1 + 17, StringComparison.InvariantCultureIgnoreCase);
                             var table = content.Substring(i1 + 17, i2 - i1 - 17);
                             ParseTable(indexName, timeStamp, table, items);
-                            Debug.Print($"table: {items.Count}, {zipItem.FileNameWithoutExtension}");
+                            Debug.Print($"table: {items.Count}, {entry.Name}");
                         }
                         i1 = content.IndexOf(">stock symbol<", StringComparison.InvariantCultureIgnoreCase);
                         if (items.Count == 0 && i1 > 0)
@@ -87,7 +88,7 @@ namespace Data.Actions.Wikipedia
                             var i2 = content.IndexOf("</ul>", i1 + 17, StringComparison.InvariantCultureIgnoreCase);
                             var list = content.Substring(i1 + 17, i2 - i1 - 17);
                             ParseList(indexName, timeStamp, list, items);
-                            Debug.Print($"list: {items.Count}, {zipItem.FileNameWithoutExtension}");
+                            Debug.Print($"list: {items.Count}, {entry.Name}");
                         }
 
                         i1 = content.IndexOf("==Components==", StringComparison.InvariantCultureIgnoreCase);
@@ -96,7 +97,7 @@ namespace Data.Actions.Wikipedia
                             var i2 = content.IndexOf("==External links==", i1, StringComparison.InvariantCultureIgnoreCase);
                             var links = content.Substring(i1 + 14, i2 - i1 - 14);
                             ParseLinks(indexName, timeStamp, links, items);
-                            Debug.Print($"==Components==: {zipItem.FileNameWithoutExtension}");
+                            Debug.Print($"==Components==: {entry.Name}");
                         }
 
                         i1 = content.IndexOf(">External links</a>", StringComparison.InvariantCultureIgnoreCase);
@@ -107,7 +108,7 @@ namespace Data.Actions.Wikipedia
                                 i2 = content.IndexOf("</ul>", i1 + 17, StringComparison.InvariantCultureIgnoreCase);
                             var list = content.Substring(i1 + 17, i2 - i1 - 17);
                             ParseList(indexName, timeStamp, list, items);
-                            Debug.Print($"External link: {items.Count}, {zipItem.FileNameWithoutExtension}");
+                            Debug.Print($"External link: {items.Count}, {entry.Name}");
                         }
 
                         i1 = content.IndexOf(">Ticker Symbol</a></th>", StringComparison.InvariantCultureIgnoreCase);
@@ -118,12 +119,12 @@ namespace Data.Actions.Wikipedia
                             var i3 = content.IndexOf("</table", i2, StringComparison.InvariantCultureIgnoreCase);
                             var table = content.Substring(i2, i3 - i2);
                             ParseTable(indexName, timeStamp, table, items);
-                            Debug.Print($"Ticker Symbol: {items.Count}, {zipItem.FileNameWithoutExtension}");
+                            Debug.Print($"Ticker Symbol: {items.Count}, {entry.Name}");
                         }
 
                         if (items.Count == 0 && timeStamp < new DateTime(2010, 1, 1))
                         {
-                            Debug.Print($"??????: {zipItem.FileNameWithoutExtension}");
+                            Debug.Print($"??????: {entry.Name}");
                             continue;
                         }
 
@@ -136,7 +137,7 @@ namespace Data.Actions.Wikipedia
                         i1 = content.IndexOf(" changes to the list of ", StringComparison.InvariantCultureIgnoreCase);
                         if (i1 > 0)
                         {
-                            Debug.Print($"Changes: {zipItem.FileNameWithoutExtension}");
+                            Debug.Print($"Changes: {entry.Name}");
                             i1 = content.IndexOf(">Reason", StringComparison.InvariantCultureIgnoreCase);
                             var i2 = content.IndexOf("</table>", i1 + 7, StringComparison.InvariantCultureIgnoreCase);
                             var table = content.Substring(i1, i2 - i1);
@@ -182,7 +183,7 @@ namespace Data.Actions.Wikipedia
                             IndexDbChangeItem.SaveToDb(changes);
                         }
                         else if (indexName.StartsWith("SP") && timeStamp > new DateTime(2016, 1, 1))
-                            throw new Exception($"File should have a symbol change section. Check symbol change parser for {zipItem.FileNameWithoutExtension} in '{zipFileName}'");
+                            throw new Exception($"File should have a symbol change section. Check symbol change parser for {entry.Name} in '{zipFileName}'");
 
                         itemCount += items.Count + changes.Count;
                     }

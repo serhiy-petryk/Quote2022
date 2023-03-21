@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
 using Data.Models;
@@ -134,18 +135,16 @@ namespace Data.Actions.Eoddata
             Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {newFileCount}. Size of files: {fileSize:N0}KB");
         }
 
-        private static int ParseAndSaveToDb(string zipFileName)
+        public static int ParseAndSaveToDb(string zipFileName)
         {
             var exchange = Path.GetFileNameWithoutExtension(zipFileName).Split('_')[0].Trim().ToUpper();
             var quotes = new List<DayEoddata>();
             string[] lines = null;
-            using (var _zip = new ZipReader(zipFileName))
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
             {
-                var fileContents = _zip.Select(a => a.AllLines.ToArray()).ToArray();
-                if (fileContents.Length == 1)
-                    lines = fileContents[0];
-                else
+                if (zip.Entries.Count != 1)
                     throw new Exception($"Error in zip file structure: {zipFileName}");
+                lines = zip.Entries[0].GetLinesOfZipEntry().ToArray();
             }
 
             var itemCount = 0;

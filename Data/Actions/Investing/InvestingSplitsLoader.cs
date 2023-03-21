@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
 using Data.Models;
@@ -57,20 +58,20 @@ namespace Data.Actions.Investing
         private static int ParseZipAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
-            using (var zip = new ZipReader(zipFileName))
-                foreach (var zipItem in zip)
-                    if (zipItem.Length > 0)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries)
+                    if (entry.Length > 0)
                     {
-                        var content = zipItem.Content;
-                        var timeStamp = zipItem.Created;
+                        var content = entry.GetContentOfZipEntry();
+                        var timeStamp = entry.LastWriteTime.DateTime;
                         var items = new List<SplitModel>();
 
-                        if (Path.GetExtension(zipItem.FullName) == ".json")
+                        if (Path.GetExtension(entry.FullName) == ".json")
                             ParseJson(content, timeStamp, items);
-                        else if (Path.GetExtension(zipItem.FullName) == ".txt")
-                            ParseTxt(zipItem.FullName, content, timeStamp, items);
+                        else if (Path.GetExtension(entry.FullName) == ".txt")
+                            ParseTxt(entry.FullName, content, timeStamp, items);
                         else
-                            throw new Exception($"InvestingSplitsLoader. Parse don't defined for '{Path.GetExtension(zipItem.FullName)}' file type");
+                            throw new Exception($"InvestingSplitsLoader. Parse don't defined for '{Path.GetExtension(entry.FullName)}' file type");
 
                         if (items.Count > 0)
                             SaveToDb(items.Where(a => a.Date <= a.TimeStamp));

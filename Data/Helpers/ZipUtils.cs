@@ -73,6 +73,32 @@ namespace Data.Helpers
             }
         }
 
+        public static void AddFilesToZip(string zipPath, string[] files, string entryPrefix)
+        {
+            if (files == null || files.Length == 0)
+                return;
+
+            using (var zipArchive = System.IO.Compression.ZipFile.Open(zipPath, ZipArchiveMode.Update))
+            {
+                foreach (var file in files)
+                {
+                    var entryName = (string.IsNullOrEmpty(entryPrefix) ? null : entryPrefix + Path.DirectorySeparatorChar) + Path.GetFileName(file);
+
+                    var oldEntries = zipArchive.Entries.Where(a => string.Equals(a.FullName, entryName, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+                    foreach (var o in oldEntries) o.Delete();
+
+                    if (!string.IsNullOrEmpty(entryPrefix))
+                    {
+                        entryName = entryPrefix + Path.AltDirectorySeparatorChar + Path.GetFileName(file);
+                        oldEntries = zipArchive.Entries.Where(a => string.Equals(a.FullName, entryName, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+                        foreach (var o in oldEntries) o.Delete();
+                    }
+
+                    zipArchive.CreateEntryFromFile(file, entryName);
+                }
+            }
+        }
+
         // From https://stackoverflow.com/questions/69482441/copy-files-from-one-zip-file-to-another
         static void CopyZipEntries(string sourceZipFile, string targetZipFile)
         {

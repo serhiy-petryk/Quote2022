@@ -88,9 +88,7 @@ namespace Quote2022.Test
         public static void AddFilesToZip(string zipPath, string[] files, string entryPrefix)
         {
             if (files == null || files.Length == 0)
-            {
                 return;
-            }
 
             using (var zipArchive = System.IO.Compression.ZipFile.Open(zipPath, ZipArchiveMode.Update))
             {

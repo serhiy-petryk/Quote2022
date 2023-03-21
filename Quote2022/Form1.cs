@@ -912,7 +912,7 @@ namespace Quote2022
             btnRussellIndicesParseZipFile.Enabled = true;
         }
 
-        private void btnMinuteAlphaVantageSaveLogToDb_Click(object sender, EventArgs e)
+        private async void btnMinuteAlphaVantageSaveLogToDb_Click(object sender, EventArgs e)
         {
             btnMinuteAlphaVantageSaveLogToDb.Enabled = false;
 
@@ -923,10 +923,27 @@ namespace Quote2022
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSaveLogToDb.Start(dialog.FileName));
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSaveLogToDb.Start(dialog.FileName));
             }
 
             btnMinuteAlphaVantageSaveLogToDb.Enabled = true;
+        }
+
+        private async void btnMinuteAlphaVantageSplitDataAndSaveToZip_Click(object sender, EventArgs e)
+        {
+            btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = false;
+
+            var dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = @"E:\Quote\WebData\Minute\AlphaVantage\DataBuffer",
+                IsFolderPicker = true
+            };
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitDataAndSaveToZip.Start());
+            }
+            
+            btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = true;
         }
     }
 }

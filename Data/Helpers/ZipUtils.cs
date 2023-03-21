@@ -73,6 +73,29 @@ namespace Data.Helpers
             }
         }
 
+        // From https://stackoverflow.com/questions/69482441/copy-files-from-one-zip-file-to-another
+        static void CopyZipEntries(string sourceZipFile, string targetZipFile)
+        {
+            if (!File.Exists(targetZipFile))
+            {
+                using (var zipArchive = System.IO.Compression.ZipFile.Open(targetZipFile, ZipArchiveMode.Create)) { }
+            }
+
+            using (FileStream sourceFS = new FileStream(sourceZipFile, FileMode.Open))
+            using (FileStream targetFS = new FileStream(targetZipFile, FileMode.Open))
+            using (ZipArchive sourceZIP = new ZipArchive(sourceFS, ZipArchiveMode.Read, false))
+            using (ZipArchive targetZIP = new ZipArchive(targetFS, ZipArchiveMode.Update, false))
+                foreach (ZipArchiveEntry sourceEntry in sourceZIP.Entries)
+                {
+                    if (targetZIP.GetEntry(sourceEntry.FullName) is ZipArchiveEntry existingTargetEntry)
+                        existingTargetEntry.Delete();
+
+                    using (Stream target = targetZIP.CreateEntry(sourceEntry.FullName).Open())
+                        sourceEntry.Open().CopyTo(target);
+                }
+        }
+
+        #region =========  Extensions for ZipArchiveEntry  ===========
         public static IEnumerable<string> GetLinesOfZipEntry(this ZipArchiveEntry entry)
         {
             using (var entryStream = entry.Open())
@@ -89,5 +112,6 @@ namespace Data.Helpers
             using (var reader = new StreamReader(entryStream, System.Text.Encoding.UTF8, true))
                 return reader.ReadToEnd();
         }
+        #endregion
     }
 }

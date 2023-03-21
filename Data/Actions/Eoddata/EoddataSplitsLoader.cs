@@ -60,7 +60,7 @@ namespace Data.Actions.Eoddata
             File.WriteAllLines(txtFileName, fileLines);
 
             // Zip data
-            var zipFileName = Helpers.CsUtils.ZipFile(txtFileName);
+            var zipFileName = Helpers.ZipUtils.ZipFile(txtFileName);
 
             // Remove unnecessary files
             File.Delete(htmlFileName);

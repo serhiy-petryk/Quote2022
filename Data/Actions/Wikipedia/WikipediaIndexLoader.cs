@@ -46,7 +46,7 @@ namespace Data.Actions.Wikipedia
             }
 
             // Zip data
-            var zipFileName = CsUtils.ZipFolder(folder);
+            var zipFileName = ZipUtils.ZipFolder(folder);
 
             // Parse and save to database
             var itemCount = ParseAndSaveToDb(zipFileName);

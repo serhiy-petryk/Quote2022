@@ -35,7 +35,7 @@ namespace Data.Actions.Eoddata
             }
 
             // Zip data
-            var zipFileName = CsUtils.ZipFolder(folder);
+            var zipFileName = ZipUtils.ZipFolder(folder);
 
             // Parse and save data to database
             Logger.AddMessage($"'{zipFileName}' file is parsing");

@@ -29,7 +29,7 @@ namespace Data.Actions.Investing
             Helpers.Download.DownloadPage_POST(URL, jsonFileName, postData, true);
 
             // Zip data
-            var zipFileName = Helpers.CsUtils.ZipFile(jsonFileName);
+            var zipFileName = Helpers.ZipUtils.ZipFile(jsonFileName);
 
             // Parse and save to database
             var itemCount = ParseZipAndSaveToDb(zipFileName);

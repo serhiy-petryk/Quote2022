@@ -82,7 +82,7 @@ namespace Data.Actions.Eoddata
                 foreach (var fileId in missingFiles)
                 {
                     var textFilename = string.Format(textFileNameTemplate, fileId.Item1, fileId.Item2);
-                    var newZipFilename = Helpers.CsUtils.ZipFile(textFilename);
+                    var newZipFilename = Helpers.ZipUtils.ZipFile(textFilename);
                     var destinationZipFileName = $"{FILE_FOLDER}{fileId.Item1}_{fileId.Item2}.zip";
                     File.Move(newZipFilename, destinationZipFileName);
                 }

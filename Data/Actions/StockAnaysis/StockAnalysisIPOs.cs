@@ -22,7 +22,7 @@ namespace Data.Actions.StockAnaysis
             Helpers.Download.DownloadPage(Url, jsonFileName);
 
             // Zip data
-           Helpers.CsUtils.ZipFile(jsonFileName, zipFileName);
+           Helpers.ZipUtils.ZipFile(jsonFileName, zipFileName);
 
             // Parse and save to database
             var itemCount = ParseAndSaveToDb(zipFileName);

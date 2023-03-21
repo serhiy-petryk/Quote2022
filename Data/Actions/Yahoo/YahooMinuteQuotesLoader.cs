@@ -55,7 +55,7 @@ namespace Data.Actions.Yahoo
 
             // Zip data
             Logger.AddMessage($@"Zip data. {Directory.GetFiles(folder, "*.txt").Length:N0} files");
-            var zipFileName = Helpers.CsUtils.ZipFolder(folder);
+            var zipFileName = Helpers.ZipUtils.ZipFolder(folder);
 
             // Remove json files
             // Directory.Delete(folder, true);

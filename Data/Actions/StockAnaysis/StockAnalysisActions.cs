@@ -26,7 +26,7 @@ namespace Data.Actions.StockAnaysis
             Helpers.Download.DownloadPage(Url, htmlFileName);
 
             // Zip data
-            Helpers.CsUtils.ZipFile(htmlFileName, zipFileName);
+            Helpers.ZipUtils.ZipFile(htmlFileName, zipFileName);
 
             // Parse and save to database
             var itemCount = ParseAndSaveToDb(zipFileName);

@@ -22,7 +22,7 @@ namespace Data.Actions.TradingView
             Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
 
             // Zip data
-            var zipFileName = CsUtils.ZipFile(filename);
+            var zipFileName = ZipUtils.ZipFile(filename);
 
             // Parse and save data to database
             Logger.AddMessage($"Parse and save files to database");

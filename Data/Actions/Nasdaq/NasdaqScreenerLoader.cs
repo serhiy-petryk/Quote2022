@@ -40,7 +40,7 @@ namespace Data.Actions.Nasdaq
             Helpers.Download.DownloadPage(EtfUrl, etfFile, true);
 
             // Zip data
-            var zipFileName = Helpers.CsUtils.ZipFolder(folder);
+            var zipFileName = Helpers.ZipUtils.ZipFolder(folder);
 
             // Parse and save data to database
             Logger.AddMessage($"Parse and save files to database");

@@ -19,6 +19,9 @@ namespace Data.Actions.AlphaVantage
 
         public static void Start(string folder, bool onlyLog)
         {
+            var sw =new Stopwatch();
+            sw.Start();
+
             var folderId = Path.GetFileName(folder) + @"\";
             var log = new List<string>();
             var errorLog = new List<string>();
@@ -32,7 +35,7 @@ namespace Data.Actions.AlphaVantage
                 Directory.CreateDirectory(Path.GetDirectoryName(logFileName));
             if (File.Exists(logFileName))
                 File.Delete(logFileName);
-            File.AppendAllText(logFileName, $"Status\tFileId");
+            File.AppendAllLines(logFileName, new [] {$"Status\tFileId"});
 
             var files = Directory.GetFiles(folder, "*.csv");
             foreach (var file in files)
@@ -101,7 +104,7 @@ namespace Data.Actions.AlphaVantage
                 {
                     ProcessFileItems(items, errorLog, onlyLog);
                     SaveFileItemLog(items, logFileName, statusCounts);
-                    Debug.Print($"Cnt: {cnt}\tMemoryUsed: {CsUtils.MemoryUsedInBytes/1024/1024:N0}");
+                    // Debug.Print($"Cnt: {cnt}\tMemoryUsed: {CsUtils.MemoryUsedInBytes/1024/1024:N0}");
                 }
             }
 
@@ -115,8 +118,11 @@ namespace Data.Actions.AlphaVantage
             if (File.Exists(errorFileName))
                 File.Delete(errorFileName);
 
-            File.AppendAllText(errorFileName, $"File\tMessage\tContent{Environment.NewLine}");
+            File.AppendAllLines(errorFileName, new[] {$"File\tMessage\tContent"});
             File.AppendAllLines(errorFileName, errorLog);
+
+            sw.Stop();
+            Debug.Print($"AlphaVantageMinuteSplitDataAndSaveToZip duration: {sw.ElapsedMilliseconds/1000:N0}");
 
             if (errorLog.Count > 0)
                 Logger.AddMessage($"!Finished. Found {errorLog.Count} errors. New items: {statusCounts[2]:N0}. Old items: {statusCounts[1]:N0}. Items with error: {statusCounts[0]:N0}. Error filename: {errorFileName}");
@@ -184,6 +190,12 @@ namespace Data.Actions.AlphaVantage
                         }
                     }
 
+                }
+                else
+                {
+                    // New item
+                    foreach (var item in kvp.Value)
+                        item.Status = FileItemStatus.New;
                 }
 
                 if (onlyLog)

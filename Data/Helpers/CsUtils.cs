@@ -30,5 +30,17 @@ namespace Data.Helpers
 
         public static Tuple<DateTime, string> GetTimeStamp(int hourOffset = -9) => new Tuple<DateTime, string>(DateTime.Now.AddHours(hourOffset),
             DateTime.Now.AddHours(hourOffset).ToString("yyyyMMdd"));
+
+        public static long MemoryUsedInBytes
+        {
+            get
+            {
+                // clear memory
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                return GC.GetTotalMemory(true);
+            }
+        }
     }
 }

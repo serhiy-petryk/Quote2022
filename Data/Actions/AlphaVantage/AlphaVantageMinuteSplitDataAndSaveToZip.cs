@@ -17,11 +17,22 @@ namespace Data.Actions.AlphaVantage
     {
         private const string DestinationDataFolder = @"E:\Quote\WebData\Minute\AlphaVantage\Data\";
 
-        public static void Start(string folder)
+        public static void Start(string folder, bool onlyLog)
         {
             var folderId = Path.GetFileName(folder) + @"\";
+            var log = new List<string>();
             var errorLog = new List<string>();
+            var items = new Dictionary<DateTime, List<FileItem>>();
             var cnt = 0;
+            var statusCounts = new int[3];
+
+            // Create log file
+            var logFileName = folder + $"\\Logs\\LogSaveToZip.txt";
+            if (!Directory.Exists(Path.GetDirectoryName(logFileName)))
+                Directory.CreateDirectory(Path.GetDirectoryName(logFileName));
+            if (File.Exists(logFileName))
+                File.Delete(logFileName);
+            File.AppendAllText(logFileName, $"Status\tFileId");
 
             var files = Directory.GetFiles(folder, "*.csv");
             foreach (var file in files)
@@ -32,8 +43,9 @@ namespace Data.Actions.AlphaVantage
 
                 var fileId = folderId + Path.GetFileName(file);
                 // var fileShortName = Path.GetFileNameWithoutExtension(file);
-                var content = File.ReadAllText(file);
-                var lines = content.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                // var content = File.ReadAllText(file);
+                // var lines = content.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+                var lines = File.ReadAllLines(file);
                 if (lines.Length == 0)
                     throw new Exception($"MinuteAlphaVantage_SplitData. Empty file: {fileId}");
 
@@ -70,10 +82,12 @@ namespace Data.Actions.AlphaVantage
                         "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).Date;
                     if (date != lastDate)
                     {
-                        SaveQuotesToFile(symbol, lastDate, linesToSave, fileCreated);
-                        linesToSave.Clear();
-                        linesToSave.Add(
-                            $"# File {Path.GetFileNameWithoutExtension(file)}. Created at {File.GetLastWriteTime(file):yyyy-MM-dd HH:mm:ss}");
+                        FileItem.CreateItem(items, symbol, lastDate, linesToSave, fileCreated);
+
+                        linesToSave = new List<string>
+                        {
+                            $"# File {Path.GetFileNameWithoutExtension(file)}. Created at {File.GetLastWriteTime(file):yyyy-MM-dd HH:mm:ss}"
+                        };
                         lastDate = date;
                     }
 
@@ -81,11 +95,21 @@ namespace Data.Actions.AlphaVantage
                 }
 
                 if (linesToSave.Count > 0)
-                    SaveQuotesToFile(symbol, lastDate, linesToSave, fileCreated);
+                    FileItem.CreateItem(items, symbol, lastDate, linesToSave, fileCreated);
+
+                if (cnt % 500 == 0)
+                {
+                    ProcessFileItems(items, errorLog, onlyLog);
+                    SaveFileItemLog(items, logFileName, statusCounts);
+                    Debug.Print($"Cnt: {cnt}\tMemoryUsed: {CsUtils.MemoryUsedInBytes/1024/1024:N0}");
+                }
             }
 
+            ProcessFileItems(items, errorLog, onlyLog);
+            SaveFileItemLog(items, logFileName, statusCounts);
+
             // Save errors to file
-            var errorFileName = folder + $"\\Logs\\ErrorLogZip.txt";
+            var errorFileName = folder + $"\\Logs\\ErrorLogSaveToZip.txt";
             if (!Directory.Exists(Path.GetDirectoryName(errorFileName)))
                 Directory.CreateDirectory(Path.GetDirectoryName(errorFileName));
             if (File.Exists(errorFileName))
@@ -95,58 +119,97 @@ namespace Data.Actions.AlphaVantage
             File.AppendAllLines(errorFileName, errorLog);
 
             if (errorLog.Count > 0)
-                Logger.AddMessage($"!Finished. Found {errorLog.Count} errors. Error filename: {errorFileName}");
+                Logger.AddMessage($"!Finished. Found {errorLog.Count} errors. New items: {statusCounts[2]:N0}. Old items: {statusCounts[1]:N0}. Items with error: {statusCounts[0]:N0}. Error filename: {errorFileName}");
             else
-                Logger.AddMessage($"!Finished. No errors.");
+                Logger.AddMessage($"!Finished. New items: {statusCounts[2]:N0}. Old items: {statusCounts[1]:N0}. No errors");
         }
 
-        private static void SaveQuotesToFile(string symbol, DateTime date, List<string> content, DateTime fileCreationTime)
+        private static void SaveFileItemLog(Dictionary<DateTime, List<FileItem>> items, string logFileName, int[] statusCount)
         {
-            if (content.Count < 2) return;
+            var allItems = items.SelectMany(a => a.Value).ToArray();
+            items.Clear();
 
-            var fileId = $"{symbol}_{date:yyyyMMdd}.csv";
-            var fileId2 = $"{symbol}_{date:yyyyMMdd}";
-            var zipFileName = $"{DestinationDataFolder}MAV_{date:yyyyMMdd}.zip";
-            if (File.Exists(zipFileName))
+            Logger.AddMessage($"Save log. Item count: {allItems.Length}");
+
+            statusCount[0] += allItems.Count(a => a.Status == FileItemStatus.Error);
+            statusCount[1] += allItems.Count(a => a.Status == FileItemStatus.Old);
+            statusCount[2] += allItems.Count(a => a.Status == FileItemStatus.New);
+
+            var fileLines = allItems.Select(a => $"{a.Status}\t{a.FileId}");
+            File.AppendAllLines(logFileName, fileLines);
+        }
+
+        private static void ProcessFileItems(Dictionary<DateTime, List<FileItem>> items, List<string> errorLog, bool onlyLog)
+        {
+            Logger.AddMessage($"Process file items for {items.Count:N0} dates");
+
+            foreach (var kvp in items)
             {
-                /*using (var zip = new ZipReader(zipFileName))
+                var zipFileName = $"{DestinationDataFolder}MAV_{kvp.Key:yyyyMMdd}.zip";
+
+                if (File.Exists(zipFileName))
                 {
-                    var entry = zip.FirstOrDefault(a => string.Equals(a.FileNameWithoutExtension, fileId2, StringComparison.InvariantCultureIgnoreCase));
-                    if (entry!=null)
+                    using (var zipArchive = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
                     {
-                        var oldLines = entry.AllLines.ToArray();
-                        if (oldLines.Length != content.Count)
-                            throw new Exception($"Different content. File: {zipFileName}. Id of new file: {content[0]}");
-                        for (var k = 1; k < oldLines.Length; k++)
+                        foreach (var item in kvp.Value)
                         {
-                            if (oldLines[k] != content[k])
-                                throw new Exception($"Different content in {k} line of files. File: {zipFileName}. Id of new file: {content[0]}.{Environment.NewLine}{oldLines[k]}{Environment.NewLine}{content[k]}");
+                            var entry = zipArchive.Entries.FirstOrDefault(a =>
+                                string.Equals(a.Name, item.FileId, StringComparison.InvariantCultureIgnoreCase));
+                            if (entry != null)
+                            {
+                                var oldLines = entry.GetLinesOfZipEntry().ToArray();
+                                if (oldLines.Length != item.Content.Count)
+                                {
+                                    errorLog.Add($"{item.FileId}\tDifferent content line numbers\t{oldLines.Length} lines in zip file, {item.Content.Count} lines in new file");
+                                    item.Status = FileItemStatus.Error;
+                                    continue;
+                                }
+
+                                for (var k = 1; k < oldLines.Length; k++)
+                                {
+                                    if (oldLines[k] != item.Content[k])
+                                    {
+                                        item.Status = FileItemStatus.Error;
+                                        errorLog.Add($"{item.FileId}\tDifferent content in {k} line\tContent line in zip:{oldLines[k]}");
+                                        continue;
+                                    }
+                                }
+
+                                item.Status = FileItemStatus.Old;
+                                continue;
+                            }
+
+                            // New item
+                            item.Status = FileItemStatus.New;
                         }
-                        Debug.Print($"Exist: {date:yyyyMMdd}, {symbol}");
-                        return;
                     }
-                }*/
-                using (var zipArchive = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                {
-                    var entry = zipArchive.Entries.FirstOrDefault(a => string.Equals(a.Name, fileId, StringComparison.InvariantCultureIgnoreCase));
-                    if (entry != null)
-                    {
-                        var oldLines = entry.GetLinesOfZipEntry().ToArray();
-                        if (oldLines.Length != content.Count)
-                            throw new Exception($"Different content. File: {zipFileName}. Id of new file: {content[0]}");
-                        for (var k = 1; k < oldLines.Length; k++)
-                        {
-                            if (oldLines[k] != content[k])
-                                throw new Exception($"Different content in {k} line of files. File: {zipFileName}. Id of new file: {content[0]}.{Environment.NewLine}{oldLines[k]}{Environment.NewLine}{content[k]}");
-                        }
-                        Debug.Print($"Exist: {date:yyyyMMdd}, {symbol}");
-                        return;
-                    }
+
                 }
 
+                if (onlyLog)
+                    continue;
+            }
+        }
+
+        public enum FileItemStatus { Error, Old, New };
+        public class FileItem
+        {
+
+            public static void CreateItem(Dictionary<DateTime, List<FileItem>> items, string symbol, DateTime date, List<string> content, DateTime created)
+            {
+                if (content.Count<2) return;
+
+                if (!items.ContainsKey(date))
+                    items.Add(date, new List<FileItem>());
+                items[date].Add(new FileItem{Symbol = symbol, Date = date, Content = content, Created = created});
             }
 
-            Debug.Print($"New: {date:yyyyMMdd}, {symbol}");
+            public string Symbol;
+            public DateTime Date;
+            public List<string> Content;
+            public DateTime Created;
+            public string FileId => $"{Symbol}_{Date:yyyyMMdd}.csv";
+            public FileItemStatus Status;
         }
     }
 }

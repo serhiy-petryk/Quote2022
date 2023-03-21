@@ -940,7 +940,7 @@ namespace Quote2022
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitDataAndSaveToZip.Start(dialog.FileName));
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitDataAndSaveToZip.Start(dialog.FileName, true));
             }
             
             btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = true;

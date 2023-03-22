@@ -51,6 +51,21 @@ namespace Data.Helpers
             return zipFileName;
         }
 
+        public static void AddLinesToZip(string zipPath, IEnumerable<string> contentLines, string entryName)
+        {
+            using (var zipArchive = System.IO.Compression.ZipFile.Open(zipPath, ZipArchiveMode.Update))
+            {
+                var oldEntries = zipArchive.Entries.Where(a => string.Equals(a.FullName, entryName, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+                foreach (var o in oldEntries)
+                    o.Delete();
+
+                var readmeEntry = zipArchive.CreateEntry(entryName);
+                using (var writer = new StreamWriter(readmeEntry.Open()))
+                    foreach (var line in contentLines)
+                        writer.WriteLine(line);
+            }
+        }
+
         public static void AddFileToZip(string zipPath, string file, string entryPrefix)
         {
             using (var zipArchive = System.IO.Compression.ZipFile.Open(zipPath, ZipArchiveMode.Update))

@@ -929,6 +929,24 @@ namespace Quote2022
             btnMinuteAlphaVantageSaveLogToDb.Enabled = true;
         }
 
+        private async void btnMinuteAlphaVantageSplitDataLog_Click(object sender, EventArgs e)
+        {
+            btnMinuteAlphaVantageSplitDataLog.Enabled = false;
+
+            var dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = @"E:\Quote\WebData\Minute\AlphaVantage\DataBuffer",
+                IsFolderPicker = true
+            };
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitData.Start(dialog.FileName, true));
+            }
+
+            btnMinuteAlphaVantageSplitDataLog.Enabled = true;
+
+        }
+
         private async void btnMinuteAlphaVantageSplitDataAndSaveToZip_Click(object sender, EventArgs e)
         {
             btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = false;
@@ -940,11 +958,12 @@ namespace Quote2022
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitDataAndSaveToZip.Start(dialog.FileName, true));
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitData.Start(dialog.FileName, false));
             }
-            
+
             btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = true;
         }
+
     }
 }
 

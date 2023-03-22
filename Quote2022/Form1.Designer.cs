@@ -32,13 +32,14 @@ namespace Quote2022
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip = new System.Windows.Forms.Button();
             this.btnMinuteAlphaVantageSplitDataLog = new System.Windows.Forms.Button();
             this.btnMinuteAlphaVantageSaveLogToDb = new System.Windows.Forms.Button();
             this.btnRussellIndicesParseZipFile = new System.Windows.Forms.Button();
@@ -146,7 +147,7 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip = new System.Windows.Forms.Button();
+            this.btnMavCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
@@ -204,6 +205,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnMavCopyZipInfoToDb);
             this.tpLoaderNew.Controls.Add(this.btnMinuteAlphaVantageSplitDataAndSaveToZip);
             this.tpLoaderNew.Controls.Add(this.btnMinuteAlphaVantageSplitDataLog);
             this.tpLoaderNew.Controls.Add(this.btnMinuteAlphaVantageSaveLogToDb);
@@ -220,11 +222,21 @@ namespace Quote2022
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
             // 
+            // btnMinuteAlphaVantageSplitDataAndSaveToZip
+            // 
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Location = new System.Drawing.Point(709, 98);
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Name = "btnMinuteAlphaVantageSplitDataAndSaveToZip";
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Size = new System.Drawing.Size(195, 40);
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.TabIndex = 57;
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Text = "MinuteAlphaVantage split files by dates and save to zip";
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.UseVisualStyleBackColor = true;
+            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Click += new System.EventHandler(this.btnMinuteAlphaVantageSplitDataAndSaveToZip_Click);
+            // 
             // btnMinuteAlphaVantageSplitDataLog
             // 
             this.btnMinuteAlphaVantageSplitDataLog.Location = new System.Drawing.Point(709, 56);
             this.btnMinuteAlphaVantageSplitDataLog.Name = "btnMinuteAlphaVantageSplitDataLog";
-            this.btnMinuteAlphaVantageSplitDataLog.Size = new System.Drawing.Size(195, 40);
+            this.btnMinuteAlphaVantageSplitDataLog.Size = new System.Drawing.Size(195, 27);
             this.btnMinuteAlphaVantageSplitDataLog.TabIndex = 56;
             this.btnMinuteAlphaVantageSplitDataLog.Text = "MinuteAlphaVantage split files LOG";
             this.btnMinuteAlphaVantageSplitDataLog.UseVisualStyleBackColor = true;
@@ -298,14 +310,14 @@ namespace Quote2022
             this.Started,
             this.Duration});
             this.dataGridView1.DataSource = this.loaderItemBindingSource;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.Location = new System.Drawing.Point(8, 15);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
@@ -344,9 +356,9 @@ namespace Quote2022
             // 
             this.Started.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.Started.DataPropertyName = "Started";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.Format = "HH:mm:ss";
-            this.Started.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.Format = "HH:mm:ss";
+            this.Started.DefaultCellStyle = dataGridViewCellStyle1;
             this.Started.HeaderText = "Started";
             this.Started.MinimumWidth = 2;
             this.Started.Name = "Started";
@@ -357,8 +369,8 @@ namespace Quote2022
             // 
             this.Duration.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.Duration.DataPropertyName = "Duration";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Duration.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Duration.DefaultCellStyle = dataGridViewCellStyle2;
             this.Duration.HeaderText = "Time";
             this.Duration.MinimumWidth = 24;
             this.Duration.Name = "Duration";
@@ -1517,15 +1529,15 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnMinuteAlphaVantageSplitDataAndSaveToZip
+            // btnMavCopyZipInfoToDb
             // 
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Location = new System.Drawing.Point(709, 113);
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Name = "btnMinuteAlphaVantageSplitDataAndSaveToZip";
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Size = new System.Drawing.Size(195, 40);
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.TabIndex = 57;
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Text = "MinuteAlphaVantage split files by dates and save to zip";
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.UseVisualStyleBackColor = true;
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Click += new System.EventHandler(this.btnMinuteAlphaVantageSplitDataAndSaveToZip_Click);
+            this.btnMavCopyZipInfoToDb.Location = new System.Drawing.Point(709, 166);
+            this.btnMavCopyZipInfoToDb.Name = "btnMavCopyZipInfoToDb";
+            this.btnMavCopyZipInfoToDb.Size = new System.Drawing.Size(195, 51);
+            this.btnMavCopyZipInfoToDb.TabIndex = 58;
+            this.btnMavCopyZipInfoToDb.Text = "MinuteAlphaVantage copy info from zip to DB";
+            this.btnMavCopyZipInfoToDb.UseVisualStyleBackColor = true;
+            this.btnMavCopyZipInfoToDb.Click += new System.EventHandler(this.btnMavCopyZipInfoToDb_Click);
             // 
             // Form1
             // 
@@ -1682,6 +1694,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnMinuteAlphaVantageSaveLogToDb;
         private System.Windows.Forms.Button btnMinuteAlphaVantageSplitDataLog;
         private System.Windows.Forms.Button btnMinuteAlphaVantageSplitDataAndSaveToZip;
+        private System.Windows.Forms.Button btnMavCopyZipInfoToDb;
     }
 }
 

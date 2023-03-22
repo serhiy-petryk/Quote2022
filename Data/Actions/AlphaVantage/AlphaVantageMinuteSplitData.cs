@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Data.Helpers;
 
 namespace Data.Actions.AlphaVantage
@@ -37,7 +33,7 @@ namespace Data.Actions.AlphaVantage
                 File.Delete(logFileName);
             File.AppendAllLines(logFileName, new [] {$"Status\tFileId"});
 
-            var files = Directory.GetFiles(folder, "*.csv");
+            var files = Directory.GetFiles(folder, $"*.csv");
             foreach (var file in files)
             {
                 cnt++;
@@ -45,9 +41,7 @@ namespace Data.Actions.AlphaVantage
                     Logger.AddMessage($"Processed {cnt} files from {files.Length}. Folder: {folderId}");
 
                 var fileId = folderId + Path.GetFileName(file);
-                // var fileShortName = Path.GetFileNameWithoutExtension(file);
-                // var content = File.ReadAllText(file);
-                // var lines = content.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+
                 var lines = File.ReadAllLines(file);
                 if (lines.Length == 0)
                     throw new Exception($"MinuteAlphaVantage_SplitData. Empty file: {fileId}");
@@ -104,7 +98,6 @@ namespace Data.Actions.AlphaVantage
                 {
                     ProcessFileItems(items, errorLog, onlyLog, folderId);
                     SaveFileItemLog(items, logFileName, statusCounts, folderId);
-                    // Debug.Print($"Cnt: {cnt}\tMemoryUsed: {CsUtils.MemoryUsedInBytes/1024/1024:N0}");
                 }
             }
 

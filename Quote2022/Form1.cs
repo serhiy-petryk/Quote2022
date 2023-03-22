@@ -964,6 +964,12 @@ namespace Quote2022
             btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = true;
         }
 
+        private async void btnMavCopyZipInfoToDb_Click(object sender, EventArgs e)
+        {
+            btnMavCopyZipInfoToDb.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.AlphaVantage.MavCopyZipInfoToDb.Start);
+            btnMavCopyZipInfoToDb.Enabled = true;
+        }
     }
 }
 

@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Actions\AlphaVantage\AlphaVantageMinuteSplitData.cs" />
     <Compile Include="Actions\AlphaVantage\AlphaVantageMinuteSaveLogToDb.cs" />
+    <Compile Include="Actions\AlphaVantage\MavCopyZipInfoToDb.cs" />
     <Compile Include="Actions\Eoddata\EoddataDailyLoader.cs" />
     <Compile Include="Actions\Eoddata\EoddataSplitsLoader.cs" />
     <Compile Include="Actions\Eoddata\EoddataSymbolsLoader.cs" />

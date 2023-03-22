@@ -912,9 +912,9 @@ namespace Quote2022
             btnRussellIndicesParseZipFile.Enabled = true;
         }
 
-        private async void btnMinuteAlphaVantageSaveLogToDb_Click(object sender, EventArgs e)
+        private async void btnMavSaveLogToDb_Click(object sender, EventArgs e)
         {
-            btnMinuteAlphaVantageSaveLogToDb.Enabled = false;
+            btnMavSaveLogToDb.Enabled = false;
 
             var dialog = new CommonOpenFileDialog
             {
@@ -923,15 +923,15 @@ namespace Quote2022
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSaveLogToDb.Start(dialog.FileName));
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.MavSaveLogToDb.Start(dialog.FileName));
             }
 
-            btnMinuteAlphaVantageSaveLogToDb.Enabled = true;
+            btnMavSaveLogToDb.Enabled = true;
         }
 
-        private async void btnMinuteAlphaVantageSplitDataLog_Click(object sender, EventArgs e)
+        private async void btnMavSplitDataLog_Click(object sender, EventArgs e)
         {
-            btnMinuteAlphaVantageSplitDataLog.Enabled = false;
+            btnMavSplitDataLog.Enabled = false;
 
             var dialog = new CommonOpenFileDialog
             {
@@ -940,16 +940,16 @@ namespace Quote2022
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitData.Start(dialog.FileName, true));
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.MavSplitData.Start(dialog.FileName, true));
             }
 
-            btnMinuteAlphaVantageSplitDataLog.Enabled = true;
+            btnMavSplitDataLog.Enabled = true;
 
         }
 
-        private async void btnMinuteAlphaVantageSplitDataAndSaveToZip_Click(object sender, EventArgs e)
+        private async void btnMavSplitDataAndSaveToZip_Click(object sender, EventArgs e)
         {
-            btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = false;
+            btnMavSplitDataAndSaveToZip.Enabled = false;
 
             var dialog = new CommonOpenFileDialog
             {
@@ -958,10 +958,10 @@ namespace Quote2022
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.AlphaVantageMinuteSplitData.Start(dialog.FileName, false));
+                await Task.Factory.StartNew(() => Data.Actions.AlphaVantage.MavSplitData.Start(dialog.FileName, false));
             }
 
-            btnMinuteAlphaVantageSplitDataAndSaveToZip.Enabled = true;
+            btnMavSplitDataAndSaveToZip.Enabled = true;
         }
 
         private async void btnMavCopyZipInfoToDb_Click(object sender, EventArgs e)

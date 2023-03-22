@@ -39,20 +39,17 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip = new System.Windows.Forms.Button();
-            this.btnMinuteAlphaVantageSplitDataLog = new System.Windows.Forms.Button();
-            this.btnMinuteAlphaVantageSaveLogToDb = new System.Windows.Forms.Button();
+            this.btnMavSplitDataAndSaveToZip = new System.Windows.Forms.Button();
+            this.btnMavSplitDataLog = new System.Windows.Forms.Button();
+            this.btnMavSaveLogToDb = new System.Windows.Forms.Button();
             this.btnRussellIndicesParseZipFile = new System.Windows.Forms.Button();
             this.btnTemp = new System.Windows.Forms.Button();
             this.btnRunMultiItemsLoader = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Image = new System.Windows.Forms.DataGridViewImageColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Started = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Duration = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabLoader = new System.Windows.Forms.TabPage();
             this.btnNasdaqScreenerParse = new System.Windows.Forms.Button();
             this.btnScreenerNasdaqDownload = new System.Windows.Forms.Button();
@@ -148,11 +145,13 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnMavCopyZipInfoToDb = new System.Windows.Forms.Button();
+            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.tabLoader.SuspendLayout();
             this.tabLayers.SuspendLayout();
             this.gbDataSet.SuspendLayout();
@@ -169,6 +168,7 @@ namespace Quote2022
             this.gbIntradayDataList.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -206,9 +206,9 @@ namespace Quote2022
             // tpLoaderNew
             // 
             this.tpLoaderNew.Controls.Add(this.btnMavCopyZipInfoToDb);
-            this.tpLoaderNew.Controls.Add(this.btnMinuteAlphaVantageSplitDataAndSaveToZip);
-            this.tpLoaderNew.Controls.Add(this.btnMinuteAlphaVantageSplitDataLog);
-            this.tpLoaderNew.Controls.Add(this.btnMinuteAlphaVantageSaveLogToDb);
+            this.tpLoaderNew.Controls.Add(this.btnMavSplitDataAndSaveToZip);
+            this.tpLoaderNew.Controls.Add(this.btnMavSplitDataLog);
+            this.tpLoaderNew.Controls.Add(this.btnMavSaveLogToDb);
             this.tpLoaderNew.Controls.Add(this.btnRussellIndicesParseZipFile);
             this.tpLoaderNew.Controls.Add(this.btnTemp);
             this.tpLoaderNew.Controls.Add(this.btnRunMultiItemsLoader);
@@ -222,35 +222,35 @@ namespace Quote2022
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
             // 
-            // btnMinuteAlphaVantageSplitDataAndSaveToZip
+            // btnMavSplitDataAndSaveToZip
             // 
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Location = new System.Drawing.Point(709, 98);
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Name = "btnMinuteAlphaVantageSplitDataAndSaveToZip";
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Size = new System.Drawing.Size(195, 40);
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.TabIndex = 57;
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Text = "MinuteAlphaVantage split files by dates and save to zip";
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.UseVisualStyleBackColor = true;
-            this.btnMinuteAlphaVantageSplitDataAndSaveToZip.Click += new System.EventHandler(this.btnMinuteAlphaVantageSplitDataAndSaveToZip_Click);
+            this.btnMavSplitDataAndSaveToZip.Location = new System.Drawing.Point(709, 98);
+            this.btnMavSplitDataAndSaveToZip.Name = "btnMavSplitDataAndSaveToZip";
+            this.btnMavSplitDataAndSaveToZip.Size = new System.Drawing.Size(195, 40);
+            this.btnMavSplitDataAndSaveToZip.TabIndex = 57;
+            this.btnMavSplitDataAndSaveToZip.Text = "MinuteAlphaVantage split files by dates and save to zip";
+            this.btnMavSplitDataAndSaveToZip.UseVisualStyleBackColor = true;
+            this.btnMavSplitDataAndSaveToZip.Click += new System.EventHandler(this.btnMavSplitDataAndSaveToZip_Click);
             // 
-            // btnMinuteAlphaVantageSplitDataLog
+            // btnMavSplitDataLog
             // 
-            this.btnMinuteAlphaVantageSplitDataLog.Location = new System.Drawing.Point(709, 56);
-            this.btnMinuteAlphaVantageSplitDataLog.Name = "btnMinuteAlphaVantageSplitDataLog";
-            this.btnMinuteAlphaVantageSplitDataLog.Size = new System.Drawing.Size(195, 27);
-            this.btnMinuteAlphaVantageSplitDataLog.TabIndex = 56;
-            this.btnMinuteAlphaVantageSplitDataLog.Text = "MinuteAlphaVantage split files LOG";
-            this.btnMinuteAlphaVantageSplitDataLog.UseVisualStyleBackColor = true;
-            this.btnMinuteAlphaVantageSplitDataLog.Click += new System.EventHandler(this.btnMinuteAlphaVantageSplitDataLog_Click);
+            this.btnMavSplitDataLog.Location = new System.Drawing.Point(709, 56);
+            this.btnMavSplitDataLog.Name = "btnMavSplitDataLog";
+            this.btnMavSplitDataLog.Size = new System.Drawing.Size(195, 27);
+            this.btnMavSplitDataLog.TabIndex = 56;
+            this.btnMavSplitDataLog.Text = "MinuteAlphaVantage split files LOG";
+            this.btnMavSplitDataLog.UseVisualStyleBackColor = true;
+            this.btnMavSplitDataLog.Click += new System.EventHandler(this.btnMavSplitDataLog_Click);
             // 
-            // btnMinuteAlphaVantageSaveLogToDb
+            // btnMavSaveLogToDb
             // 
-            this.btnMinuteAlphaVantageSaveLogToDb.Location = new System.Drawing.Point(709, 18);
-            this.btnMinuteAlphaVantageSaveLogToDb.Name = "btnMinuteAlphaVantageSaveLogToDb";
-            this.btnMinuteAlphaVantageSaveLogToDb.Size = new System.Drawing.Size(195, 23);
-            this.btnMinuteAlphaVantageSaveLogToDb.TabIndex = 55;
-            this.btnMinuteAlphaVantageSaveLogToDb.Text = "MinuteAlphaVantage Save Log to DB";
-            this.btnMinuteAlphaVantageSaveLogToDb.UseVisualStyleBackColor = true;
-            this.btnMinuteAlphaVantageSaveLogToDb.Click += new System.EventHandler(this.btnMinuteAlphaVantageSaveLogToDb_Click);
+            this.btnMavSaveLogToDb.Location = new System.Drawing.Point(709, 18);
+            this.btnMavSaveLogToDb.Name = "btnMavSaveLogToDb";
+            this.btnMavSaveLogToDb.Size = new System.Drawing.Size(195, 23);
+            this.btnMavSaveLogToDb.TabIndex = 55;
+            this.btnMavSaveLogToDb.Text = "MinuteAlphaVantage Save Log to DB";
+            this.btnMavSaveLogToDb.UseVisualStyleBackColor = true;
+            this.btnMavSaveLogToDb.Click += new System.EventHandler(this.btnMavSaveLogToDb_Click);
             // 
             // btnRussellIndicesParseZipFile
             // 
@@ -327,14 +327,6 @@ namespace Quote2022
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
-            // dataGridViewCheckBoxColumn1
-            // 
-            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
-            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
-            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            this.dataGridViewCheckBoxColumn1.Width = 5;
-            // 
             // Image
             // 
             this.Image.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
@@ -343,14 +335,6 @@ namespace Quote2022
             this.Image.Name = "Image";
             this.Image.ReadOnly = true;
             this.Image.Width = 5;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
-            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // Started
             // 
@@ -378,10 +362,6 @@ namespace Quote2022
             this.Duration.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Duration.ToolTipText = "Duration, seconds";
             this.Duration.Width = 24;
-            // 
-            // loaderItemBindingSource
-            // 
-            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
             // 
             // tabLoader
             // 
@@ -1539,6 +1519,26 @@ namespace Quote2022
             this.btnMavCopyZipInfoToDb.UseVisualStyleBackColor = true;
             this.btnMavCopyZipInfoToDb.Click += new System.EventHandler(this.btnMavCopyZipInfoToDb_Click);
             // 
+            // dataGridViewCheckBoxColumn1
+            // 
+            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
+            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
+            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            this.dataGridViewCheckBoxColumn1.Width = 5;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // loaderItemBindingSource
+            // 
+            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1553,7 +1553,6 @@ namespace Quote2022
             this.tabControl1.ResumeLayout(false);
             this.tpLoaderNew.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.tabLoader.ResumeLayout(false);
             this.tabLayers.ResumeLayout(false);
             this.gbDataSet.ResumeLayout(false);
@@ -1573,6 +1572,7 @@ namespace Quote2022
             this.gbIntradayDataList.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1691,9 +1691,9 @@ namespace Quote2022
         private System.Windows.Forms.DataGridViewTextBoxColumn Started;
         private System.Windows.Forms.DataGridViewTextBoxColumn Duration;
         private System.Windows.Forms.Button btnRussellIndicesParseZipFile;
-        private System.Windows.Forms.Button btnMinuteAlphaVantageSaveLogToDb;
-        private System.Windows.Forms.Button btnMinuteAlphaVantageSplitDataLog;
-        private System.Windows.Forms.Button btnMinuteAlphaVantageSplitDataAndSaveToZip;
+        private System.Windows.Forms.Button btnMavSaveLogToDb;
+        private System.Windows.Forms.Button btnMavSplitDataLog;
+        private System.Windows.Forms.Button btnMavSplitDataAndSaveToZip;
         private System.Windows.Forms.Button btnMavCopyZipInfoToDb;
     }
 }

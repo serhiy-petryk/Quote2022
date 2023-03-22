@@ -8,7 +8,7 @@ using Data.Helpers;
 
 namespace Data.Actions.AlphaVantage
 {
-    public static class AlphaVantageMinuteSaveLogToDb
+    public static class MavSaveLogToDb
     {
         private static readonly TimeSpan _startTrading = new TimeSpan(9, 30, 0);
         private static readonly TimeSpan _endTrading = new TimeSpan(16, 0, 0);

@@ -9,7 +9,7 @@ using Data.Helpers;
 
 namespace Data.Actions.AlphaVantage
 {
-    public static class AlphaVantageMinuteSplitData
+    public static class MavSplitData
     {
         private const string DestinationDataFolder = @"E:\Quote\WebData\Minute\AlphaVantage\Data\";
 

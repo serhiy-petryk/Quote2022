@@ -70,8 +70,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\AlphaVantage\AlphaVantageMinuteSplitData.cs" />
-    <Compile Include="Actions\AlphaVantage\AlphaVantageMinuteSaveLogToDb.cs" />
+    <Compile Include="Actions\AlphaVantage\MavSplitData.cs" />
+    <Compile Include="Actions\AlphaVantage\MavSaveLogToDb.cs" />
     <Compile Include="Actions\AlphaVantage\MavCopyZipInfoToDb.cs" />
     <Compile Include="Actions\Eoddata\EoddataDailyLoader.cs" />
     <Compile Include="Actions\Eoddata\EoddataSplitsLoader.cs" />

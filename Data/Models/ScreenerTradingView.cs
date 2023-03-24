@@ -20,9 +20,13 @@ namespace Data.Models
 
                 var item = new DbItem
                 {
-                    Exchange = ss[0], Symbol = ss[1], Name = CheckNull((string) d[14]),
-                    Type = CheckNull((string) d[15]), Subtype = CheckNull((string) d[16]),
-                    Sector = CheckNull((string) d[12]), Industry = CheckNull((string) d[13]),
+                    Exchange = ss[0],
+                    Symbol = ss[1],
+                    Name = CheckNull((string) d[14]),
+                    Type = CheckNull((string) d[15]),
+                    Subtype = CheckNull((string) d[16]),
+                    Sector = CheckNull((string) d[12]),
+                    Industry = CheckNull((string) d[13]),
                     Close = Convert.ToSingle(d[2]),
                     Volume = Convert.ToSingle(Math.Round(Convert.ToDouble(d[6])/1000000.0,3)),
                     MarketCap = d[8] == null ? (float?) null : Convert.ToSingle(Math.Round(Convert.ToDouble(d[8]) / 1000000.0, 3)),

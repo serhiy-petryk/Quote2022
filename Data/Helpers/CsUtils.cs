@@ -27,8 +27,10 @@ namespace Data.Helpers
 
         public static int GetFileSizeInKB(string filename) => Convert.ToInt32(new FileInfo(filename).Length / 1024.0);
 
-        public static Tuple<DateTime, string> GetTimeStamp(int hourOffset = -9) => new Tuple<DateTime, string>(DateTime.Now.AddHours(hourOffset),
-            DateTime.Now.AddHours(hourOffset).ToString("yyyyMMdd"));
+        public static Tuple<DateTime, string, string> GetTimeStamp(int hourOffset = -9) =>
+            new Tuple<DateTime, string, string>(DateTime.Now.AddHours(hourOffset),
+                DateTime.Now.AddHours(hourOffset).ToString("yyyyMMdd"),
+                DateTime.Now.AddHours(0).ToString("yyyyMMddHHmmss"));
 
         public static long MemoryUsedInBytes
         {

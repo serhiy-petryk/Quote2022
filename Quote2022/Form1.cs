@@ -900,8 +900,12 @@ namespace Quote2022
             }
             return;*/
 
-            var file = @"E:\Quote\WebData\Indices\Russell\Ru3000.zip";
-            var cnt = Data.Actions.Russell.RussellIndexLoader.Parse(file);
+            /*var folder = @"E:\Quote\WebData\Screener\TradingView";
+            var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a).ToArray();
+            foreach (var f in files)
+            {
+                Data.Actions.TradingView.TvScreenerLoader.ParseAndSaveToDb(f);
+            }*/
         }
 
         private async void btnRussellIndicesParseZipFile_Click(object sender, EventArgs e)

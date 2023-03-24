@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using Data.Helpers;
@@ -16,8 +17,8 @@ namespace Data.Actions.TradingView
             Logger.AddMessage($"Started");
 
             // Download
-            var timeStamp = Helpers.CsUtils.GetTimeStamp();
-            var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp.Item2}.json";
+            var timeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
+            var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp}.json";
 
             Logger.AddMessage($"Download data to {filename}");
             Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
@@ -35,7 +36,7 @@ namespace Data.Actions.TradingView
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
-        private static int ParseAndSaveToDb(string zipFileName)
+        public static int ParseAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))

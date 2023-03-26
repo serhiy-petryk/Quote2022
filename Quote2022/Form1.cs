@@ -906,6 +906,9 @@ namespace Quote2022
             {
                 Data.Actions.TradingView.TvScreenerLoader.ParseAndSaveToDb(f);
             }*/
+
+            var file = @"E:\Quote\WebData\Symbols\finnhub.io\Symbols\SymbolsFinnhub_20230325.zip";
+            Data.Actions.Finnhub.FinnhubSymbolsLoader.ParseAndSaveToDb(file);
         }
 
         private async void btnRussellIndicesParseZipFile_Click(object sender, EventArgs e)

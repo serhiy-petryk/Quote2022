@@ -76,6 +76,7 @@
     <Compile Include="Actions\Eoddata\EoddataDailyLoader.cs" />
     <Compile Include="Actions\Eoddata\EoddataSplitsLoader.cs" />
     <Compile Include="Actions\Eoddata\EoddataSymbolsLoader.cs" />
+    <Compile Include="Actions\Finnhub\FinnhubSymbolsLoader.cs" />
     <Compile Include="Actions\Investing\InvestingSplitsLoader.cs" />
     <Compile Include="Actions\Nasdaq\NasdaqScreenerLoader.cs" />
     <Compile Include="Actions\Russell\RussellIndexLoader.cs" />

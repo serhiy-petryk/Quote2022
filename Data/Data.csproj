@@ -79,6 +79,9 @@
     <Compile Include="Actions\Eoddata\EoddataSymbolsLoader.cs" />
     <Compile Include="Actions\Finnhub\FinnhubSymbolsLoader.cs" />
     <Compile Include="Actions\Finnhub\FinnhubMinuteDownloader.cs" />
+    <Compile Include="Actions\FmpCloud\FmpCloudDailyLoader.cs" />
+    <Compile Include="Actions\FmpCloud\FmpCloudSymbolsLoader.cs" />
+    <Compile Include="Actions\FmpCloud\FmpCloudSymbolsTradableLoader.cs" />
     <Compile Include="Actions\Investing\InvestingSplitsLoader.cs" />
     <Compile Include="Actions\Nasdaq\NasdaqScreenerLoader.cs" />
     <Compile Include="Actions\Polygon\PolygonDailyLoader.cs" />

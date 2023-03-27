@@ -81,6 +81,8 @@
     <Compile Include="Actions\Finnhub\FinnhubMinuteDownloader.cs" />
     <Compile Include="Actions\Investing\InvestingSplitsLoader.cs" />
     <Compile Include="Actions\Nasdaq\NasdaqScreenerLoader.cs" />
+    <Compile Include="Actions\Polygon\PolygonDailyLoader.cs" />
+    <Compile Include="Actions\Polygon\PolygonMinuteLoader.cs" />
     <Compile Include="Actions\Russell\RussellIndexLoader.cs" />
     <Compile Include="Actions\StockAnaysis\StockAnalysisIPOs.cs" />
     <Compile Include="Actions\StockAnaysis\StockAnalysisActions.cs" />

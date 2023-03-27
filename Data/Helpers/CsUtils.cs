@@ -1,10 +1,20 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace Data.Helpers
 {
     public static class CsUtils
     {
+        public static string[] GetApiKeys(string dataProvider)
+        {
+            const string filename = @"E:\Quote\WebData\ApiKeys.txt";
+            var keys = File.ReadAllLines(filename)
+                .Where(a => a.StartsWith(dataProvider, StringComparison.InvariantCultureIgnoreCase))
+                .Select(a => a.Split('\t')[1].Trim()).ToArray();
+            return keys;
+        }
+
         public static long GetWebDateTime(DateTime dt)
         {
             var offsetDate = new DateTime(1970, 1, 1);

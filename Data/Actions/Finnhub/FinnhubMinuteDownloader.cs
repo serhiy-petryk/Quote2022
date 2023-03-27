@@ -10,12 +10,6 @@ namespace Data.Actions.Finnhub
 {
     public static class FinnhubMinuteDownloader
     {
-        const string ApiKeyFileName = @"E:\Quote\WebData\Minute\Finnhub\ApiKey.txt";
-
-        private static bool _stopFlag;
-
-        public static void Stop() => _stopFlag = true;
-
         public static void Start(string[] symbols)
         {
             if (symbols.Length == 0)
@@ -24,10 +18,8 @@ namespace Data.Actions.Finnhub
                 return;
             }
 
-            _stopFlag = false;
-
+            var apiKey = CsUtils.GetApiKeys("finnhub.io")[0];
             var filenameTemplate = @"E:\Quote\WebData\Minute\Finnhub\Data\Finnhub_20230325\fMin_{0}_{1}.json";
-            var apiKey = File.ReadAllLines(ApiKeyFileName).FirstOrDefault(a => !string.IsNullOrEmpty(a) && !a.StartsWith("#"));
 
             // SetUrlsAndFilenamesLastYear(symbols);
             Logger.AddMessage($"Define urls and filenames to download.");
@@ -57,16 +49,12 @@ namespace Data.Actions.Finnhub
                 return;
 
             var downloadedItems = 0;
-            _stopFlag = false;
-
-            // var tasks = _apiKeys.Select(a => Task.Factory.StartNew(() => Download(a)));
-            // Task.WaitAll(tasks.ToArray());
             var urlOffset = 0;
             while (true)
             {
                 for (var k = 0; k < 50; k++)
                 {
-                    if (urlOffset >= urlsAndFilenames.Count || _stopFlag)
+                    if (urlOffset >= urlsAndFilenames.Count)
                         break;
 
                     var urlAndFilename = urlsAndFilenames[urlOffset++];
@@ -81,7 +69,7 @@ namespace Data.Actions.Finnhub
                     downloadedItems++;
                 }
                 
-                if (urlOffset >= urlsAndFilenames.Count || _stopFlag)
+                if (urlOffset >= urlsAndFilenames.Count)
                     break;
 
                 Logger.AddMessage($"Downloaded {urlOffset} items from {urlsAndFilenames.Count}. Delay 1 minute");

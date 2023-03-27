@@ -41,7 +41,8 @@ namespace Quote2022
 
             StartImageAnimation();
 
-            Logger.MessageAdded += (sender, args) => StatusLabel.Text = args.FullMessage; 
+            // Logger.MessageAdded += (sender, args) => StatusLabel.Text = args.FullMessage;
+            Logger.MessageAdded += (sender, args) => this.BeginInvoke((Action)(() => StatusLabel.Text = args.FullMessage));
         }
 
         #region ===========  Image Animation  ============
@@ -843,72 +844,15 @@ namespace Quote2022
             ((Control)sender).Enabled = true;
         }
 
-        private void btnTemp_Click(object sender, EventArgs e)
+        private async void btnTemp_Click(object sender, EventArgs e)
         {
-            // Actions.SymbolsYahoo.ScreenerYahoo_Download.Start(ShowStatus);
-            // Actions.SymbolsYahoo.ProfileYahoo_Parse.Start(@"E:\Quote\WebData\Symbols\Yahoo\Profile\Data", ShowStatus);
-            // Actions.SymbolsYahoo.ProfileYahoo_Parse.Start(@"E:\Quote\WebData\Symbols\Yahoo\Profile\Data\YP_20230222", ShowStatus);
-            // Actions.ScreenerStockAnalysis.ScreenerStockAnalysis_Download.Start(ShowStatus);
-            // Actions.Barchart.IndexBarchart_Parse.ParseRussell3000();
-            // Actions.Barchart.IndexBarchart_Parse.ParseSP600();
-            // var url = @"https://web.archive.org/web/20121101000000/http://www.eoddata.com/stocklist/NYSE/I.htm";
-            // Actions.Download.DownloadPage(url, @"E:\Temp\aa.html");
+            btnTemp.Enabled = false;
 
-            // https://en.wikipedia.org/wiki/List_of_S%26P_600_companies
-            // Helpers.WebArchive.Download("https://en.wikipedia.org/wiki/Nasdaq-100", @"E:\Quote\WebArchive\Indices\Wikipedia\Nasdaq100\Nasdaq100_{0}.html", ShowStatus);
-            // Actions.Wikipedia.Indices.Parse(@"E:\Quote\WebArchive\Indices\Wikipedia\WebArchive.Wikipedia.Indices.zip", ShowStatus);
-
-            /*var types = new[] {"Listed", "Delisted", "Splits", "Changes", "Spinoffs", "Bankruptcies", "Acquisitions"};
-
-            foreach (var t in types)
-            {
-                Helpers.WebArchive.Download($"https://stockanalysis.com/actions/{t.ToLower()}",
-                    $@"E:\Quote\WebArchive\Symbols\Stockanalysis\{t}\Recent\{t}_{{0}}.html", ShowStatus);
-                for (var k = 2023; k >= 1998; k--)
-                {
-                    Helpers.WebArchive.Download($"https://stockanalysis.com/actions/{t.ToLower()}/{k}",
-                        $@"E:\Quote\WebArchive\Symbols\Stockanalysis\{t}\{k}\{t}_{k}_{{0}}.html", ShowStatus);
-                }
-            }*/
-
-            /*for (var k = 2023; k >= 1998; k--)
-            {
-                Helpers.WebArchive.Download($"https://stockanalysis.com/actions/{k}",
-                    $@"E:\Quote\WebArchive\Symbols\Stockanalysis\Actions\{k}\Actions_{{0}}.html", ShowStatus);
-            }*/
-
-            // https://stockanalysis.com/api/screener/s/f?m=ipoDate&s=desc&c=ipoDate,s,n,ipoPrice,ippc,exchange&f=ipoDate-year-2023&i=histip
-
-            // Actions.Github.NasdaqScreener(ShowStatus);
-
-            /*var folder = @"E:\Quote\WebData\Symbols\Eoddata";
-            var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a);
-            foreach (var file in files)
-            {
-                var i = Data.Actions.Eoddata.EoddataSymbolsLoader.ParseAndSaveToDb(file);
-                Debug.Print($"{i:N0}\t{file}");
-            }*/
-
-            /*var folder = @"E:\Quote\WebData\Indices\Russell\Ru3000";
-            foreach (var f in Directory.GetFiles(folder))
-            {
-                var ss = Path.GetFileNameWithoutExtension(f).Split('_');
-                var t = ss[ss.Length - 1].Length == 8 ? ss[ss.Length - 1] : ss[ss.Length - 2];
-                var timeStamp = DateTime.ParseExact(t, "yyyyMMdd", CultureInfo.InvariantCulture);
-                File.SetCreationTime(f, timeStamp);
-                File.SetLastWriteTime(f, timeStamp);
-            }
-            return;*/
-
-            /*var folder = @"E:\Quote\WebData\Screener\TradingView";
-            var files = Directory.GetFiles(folder, "*.zip").OrderBy(a=>a).ToArray();
-            foreach (var f in files)
-            {
-                Data.Actions.TradingView.TvScreenerLoader.ParseAndSaveToDb(f);
-            }*/
-
-            var file = @"E:\Quote\WebData\Symbols\finnhub.io\Symbols\SymbolsFinnhub_20230325.zip";
-            Data.Actions.Finnhub.FinnhubSymbolsLoader.ParseAndSaveToDb(file);
+            const string symbolListFileName = @"E:\Quote\WebData\Minute\Finnhub\SymbolsToDownload_20230325.txt";
+            var symbols = File.ReadAllLines(symbolListFileName).Where(a => !a.StartsWith("#")).Distinct().OrderBy(a=>a).ToArray();
+            await Task.Factory.StartNew(() => Data.Actions.Finnhub.FinnhubMinuteDownloader.Start(symbols));
+            
+            btnTemp.Enabled = true;
         }
 
         private async void btnRussellIndicesParseZipFile_Click(object sender, EventArgs e)

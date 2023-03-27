@@ -5,6 +5,16 @@ namespace Data.Helpers
 {
     public static class CsUtils
     {
+        public static long GetWebDateTime(DateTime dt)
+        {
+            var offsetDate = new DateTime(1970, 1, 1);
+            var tzi = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
+            var seconds = (dt - offsetDate).TotalSeconds + (tzi.GetUtcOffset(dt)).TotalSeconds;
+            // var seconds = (dt - offsetDate).TotalSeconds;
+            return Convert.ToInt64(seconds);
+        }
+
         public static string GetString(object o)
         {
             if (o is DateTime dt)

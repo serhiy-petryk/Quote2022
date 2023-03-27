@@ -16,7 +16,6 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"Started");
 
             var api = CsUtils.GetApiKeys("polygon.io")[1];
-
             var folder = $@"E:\Quote\WebData\Minute\Polygon\Data\20230327\";
 
             var symbolAndDates = new List<Tuple<string, DateTime,DateTime>>();

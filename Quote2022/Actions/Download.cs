@@ -26,8 +26,7 @@ namespace Quote2022.Actions
         {
             const string dataFolder = @"E:\Quote\WebData\Minute\AlphaVantage\YearMonth\";
             const string symbolListFileName = @"E:\Quote\WebData\Minute\AlphaVantage\SymbolsToDownload.txt";
-            // var apiKeys = new[] { "TK4Q66GMN8YDXDVZ", "TXQMV0KYX4WBX7VS", "QDYJLC03FUZX4VN2" };
-            var apiKeys = new[] { "TXQMV0KYX4WBX7VS" };
+            var apiKeys = new[] { Data.Helpers.CsUtils.GetApiKeys("alphavantage.co")[2] };
 
             showStatusAction($"MinuteAlphaVantage_Download. Define urls and filenames to download.");
             var periodIds = new Dictionary<string, DateTime>();

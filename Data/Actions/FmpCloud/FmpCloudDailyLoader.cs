@@ -4,12 +4,8 @@ using System.Data.SqlClient;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Data.Helpers;
-using Data.Models;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace Data.Actions.FmpCloud
 {
@@ -56,34 +52,6 @@ namespace Data.Actions.FmpCloud
                     }
                 }
             }
-
-            /*var timeStamp = CsUtils.GetTimeStamp();
-
-            // Download data
-            foreach (var exchange in Exchanges)
-            {
-                var stockFile = folder + $@"StockScreener_{exchange}_{timeStamp.Item2}.json";
-                var stockUrl = string.Format(StockUrlTemplate, exchange);
-                Logger.AddMessage($"Download STOCK data for {exchange} from {StockUrlTemplate} to {stockFile}");
-                Helpers.Download.DownloadPage(stockUrl, stockFile, true);
-            }
-
-            var etfFile = folder + $@"EtfScreener_{timeStamp.Item2}.json";
-            Logger.AddMessage($"Download ETF data from {EtfUrl} to {etfFile}");
-            Helpers.Download.DownloadPage(EtfUrl, etfFile, true);
-
-            // Zip data
-            var zipFileName = Helpers.ZipUtils.ZipFolder(folder);
-
-            // Parse and save data to database
-            Logger.AddMessage($"Parse and save files to database");
-            var itemCount = ParseAndSaveToDb(zipFileName);
-
-            // Remove json files
-            Directory.Delete(folder, true);
-
-            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");*/
-
             Logger.AddMessage($"!Finished. ");//Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
 
@@ -112,9 +80,6 @@ namespace Data.Actions.FmpCloud
                         var items = JsonConvert.DeserializeObject<cItem[]>(entry.GetContentOfZipEntry()).ToArray();
                         itemCount += items.Length;
 
-                        // var ok = items.Where(a => CheckSymbol(a.symbol)).Select(a => a.symbol).Distinct().ToArray();
-                        // var bad = items.Where(a => !CheckSymbol(a.symbol)).Select(a => a.symbol).Distinct().ToArray();
-
                         // Save data to buffer table of data server
                         Helpers.DbUtils.SaveToDbTable(items.Where(a=>CheckSymbol(a.symbol)), "dbQuote2023..DayFmpCloud", "symbol", "date", "open",
                             "high", "low", "close", "volume", "adjClose");
@@ -141,23 +106,6 @@ namespace Data.Actions.FmpCloud
                     return !(symbol.EndsWith(".L") || symbol.EndsWith(".F") || symbol.EndsWith(".V"));
             }
             return !symbol.EndsWith("-USD");
-        }
-
-        private static bool CheckSymbolXX(string symbol)
-        {
-            var chars = symbol.ToArray();
-            var minusCount = 0;
-            for (var k = 0; k < chars.Length; k++)
-            {
-                var c = chars[k];
-                if (k == 0 && !char.IsUpper(c)) return false;
-                if (k == (chars.Length - 1) && !char.IsUpper(c)) return false;
-                if (c == '-')
-                    minusCount++;
-                else if (!char.IsUpper(c)) return false;
-            }
-
-            return minusCount < 2;
         }
 
         #region ===========  Json SubClasses  ===========

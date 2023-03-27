@@ -10,6 +10,9 @@ namespace Data.Actions.Finnhub
 {
     public static class FinnhubMinuteDownloader
     {
+        private const string filenameTemplate = @"E:\Quote\WebData\Minute\Finnhub\Data\Finnhub_20230325\fMin_{0}_{1}.json";
+        private static string apiKey = CsUtils.GetApiKeys("finnhub.io")[0];
+
         public static void Start(string[] symbols)
         {
             if (symbols.Length == 0)
@@ -17,9 +20,6 @@ namespace Data.Actions.Finnhub
                 MessageBox.Show("No symbols in file");
                 return;
             }
-
-            var apiKey = CsUtils.GetApiKeys("finnhub.io")[0];
-            var filenameTemplate = @"E:\Quote\WebData\Minute\Finnhub\Data\Finnhub_20230325\fMin_{0}_{1}.json";
 
             // SetUrlsAndFilenamesLastYear(symbols);
             Logger.AddMessage($"Define urls and filenames to download.");

@@ -69,6 +69,8 @@ namespace Data.Actions.Eoddata
                         
                         var items = lines.Skip(1).Select(line => new SymbolsEoddata(exchange, date, line.Split('\t')))
                             .ToArray();
+                        foreach (var item in items)
+                            item.TimeStamp = entry.LastWriteTime.DateTime;
 
                         itemCount += items.Length;
 

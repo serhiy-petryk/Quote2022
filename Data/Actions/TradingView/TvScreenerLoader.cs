@@ -40,22 +40,21 @@ namespace Data.Actions.TradingView
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var o = JsonConvert.DeserializeObject<ScreenerTradingView>(entry.GetContentOfZipEntry());
+                    var items = o.data.Select(a => a.GetDbItem(entry.LastWriteTime.DateTime)).ToArray();
+
+                    if (items.Length > 0)
                     {
-                        var o = JsonConvert.DeserializeObject<ScreenerTradingView>(entry.GetContentOfZipEntry());
-                        var items = o.data.Select(a => a.GetDbItem(entry.LastWriteTime.DateTime)).ToArray();
-
-                        if (items.Length > 0)
-                        {
-                            DbUtils.ClearAndSaveToDbTable(items, "Bfr_ScreenerTradingView", "Symbol", "Exchange",
-                                "Name", "Type", "Subtype", "Sector", "Industry", "Close", "MarketCap", "Volume",
-                                "Recommend", "TimeStamp");
-                            DbUtils.RunProcedure("pUpdateScreenerTradingView");
-                        }
-
-                        itemCount += items.Length;
+                        DbUtils.ClearAndSaveToDbTable(items, "Bfr_ScreenerTradingView", "Symbol", "Exchange",
+                            "Name", "Type", "Subtype", "Sector", "Industry", "Close", "MarketCap", "Volume",
+                            "Recommend", "TimeStamp");
+                        DbUtils.RunProcedure("pUpdateScreenerTradingView");
                     }
+
+                    itemCount += items.Length;
+                }
 
             return itemCount;
         }

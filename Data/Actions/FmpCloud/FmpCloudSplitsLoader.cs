@@ -49,22 +49,21 @@ namespace Data.Actions.FmpCloud
         {
             var items = new Dictionary<Tuple<string, DateTime>, cItem>();
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var cItems = JsonConvert.DeserializeObject<cItem[]>(entry.GetContentOfZipEntry()).ToArray();
+                    foreach (var item in cItems)
                     {
-                        var cItems = JsonConvert.DeserializeObject<cItem[]>(entry.GetContentOfZipEntry()).ToArray();
-                        foreach (var item in cItems)
-                        {
-                            if (!FmpCloudCommon.IsValidSymbol(item.symbol))
-                                continue;
+                        if (!FmpCloudCommon.IsValidSymbol(item.symbol))
+                            continue;
 
-                            item.TimeStamp = entry.LastWriteTime.DateTime;
-                            var key = new Tuple<string, DateTime>(item.symbol, item.date);
-                            if (!items.ContainsKey(key))
-                                items.Add(key, item);
-                        }
-
+                        item.TimeStamp = entry.LastWriteTime.DateTime;
+                        var key = new Tuple<string, DateTime>(item.symbol, item.date);
+                        if (!items.ContainsKey(key))
+                            items.Add(key, item);
                     }
+
+                }
 
             var K = items.Values.Select(a => a.K).ToArray();
             // Save data to buffer table of data server

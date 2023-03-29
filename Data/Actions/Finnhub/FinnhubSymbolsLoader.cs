@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.Compression;
+using System.Linq;
 using Data.Helpers;
 using Newtonsoft.Json;
 
@@ -53,21 +54,20 @@ namespace Data.Actions.Finnhub
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
-                    {
-                        var items = JsonConvert.DeserializeObject<cItem[]>(entry.GetContentOfZipEntry());
-                        var timeStamp = entry.LastWriteTime.DateTime;
-                        foreach (var item in items)
-                            item.TimeStamp = timeStamp;
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var items = JsonConvert.DeserializeObject<cItem[]>(entry.GetContentOfZipEntry());
+                    var timeStamp = entry.LastWriteTime.DateTime;
+                    foreach (var item in items)
+                        item.TimeStamp = timeStamp;
 
-                        itemCount += items.Length;
+                    itemCount += items.Length;
 
-                        // Save data to buffer table of data server
-                        Helpers.DbUtils.ClearAndSaveToDbTable(items, "dbQuote2023..Bfr_SymbolsFinnhub", "symbol",
-                            "Exchange", "Type", "Name", "Figi", "ShareClassFigi", "TimeStamp");
-                        // Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata");
-                    }
+                    // Save data to buffer table of data server
+                    Helpers.DbUtils.ClearAndSaveToDbTable(items, "dbQuote2023..Bfr_SymbolsFinnhub", "symbol",
+                        "Exchange", "Type", "Name", "Figi", "ShareClassFigi", "TimeStamp");
+                    // Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata");
+                }
 
             return itemCount;
         }

@@ -59,25 +59,24 @@ namespace Data.Actions.Investing
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
-                    {
-                        var content = entry.GetContentOfZipEntry();
-                        var timeStamp = entry.LastWriteTime.DateTime;
-                        var items = new List<SplitModel>();
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var content = entry.GetContentOfZipEntry();
+                    var timeStamp = entry.LastWriteTime.DateTime;
+                    var items = new List<SplitModel>();
 
-                        if (Path.GetExtension(entry.FullName) == ".json")
-                            ParseJson(content, timeStamp, items);
-                        else if (Path.GetExtension(entry.FullName) == ".txt")
-                            ParseTxt(entry.FullName, content, timeStamp, items);
-                        else
-                            throw new Exception($"InvestingSplitsLoader. Parse don't defined for '{Path.GetExtension(entry.FullName)}' file type");
+                    if (Path.GetExtension(entry.FullName) == ".json")
+                        ParseJson(content, timeStamp, items);
+                    else if (Path.GetExtension(entry.FullName) == ".txt")
+                        ParseTxt(entry.FullName, content, timeStamp, items);
+                    else
+                        throw new Exception($"InvestingSplitsLoader. Parse don't defined for '{Path.GetExtension(entry.FullName)}' file type");
 
-                        if (items.Count > 0)
-                            SaveToDb(items.Where(a => a.Date <= a.TimeStamp));
+                    if (items.Count > 0)
+                        SaveToDb(items.Where(a => a.Date <= a.TimeStamp));
 
-                        itemCount += items.Count;
-                    }
+                    itemCount += items.Count;
+                }
 
             return itemCount;
         }

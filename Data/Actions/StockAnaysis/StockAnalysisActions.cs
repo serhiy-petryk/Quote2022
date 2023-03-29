@@ -41,26 +41,25 @@ namespace Data.Actions.StockAnaysis
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var items = new List<Models.ActionStockAnalysis>();
+                    Parse(entry.GetContentOfZipEntry(), items, entry.LastWriteTime.DateTime);
+                    itemCount += items.Count;
+                    // Save data to database
+                    if (items.Count > 0)
                     {
-                        var items = new List<Models.ActionStockAnalysis>();
-                        Parse(entry.GetContentOfZipEntry(), items, entry.LastWriteTime.DateTime);
-                        itemCount += items.Count;
-                        // Save data to database
-                        if (items.Count > 0)
-                        {
-                            DbUtils.ClearAndSaveToDbTable(items.Where(a => !a.IsBad), "dbQuote2023..Bfr_ActionsStockAnalysis",
-                                "Date", "Type", "Symbol", "OtherSymbolOrName", "Name", "Description", "SplitRatio", "SplitK",
-                                "TimeStamp");
+                        DbUtils.ClearAndSaveToDbTable(items.Where(a => !a.IsBad), "dbQuote2023..Bfr_ActionsStockAnalysis",
+                            "Date", "Type", "Symbol", "OtherSymbolOrName", "Name", "Description", "SplitRatio", "SplitK",
+                            "TimeStamp");
 
-                            DbUtils.ClearAndSaveToDbTable(items.Where(a => a.IsBad),
-                                "dbQuote2023..Bfr_ActionsStockAnalysisError", "Date", "Type", "Symbol", "OtherSymbolOrName",
-                                "Description", "TimeStamp");
+                        DbUtils.ClearAndSaveToDbTable(items.Where(a => a.IsBad),
+                            "dbQuote2023..Bfr_ActionsStockAnalysisError", "Date", "Type", "Symbol", "OtherSymbolOrName",
+                            "Description", "TimeStamp");
 
-                            DbUtils.RunProcedure("dbQuote2023..pUpdateActionsStockAnalysis");
-                        }
+                        DbUtils.RunProcedure("dbQuote2023..pUpdateActionsStockAnalysis");
                     }
+                }
 
             return itemCount;
         }

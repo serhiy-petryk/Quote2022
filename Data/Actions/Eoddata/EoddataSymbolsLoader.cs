@@ -55,30 +55,29 @@ namespace Data.Actions.Eoddata
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
-                    {
-                        var lines = entry.GetLinesOfZipEntry().ToArray();
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var lines = entry.GetLinesOfZipEntry().ToArray();
 
-                        var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
-                        var exchange = ss[0].Trim().ToUpper();
-                        var date = entry.LastWriteTime.DateTime;
+                    var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
+                    var exchange = ss[0].Trim().ToUpper();
+                    var date = entry.LastWriteTime.DateTime;
 
-                        if (lines.Length == 0 || !string.Equals(lines[0], "Symbol\tDescription"))
-                            throw new Exception($"SymbolsEoddata_Parse error! Please, check the first line of {entry.Name} file in {zipFileName}");
-                        
-                        var items = lines.Skip(1).Select(line => new SymbolsEoddata(exchange, date, line.Split('\t')))
-                            .ToArray();
-                        foreach (var item in items)
-                            item.TimeStamp = entry.LastWriteTime.DateTime;
+                    if (lines.Length == 0 || !string.Equals(lines[0], "Symbol\tDescription"))
+                        throw new Exception($"SymbolsEoddata_Parse error! Please, check the first line of {entry.Name} file in {zipFileName}");
 
-                        itemCount += items.Length;
+                    var items = lines.Skip(1).Select(line => new SymbolsEoddata(exchange, date, line.Split('\t')))
+                        .ToArray();
+                    foreach (var item in items)
+                        item.TimeStamp = entry.LastWriteTime.DateTime;
 
-                        // Save data to buffer table of data server
-                        Helpers.DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name",
-                            "TimeStamp");
-                        Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata");
-                    }
+                    itemCount += items.Length;
+
+                    // Save data to buffer table of data server
+                    Helpers.DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name",
+                        "TimeStamp");
+                    Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata");
+                }
 
             return itemCount;
         }

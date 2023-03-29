@@ -11,16 +11,15 @@ namespace Data.Actions.FmpCloud
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
-                    {
-                        var items = JsonConvert.DeserializeObject<cItem[]>(entry.GetContentOfZipEntry()).ToArray();
-                        itemCount += items.Length;
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var items = JsonConvert.DeserializeObject<cItem[]>(entry.GetContentOfZipEntry()).ToArray();
+                    itemCount += items.Length;
 
-                        // Save data to buffer table of data server
-                        Helpers.DbUtils.SaveToDbTable(items, "dbQuote2023..SymbolsTradableFmpCloud", "symbol", "name", "price",
-                            "exchange", "exchangeShortName", "type");
-                    }
+                    // Save data to buffer table of data server
+                    Helpers.DbUtils.SaveToDbTable(items, "dbQuote2023..SymbolsTradableFmpCloud", "symbol", "name", "price",
+                        "exchange", "exchangeShortName", "type");
+                }
 
             return itemCount;
         }

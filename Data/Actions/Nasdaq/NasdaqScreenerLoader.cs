@@ -57,63 +57,62 @@ namespace Data.Actions.Nasdaq
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var content = entry.GetContentOfZipEntry();
+
+                    if (entry.LastWriteTime.DateTime < new DateTime(2021, 2, 6)) // 3 very old files have old symbol format => don't save in database
+                        continue;
+
+                    var stockItems = new List<cStockRow>();
+                    var etfItems = new List<cEtfRow>();
+
+                    if (Path.GetExtension(entry.FullName) == ".json" && entry.Name.IndexOf("Etf", StringComparison.InvariantCultureIgnoreCase) != -1)
                     {
-                        var content = entry.GetContentOfZipEntry();
+                        var oEtf = JsonConvert.DeserializeObject<cEtfRoot>(content);
+                        etfItems = oEtf.data.data.rows.ToList();
 
-                        if (entry.LastWriteTime.DateTime < new DateTime(2021, 2, 6)) // 3 very old files have old symbol format => don't save in database
-                            continue;
-
-                        var stockItems = new List<cStockRow>();
-                        var etfItems = new List<cEtfRow>();
-
-                        if (Path.GetExtension(entry.FullName) == ".json" && entry.Name.IndexOf("Etf", StringComparison.InvariantCultureIgnoreCase) != -1)
-                        {
-                            var oEtf = JsonConvert.DeserializeObject<cEtfRoot>(content);
-                            etfItems = oEtf.data.data.rows.ToList();
-
-                            foreach (var item in etfItems)
-                                item.TimeStamp = entry.LastWriteTime.DateTime;
-                        }
-                        else if (Path.GetExtension(entry.FullName) == ".json" && entry.Name.IndexOf("Stock", StringComparison.InvariantCultureIgnoreCase) != -1)
-                        {
-                            var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
-                            var exchange = ss[ss.Length - 2];
-                            if (content.StartsWith("[")) // Github version
-                                stockItems = JsonConvert.DeserializeObject<cStockRow[]>(content).ToList();
-                            else
-                            {
-                                var oo = JsonConvert.DeserializeObject<cStockRoot>(content);
-                                stockItems.AddRange(oo.data.rows);
-                            }
-
-                            foreach (var item in stockItems)
-                            {
-                                item.Exchange = exchange;
-                                item.TimeStamp = entry.LastWriteTime.DateTime;
-                            }
-                        }
-                        else
-                            throw new Exception($"NasdaqScreenerLoader.Parse. '{entry.FullName}' file is invalid in {zipFileName} zip file");
-
-                        if (stockItems.Count > 0)
-                        {
-                            DbUtils.ClearAndSaveToDbTable(stockItems, "Bfr_ScreenerNasdaqStock", "symbol", "Exchange",
-                                "Name", "LastSale", "Volume", "netChange", "Change", "MarketCap", "Country", "ipoYear",
-                                "Sector", "Industry", "TimeStamp");
-                            DbUtils.RunProcedure("pUpdateScreenerNasdaqStock");
-                        }
-
-                        if (etfItems.Count > 0)
-                        {
-                            DbUtils.ClearAndSaveToDbTable(etfItems, "Bfr_ScreenerNasdaqEtf", "symbol", "Name",
-                                "LastSale", "netChange", "Change", "TimeStamp");
-                            DbUtils.RunProcedure("pUpdateScreenerNasdaqEtf");
-                        }
-                        itemCount += stockItems.Count + etfItems.Count;
-
+                        foreach (var item in etfItems)
+                            item.TimeStamp = entry.LastWriteTime.DateTime;
                     }
+                    else if (Path.GetExtension(entry.FullName) == ".json" && entry.Name.IndexOf("Stock", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    {
+                        var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
+                        var exchange = ss[ss.Length - 2];
+                        if (content.StartsWith("[")) // Github version
+                            stockItems = JsonConvert.DeserializeObject<cStockRow[]>(content).ToList();
+                        else
+                        {
+                            var oo = JsonConvert.DeserializeObject<cStockRoot>(content);
+                            stockItems.AddRange(oo.data.rows);
+                        }
+
+                        foreach (var item in stockItems)
+                        {
+                            item.Exchange = exchange;
+                            item.TimeStamp = entry.LastWriteTime.DateTime;
+                        }
+                    }
+                    else
+                        throw new Exception($"NasdaqScreenerLoader.Parse. '{entry.FullName}' file is invalid in {zipFileName} zip file");
+
+                    if (stockItems.Count > 0)
+                    {
+                        DbUtils.ClearAndSaveToDbTable(stockItems, "Bfr_ScreenerNasdaqStock", "symbol", "Exchange",
+                            "Name", "LastSale", "Volume", "netChange", "Change", "MarketCap", "Country", "ipoYear",
+                            "Sector", "Industry", "TimeStamp");
+                        DbUtils.RunProcedure("pUpdateScreenerNasdaqStock");
+                    }
+
+                    if (etfItems.Count > 0)
+                    {
+                        DbUtils.ClearAndSaveToDbTable(etfItems, "Bfr_ScreenerNasdaqEtf", "symbol", "Name",
+                            "LastSale", "netChange", "Change", "TimeStamp");
+                        DbUtils.RunProcedure("pUpdateScreenerNasdaqEtf");
+                    }
+                    itemCount += stockItems.Count + etfItems.Count;
+
+                }
 
             return itemCount;
         }

@@ -76,24 +76,23 @@ namespace Data.Actions.Polygon
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
-                    {
-                        var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
-                        if (oo.status != "OK" || oo.count != oo.queryCount || oo.count != oo.resultsCount ||
-                            oo.adjusted)
-                            throw new Exception($"Bad file: {zipFileName}");
-                        var a1 = oo.results[0].Date;
-                        itemCount += oo.results.Length;
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
+                    if (oo.status != "OK" || oo.count != oo.queryCount || oo.count != oo.resultsCount ||
+                        oo.adjusted)
+                        throw new Exception($"Bad file: {zipFileName}");
+                    var a1 = oo.results[0].Date;
+                    itemCount += oo.results.Length;
 
-                        foreach (var item in oo.results)
-                            if (item.T.Any(char.IsLower))
-                                item.T = item.T + "+";
+                    foreach (var item in oo.results)
+                        if (item.T.Any(char.IsLower))
+                            item.T = item.T + "+";
 
-                        // Save data to buffer table of data server
-                        Helpers.DbUtils.SaveToDbTable(oo.results, "dbQ2023..DayPolygon", "Symbol", "Date", "Open",
-                            "High", "Low", "Close", "Volume", "WeightedVolume", "TradeCount");
-                    }
+                    // Save data to buffer table of data server
+                    Helpers.DbUtils.SaveToDbTable(oo.results, "dbQ2023..DayPolygon", "Symbol", "Date", "Open",
+                        "High", "Low", "Close", "Volume", "WeightedVolume", "TradeCount");
+                }
 
             return itemCount;
         }

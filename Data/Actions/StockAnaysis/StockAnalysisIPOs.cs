@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using Data.Helpers;
 using Newtonsoft.Json;
 
@@ -37,24 +38,22 @@ namespace Data.Actions.StockAnaysis
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
+                    foreach (var item in oo.data.data)
+                        item.TimeStamp = entry.LastWriteTime.DateTime;
+                    itemCount += oo.data.data.Length;
+
+                    // Save data to database
+                    if (oo.data.data.Length > 0)
                     {
-                        var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
-                        foreach (var item in oo.data.data)
-                            item.TimeStamp = entry.LastWriteTime.DateTime;
-                        itemCount += oo.data.data.Length;
+                        DbUtils.ClearAndSaveToDbTable(oo.data.data, "dbQuote2023..Bfr_IpoStockAnalysis", "Symbol", "Date", "Exchange",
+                            "Name", "IpoPrice", "CurrentPrice", "Sector", "Industry", "employees", "TimeStamp");
 
-                        // Save data to database
-                        if (oo.data.data.Length > 0)
-                        {
-                            DbUtils.ClearAndSaveToDbTable(oo.data.data, "dbQuote2023..Bfr_IpoStockAnalysis", "Symbol", "Date", "Exchange",
-                                "Name", "IpoPrice", "CurrentPrice", "Sector", "Industry", "employees", "TimeStamp");
-
-                            DbUtils.RunProcedure("dbQuote2023..pUpdateIpoStockAnalysis");
-                        }
-
+                        DbUtils.RunProcedure("dbQuote2023..pUpdateIpoStockAnalysis");
                     }
+                }
 
             return itemCount;
         }

@@ -58,7 +58,7 @@ namespace Data.Actions.FmpCloud
         public static int ParseAndSaveToDbAllFiles()
         {
             var folder = @"E:\Quote\WebData\Daily\FmpCloud\Data";
-            var files = Directory.GetFiles(folder, "*12.zip");
+            var files = Directory.GetFiles(folder, "*02.zip");
             var itemCnt = 0;
             var fileCnt = 0;
             foreach (var file in files)

@@ -8,14 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Data.Helpers;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Quote2022.Actions;
 using Quote2022.Actions.MinuteAlphaVantage;
 using Quote2022.Actions.Nasdaq;
 using Quote2022.Helpers;
 using Quote2022.Models;
-using CsUtils = Quote2022.Helpers.CsUtils;
 
 namespace Quote2022
 {
@@ -42,7 +40,7 @@ namespace Quote2022
             StartImageAnimation();
 
             // Logger.MessageAdded += (sender, args) => StatusLabel.Text = args.FullMessage;
-            Logger.MessageAdded += (sender, args) => this.BeginInvoke((Action)(() => StatusLabel.Text = args.FullMessage));
+            Data.Helpers.Logger.MessageAdded += (sender, args) => this.BeginInvoke((Action)(() => StatusLabel.Text = args.FullMessage));
         }
 
         #region ===========  Image Animation  ============
@@ -848,9 +846,8 @@ namespace Quote2022
         {
             btnTemp.Enabled = false;
 
-            const string symbolListFileName = @"E:\Quote\WebData\Minute\Finnhub\SymbolsToDownload_20230325.txt";
-            var symbols = File.ReadAllLines(symbolListFileName).Where(a => !a.StartsWith("#")).Distinct().OrderBy(a=>a).ToArray();
-            await Task.Factory.StartNew(() => Data.Actions.Finnhub.FinnhubMinuteDownloader.Start(symbols));
+            var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.zip";
+            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveToDb(fn));
             
             btnTemp.Enabled = true;
         }
@@ -920,6 +917,44 @@ namespace Quote2022
             btnMavCopyZipInfoToDb.Enabled = false;
             await Task.Factory.StartNew(Data.Actions.AlphaVantage.MavCopyZipInfoToDb.Start);
             btnMavCopyZipInfoToDb.Enabled = true;
+        }
+
+        private async void btnWAEoddataSymbols_Click(object sender, EventArgs e)
+        {
+            btnWAEoddataSymbols.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.WebArchive.Eoddata.WA_EoddataSymbolsLoader.Start);
+            btnWAEoddataSymbols.Enabled = true;
+        }
+
+        private async void btnFmpCloudSplits_Click(object sender, EventArgs e)
+        {
+            btnFmpCloudSplits.Enabled = false;
+            // await Task.Factory.StartNew(Data.Actions.FmpCloud.FmpCloudSplitsLoader.Start);
+            var filename = @"E:\Quote\WebData\Splits\FmpCloud\Data\FmpCloudSplits_20230327.zip";
+            await Task.Factory.StartNew(() => Data.Actions.FmpCloud.FmpCloudSplitsLoader.ParseAndSaveToDb(filename));
+            btnFmpCloudSplits.Enabled = true;
+
+        }
+
+        private async void btnWaEoddataSymbolsParseAndSaveToDb_Click(object sender, EventArgs e)
+        {
+            btnWaEoddataSymbolsParseAndSaveToDb.Enabled = false;
+
+            /*var folder = @"E:\Quote\WebArchive\Eoddata\Symbols\WA_Eoddata_Symbols_20230327\NASDAQ";
+            var files = Directory.GetFiles(folder, "*.html");
+            foreach (var file in files)
+            {
+                var ss = Path.GetFileNameWithoutExtension(file).Split('_');
+                var timestamp = DateTime.ParseExact(ss[ss.Length - 1], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+                File.SetCreationTime(file, timestamp); 
+                File.SetLastWriteTime(file, timestamp);
+
+            }*/
+            var filename = @"E:\Quote\WebArchive\Eoddata\Symbols\WA_Eoddata_Symbols_20230327\WA_Eoddata_Symbols_AMEX_20230327.zip";
+            await Task.Factory.StartNew(() => Data.Actions.WebArchive.Eoddata.WA_EoddataSymbolsLoader.ParseAndSaveToDb(filename));
+
+            btnWaEoddataSymbolsParseAndSaveToDb.Enabled = true;
+
         }
     }
 }

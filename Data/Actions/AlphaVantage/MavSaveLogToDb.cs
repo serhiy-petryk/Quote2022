@@ -10,8 +10,8 @@ namespace Data.Actions.AlphaVantage
 {
     public static class MavSaveLogToDb
     {
-        private static readonly TimeSpan _startTrading = new TimeSpan(9, 30, 0);
-        private static readonly TimeSpan _endTrading = new TimeSpan(16, 0, 0);
+        private static readonly TimeSpan StartTrading = new TimeSpan(9, 30, 0);
+        private static readonly TimeSpan EndTrading = new TimeSpan(16, 0, 0);
 
         public static void Start(string folder)
         {
@@ -143,7 +143,7 @@ namespace Data.Actions.AlphaVantage
                     // if (logEntry.MinTime > time) logEntry.MinTime = time;
                     // if (logEntry.MaxTime < time) logEntry.MaxTime = time;
 
-                    if (time > _startTrading && time <= _endTrading)
+                    if (time > StartTrading && time <= EndTrading)
                     {
                         logEntry.Count++;
                         logEntry.Volume += volume;

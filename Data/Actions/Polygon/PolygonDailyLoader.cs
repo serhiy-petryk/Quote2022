@@ -98,7 +98,6 @@ namespace Data.Actions.Polygon
         }
 
         #region ===========  Json SubClasses  ===========
-
         private class cRoot
         {
             public int queryCount;

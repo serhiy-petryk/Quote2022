@@ -48,10 +48,16 @@ namespace Quote2022
             this.btnRunMultiItemsLoader = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Image = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Started = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Duration = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tpOneTime = new System.Windows.Forms.TabPage();
+            this.btnWaEoddataSymbolsParseAndSaveToDb = new System.Windows.Forms.Button();
+            this.btnFmpCloudSplits = new System.Windows.Forms.Button();
+            this.btnWAEoddataSymbols = new System.Windows.Forms.Button();
             this.tabLoader = new System.Windows.Forms.TabPage();
             this.btnNasdaqScreenerParse = new System.Windows.Forms.Button();
             this.btnScreenerNasdaqDownload = new System.Windows.Forms.Button();
@@ -146,16 +152,12 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnWAEoddataSymbols = new System.Windows.Forms.Button();
-            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.btnWaEoddataSymbolsParseAndSaveToDb = new System.Windows.Forms.Button();
-            this.btnFmpCloudSplits = new System.Windows.Forms.Button();
+            this.btnMinutePolygonSaveLogToDb = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.tpOneTime.SuspendLayout();
             this.tabLoader.SuspendLayout();
             this.tabLayers.SuspendLayout();
@@ -173,7 +175,6 @@ namespace Quote2022
             this.gbIntradayDataList.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -211,6 +212,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSaveLogToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavCopyZipInfoToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavSplitDataAndSaveToZip);
             this.tpLoaderNew.Controls.Add(this.btnMavSplitDataLog);
@@ -230,7 +232,7 @@ namespace Quote2022
             // 
             // btnMavCopyZipInfoToDb
             // 
-            this.btnMavCopyZipInfoToDb.Location = new System.Drawing.Point(709, 166);
+            this.btnMavCopyZipInfoToDb.Location = new System.Drawing.Point(891, 163);
             this.btnMavCopyZipInfoToDb.Name = "btnMavCopyZipInfoToDb";
             this.btnMavCopyZipInfoToDb.Size = new System.Drawing.Size(195, 51);
             this.btnMavCopyZipInfoToDb.TabIndex = 58;
@@ -240,7 +242,7 @@ namespace Quote2022
             // 
             // btnMavSplitDataAndSaveToZip
             // 
-            this.btnMavSplitDataAndSaveToZip.Location = new System.Drawing.Point(709, 98);
+            this.btnMavSplitDataAndSaveToZip.Location = new System.Drawing.Point(891, 95);
             this.btnMavSplitDataAndSaveToZip.Name = "btnMavSplitDataAndSaveToZip";
             this.btnMavSplitDataAndSaveToZip.Size = new System.Drawing.Size(195, 40);
             this.btnMavSplitDataAndSaveToZip.TabIndex = 57;
@@ -250,7 +252,7 @@ namespace Quote2022
             // 
             // btnMavSplitDataLog
             // 
-            this.btnMavSplitDataLog.Location = new System.Drawing.Point(709, 56);
+            this.btnMavSplitDataLog.Location = new System.Drawing.Point(891, 53);
             this.btnMavSplitDataLog.Name = "btnMavSplitDataLog";
             this.btnMavSplitDataLog.Size = new System.Drawing.Size(195, 27);
             this.btnMavSplitDataLog.TabIndex = 56;
@@ -260,7 +262,7 @@ namespace Quote2022
             // 
             // btnMavSaveLogToDb
             // 
-            this.btnMavSaveLogToDb.Location = new System.Drawing.Point(709, 18);
+            this.btnMavSaveLogToDb.Location = new System.Drawing.Point(892, 18);
             this.btnMavSaveLogToDb.Name = "btnMavSaveLogToDb";
             this.btnMavSaveLogToDb.Size = new System.Drawing.Size(195, 23);
             this.btnMavSaveLogToDb.TabIndex = 55;
@@ -343,6 +345,14 @@ namespace Quote2022
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
+            // dataGridViewCheckBoxColumn1
+            // 
+            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
+            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
+            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            this.dataGridViewCheckBoxColumn1.Width = 5;
+            // 
             // Image
             // 
             this.Image.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
@@ -351,6 +361,14 @@ namespace Quote2022
             this.Image.Name = "Image";
             this.Image.ReadOnly = true;
             this.Image.Width = 5;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // Started
             // 
@@ -379,6 +397,10 @@ namespace Quote2022
             this.Duration.ToolTipText = "Duration, seconds";
             this.Duration.Width = 24;
             // 
+            // loaderItemBindingSource
+            // 
+            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
+            // 
             // tpOneTime
             // 
             this.tpOneTime.Controls.Add(this.btnWaEoddataSymbolsParseAndSaveToDb);
@@ -391,6 +413,36 @@ namespace Quote2022
             this.tpOneTime.TabIndex = 7;
             this.tpOneTime.Text = "One Time";
             this.tpOneTime.UseVisualStyleBackColor = true;
+            // 
+            // btnWaEoddataSymbolsParseAndSaveToDb
+            // 
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Location = new System.Drawing.Point(20, 60);
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Name = "btnWaEoddataSymbolsParseAndSaveToDb";
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Size = new System.Drawing.Size(160, 40);
+            this.btnWaEoddataSymbolsParseAndSaveToDb.TabIndex = 4;
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Text = "WA Eoddata Symbols Parse and SaveTo Db";
+            this.btnWaEoddataSymbolsParseAndSaveToDb.UseVisualStyleBackColor = true;
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Click += new System.EventHandler(this.btnWaEoddataSymbolsParseAndSaveToDb_Click);
+            // 
+            // btnFmpCloudSplits
+            // 
+            this.btnFmpCloudSplits.Location = new System.Drawing.Point(205, 15);
+            this.btnFmpCloudSplits.Name = "btnFmpCloudSplits";
+            this.btnFmpCloudSplits.Size = new System.Drawing.Size(130, 23);
+            this.btnFmpCloudSplits.TabIndex = 3;
+            this.btnFmpCloudSplits.Text = "FmpCloud Splits";
+            this.btnFmpCloudSplits.UseVisualStyleBackColor = true;
+            this.btnFmpCloudSplits.Click += new System.EventHandler(this.btnFmpCloudSplits_Click);
+            // 
+            // btnWAEoddataSymbols
+            // 
+            this.btnWAEoddataSymbols.Location = new System.Drawing.Point(21, 15);
+            this.btnWAEoddataSymbols.Name = "btnWAEoddataSymbols";
+            this.btnWAEoddataSymbols.Size = new System.Drawing.Size(130, 23);
+            this.btnWAEoddataSymbols.TabIndex = 0;
+            this.btnWAEoddataSymbols.Text = "WA Eoddata Symbols";
+            this.btnWAEoddataSymbols.UseVisualStyleBackColor = true;
+            this.btnWAEoddataSymbols.Click += new System.EventHandler(this.btnWAEoddataSymbols_Click);
             // 
             // tabLoader
             // 
@@ -1538,55 +1590,15 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnWAEoddataSymbols
+            // btnMinutePolygonSaveLogToDb
             // 
-            this.btnWAEoddataSymbols.Location = new System.Drawing.Point(21, 15);
-            this.btnWAEoddataSymbols.Name = "btnWAEoddataSymbols";
-            this.btnWAEoddataSymbols.Size = new System.Drawing.Size(130, 23);
-            this.btnWAEoddataSymbols.TabIndex = 0;
-            this.btnWAEoddataSymbols.Text = "WA Eoddata Symbols";
-            this.btnWAEoddataSymbols.UseVisualStyleBackColor = true;
-            this.btnWAEoddataSymbols.Click += new System.EventHandler(this.btnWAEoddataSymbols_Click);
-            // 
-            // dataGridViewCheckBoxColumn1
-            // 
-            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
-            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
-            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            this.dataGridViewCheckBoxColumn1.Width = 5;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
-            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // loaderItemBindingSource
-            // 
-            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
-            // 
-            // btnWaEoddataSymbolsParseAndSaveToDb
-            // 
-            this.btnWaEoddataSymbolsParseAndSaveToDb.Location = new System.Drawing.Point(20, 60);
-            this.btnWaEoddataSymbolsParseAndSaveToDb.Name = "btnWaEoddataSymbolsParseAndSaveToDb";
-            this.btnWaEoddataSymbolsParseAndSaveToDb.Size = new System.Drawing.Size(160, 40);
-            this.btnWaEoddataSymbolsParseAndSaveToDb.TabIndex = 4;
-            this.btnWaEoddataSymbolsParseAndSaveToDb.Text = "WA Eoddata Symbols Parse and SaveTo Db";
-            this.btnWaEoddataSymbolsParseAndSaveToDb.UseVisualStyleBackColor = true;
-            this.btnWaEoddataSymbolsParseAndSaveToDb.Click += new System.EventHandler(this.btnWaEoddataSymbolsParseAndSaveToDb_Click);
-            // 
-            // btnFmpCloudSplits
-            // 
-            this.btnFmpCloudSplits.Location = new System.Drawing.Point(205, 15);
-            this.btnFmpCloudSplits.Name = "btnFmpCloudSplits";
-            this.btnFmpCloudSplits.Size = new System.Drawing.Size(130, 23);
-            this.btnFmpCloudSplits.TabIndex = 3;
-            this.btnFmpCloudSplits.Text = "FmpCloud Splits";
-            this.btnFmpCloudSplits.UseVisualStyleBackColor = true;
-            this.btnFmpCloudSplits.Click += new System.EventHandler(this.btnFmpCloudSplits_Click);
+            this.btnMinutePolygonSaveLogToDb.Location = new System.Drawing.Point(691, 18);
+            this.btnMinutePolygonSaveLogToDb.Name = "btnMinutePolygonSaveLogToDb";
+            this.btnMinutePolygonSaveLogToDb.Size = new System.Drawing.Size(195, 23);
+            this.btnMinutePolygonSaveLogToDb.TabIndex = 59;
+            this.btnMinutePolygonSaveLogToDb.Text = "MinutePolygon Save Log to DB";
+            this.btnMinutePolygonSaveLogToDb.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonSaveLogToDb.Click += new System.EventHandler(this.btnMinutePolygonSaveLogToDb_Click);
             // 
             // Form1
             // 
@@ -1602,6 +1614,7 @@ namespace Quote2022
             this.tabControl1.ResumeLayout(false);
             this.tpLoaderNew.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.tpOneTime.ResumeLayout(false);
             this.tabLoader.ResumeLayout(false);
             this.tabLayers.ResumeLayout(false);
@@ -1622,7 +1635,6 @@ namespace Quote2022
             this.gbIntradayDataList.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1749,6 +1761,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnWAEoddataSymbols;
         private System.Windows.Forms.Button btnWaEoddataSymbolsParseAndSaveToDb;
         private System.Windows.Forms.Button btnFmpCloudSplits;
+        private System.Windows.Forms.Button btnMinutePolygonSaveLogToDb;
     }
 }
 

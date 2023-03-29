@@ -57,9 +57,12 @@ namespace Quote2022
         }
         private void OnFrameChanged(object o, EventArgs e)
         {
-            //Force a call to the Paint event handler.
-            dataGridView1.InvalidateColumn(1);
-            dataGridView1.InvalidateColumn(4);
+            if (dataGridView1.Columns.Count > 4)
+            {
+                //Force a call to the Paint event handler.
+                dataGridView1.InvalidateColumn(1);
+                dataGridView1.InvalidateColumn(4);
+            }
         }
         #endregion
 
@@ -846,9 +849,12 @@ namespace Quote2022
         {
             btnTemp.Enabled = false;
 
-            var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.zip";
+            // var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.zip";
             // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveToDb(fn));
-            
+
+            // var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.NotActive.zip";
+            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveToDb(fn));
+
             btnTemp.Enabled = true;
         }
 
@@ -955,6 +961,23 @@ namespace Quote2022
 
             btnWaEoddataSymbolsParseAndSaveToDb.Enabled = true;
 
+        }
+
+        private void btnMinutePolygonSaveLogToDb_Click(object sender, EventArgs e)
+        {
+            btnMinutePolygonSaveLogToDb.Enabled = false;
+
+            var dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = @"E:\Quote\WebData\Minute\Polygon\Data",
+                IsFolderPicker = true
+            };
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(dialog.FileName));
+            }
+
+            btnMinutePolygonSaveLogToDb.Enabled = true;
         }
     }
 }

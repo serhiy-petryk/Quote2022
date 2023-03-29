@@ -55,20 +55,19 @@ namespace Data.Actions.Polygon
         {
             var items = new List<cItem>();
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries)
-                    if (entry.Length > 0)
-                    {
-                        var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                {
+                    var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
 
-                        foreach (var item in oo.results)
-                            item.TimeStamp = entry.LastWriteTime.DateTime;
+                    foreach (var item in oo.results)
+                        item.TimeStamp = entry.LastWriteTime.DateTime;
 
-                        items.AddRange(oo.results.Where(a =>
-                            !a.ticker.StartsWith("X:", StringComparison.InvariantCultureIgnoreCase) &&
-                            !a.ticker.StartsWith("C:", StringComparison.InvariantCultureIgnoreCase)));
-                    }
+                    items.AddRange(oo.results.Where(a =>
+                        !a.ticker.StartsWith("X:", StringComparison.InvariantCultureIgnoreCase) &&
+                        !a.ticker.StartsWith("C:", StringComparison.InvariantCultureIgnoreCase)));
+                }
 
-            Helpers.DbUtils.ClearAndSaveToDbTable(items, "dbQ2023..Bfr_SymbolsPolygon", "Symbol", "primary_exchange",
+            Helpers.DbUtils.SaveToDbTable(items, "dbQ2023..Bfr_SymbolsPolygon", "Symbol", "primary_exchange",
                 "name", "type", "market", "cik", "composite_figi", "share_class_figi", "active", "last_updated_utc",
                 "TimeStamp");
 

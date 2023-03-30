@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -15,13 +16,20 @@ namespace Data.Helpers
             return keys;
         }
 
-        public static long GetWebDateTime(DateTime dt)
+        private static readonly DateTime OffsetWebTime = new DateTime(1970, 1, 1);
+        private static readonly TimeZoneInfo EstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+        // private static readonly TimeZoneInfo EstTimeZone = TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time");
+        public static DateTime GetEstDateTimeFromUnixSeconds(long unixTimeInSeconds)
         {
-            var offsetDate = new DateTime(1970, 1, 1);
-            var tzi = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            var aa2 = DateTimeOffset.FromUnixTimeSeconds(unixTimeInSeconds);
+            var aa3 = aa2 + EstTimeZone.GetUtcOffset(aa2);
+            return aa3.DateTime;
+        }
 
-            var seconds = (dt - offsetDate).TotalSeconds + (tzi.GetUtcOffset(dt)).TotalSeconds;
-            // var seconds = (dt - offsetDate).TotalSeconds;
+        public static long GetUnixSecondsFromEtcDateTime(DateTime dt)
+        {
+            var seconds = (dt - OffsetWebTime).TotalSeconds + (EstTimeZone.GetUtcOffset(dt)).TotalSeconds;
+            var a1 = (new DateTimeOffset(dt, EstTimeZone.GetUtcOffset(dt))).ToUnixTimeSeconds();
             return Convert.ToInt64(seconds);
         }
 

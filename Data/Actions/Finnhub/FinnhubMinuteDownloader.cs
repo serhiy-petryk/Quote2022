@@ -33,8 +33,8 @@ namespace Data.Actions.Finnhub
                     if (string.IsNullOrEmpty(symbol)) continue;
 
                     var date = dates[k];
-                    var from = CsUtils.GetWebDateTime(date);
-                    var to = CsUtils.GetWebDateTime(date.AddDays(30));
+                    var from = CsUtils.GetUnixSecondsFromEtcDateTime(date);
+                    var to = CsUtils.GetUnixSecondsFromEtcDateTime(date.AddDays(30));
 
                     var filename = string.Format(filenameTemplate, "M" + (k+1).ToString("D2"), symbol);
                     if (!File.Exists(filename))

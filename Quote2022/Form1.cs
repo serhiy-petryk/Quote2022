@@ -852,9 +852,6 @@ namespace Quote2022
             // var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.zip";
             // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveToDb(fn));
 
-            // var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.NotActive.zip";
-            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveToDb(fn));
-
             btnTemp.Enabled = true;
         }
 

@@ -62,9 +62,7 @@ namespace Data.Actions.Polygon
                     foreach (var item in oo.results)
                         item.TimeStamp = entry.LastWriteTime.DateTime;
 
-                    items.AddRange(oo.results.Where(a =>
-                        !a.ticker.StartsWith("X:", StringComparison.InvariantCultureIgnoreCase) &&
-                        !a.ticker.StartsWith("C:", StringComparison.InvariantCultureIgnoreCase)));
+                    items.AddRange(oo.results.Where(a => a.IsValidTicker));
                 }
 
             Helpers.DbUtils.SaveToDbTable(items, "dbQ2023..Bfr_SymbolsPolygon", "Symbol", "primary_exchange",
@@ -100,7 +98,10 @@ namespace Data.Actions.Polygon
             public DateTime last_updated_utc;
             public DateTime delisted_utc;
 
-            public string Symbol => ticker.Any(char.IsLower) ? ticker + "+" : ticker;
+            public bool IsValidTicker => !(ticker.StartsWith("X:", StringComparison.InvariantCultureIgnoreCase) ||
+                                           ticker.StartsWith("C:", StringComparison.InvariantCultureIgnoreCase) ||
+                                           PolygonCommon.IsTestTicker(Symbol));
+            public string Symbol => PolygonCommon.GetMyTicker(ticker);
 
             public DateTime TimeStamp;
         }

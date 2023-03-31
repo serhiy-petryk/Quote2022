@@ -49,7 +49,7 @@ namespace Data.Actions.Polygon
                         endDate = maxDate;
 
                     var jsonFileName = $"{folder}pMin_{symbol}_{currentDate:yyyyMMdd}.json";
-                    var urlTicker = symbol.Replace("+", "");
+                    var urlTicker = PolygonCommon.GetPolygonTicker(symbol);
                     var url =
                         $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={api}";
                     if (!File.Exists(jsonFileName))
@@ -84,7 +84,7 @@ namespace Data.Actions.Polygon
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "select symbol, min(Date) MinDate, max(Date) MaxDate from dbQ2023..Daypolygon where [Close]*Volume>5000000 group by symbol";
+                cmd.CommandText = "select symbol, min(Date) MinDate, max(Date) MaxDate from dbQ2023..DayPolygon where [Close]*Volume>5000000 group by symbol";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         symbolAndDates.Add(new Tuple<string, DateTime, DateTime>((string)rdr["Symbol"], (DateTime)rdr["MinDate"], (DateTime)rdr["MaxDate"]));
@@ -104,7 +104,7 @@ namespace Data.Actions.Polygon
 
                     var jsonFileName = $"{folder}pMin_{item.Item1}_{currentDate:yyyyMMdd}.json";
                     var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
-                    var urlTicker = item.Item1.Replace("+", "");
+                    var urlTicker = PolygonCommon.GetPolygonTicker(item.Item1);
                     var url =
                         $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={api}";
                     if (!File.Exists(zipFileName))
@@ -158,10 +158,6 @@ namespace Data.Actions.Polygon
                     var a1 = oo.results[0].Date;
                     itemCount += oo.results.Length;
 
-                    foreach (var item in oo.results)
-                        if (item.T.Any(char.IsLower))
-                            item.T = item.T + "+";
-
                     // Save data to buffer table of data server
                     Helpers.DbUtils.SaveToDbTable(oo.results, "dbQ2023..DayPolygon", "Symbol", "Date", "Open",
                         "High", "Low", "Close", "Volume", "WeightedVolume", "TradeCount");
@@ -195,7 +191,7 @@ namespace Data.Actions.Polygon
             public long t;
             public int n;
 
-            public string Symbol => T;
+            public string Symbol => PolygonCommon.GetMyTicker(T);
             public DateTime Date => CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
             public float Open => o;
             public float High => h;

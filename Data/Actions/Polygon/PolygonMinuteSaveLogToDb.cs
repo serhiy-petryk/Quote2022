@@ -71,7 +71,7 @@ namespace Data.Actions.Polygon
                     if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
                     {
                         blankFiles.Add(new BlankFile
-                            {File = fileId, FileCreated = entry.LastWriteTime.DateTime, Symbol = oo.ticker});
+                            {File = fileId, FileCreated = entry.LastWriteTime.DateTime, Symbol = oo.Symbol});
                         continue;
                     }
 
@@ -97,10 +97,9 @@ namespace Data.Actions.Polygon
                                 SaveToDb(log, blankFiles);
 
                             var position = (logEntry == null ? "First" : "Middle");
-                            var symbol = oo.ticker.Any(char.IsLower) ? oo.ticker + "+" : oo.ticker;
                             logEntry = new LogEntry
                             {
-                                File = fileId, Symbol = symbol, Date = item.DateTime.Date, Position = position,
+                                File = fileId, Symbol = oo.Symbol, Date = item.DateTime.Date, Position = position,
                                 Status = oo.status, Created = entry.LastWriteTime.DateTime
                             };
                             log.Add(logEntry);
@@ -204,6 +203,7 @@ namespace Data.Actions.Polygon
             public string next_url;
             public string request_id;
             public cItem[] results;
+            public string Symbol => PolygonCommon.GetMyTicker(ticker);
         }
         private class cItem
         {

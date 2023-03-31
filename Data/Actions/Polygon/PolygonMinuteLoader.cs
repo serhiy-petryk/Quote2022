@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Windows.Forms;
 using Data.Helpers;
 using Newtonsoft.Json;
 
@@ -16,9 +17,68 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"Started");
 
             var api = CsUtils.GetApiKeys("polygon.io")[1];
+            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331\";
+
+            Logger.AddMessage($"Load symbol list from database ...");
+            var symbols = new List<string>();
+            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandTimeout = 150;
+                cmd.CommandText = "select distinct symbol from dbQuote2023..FileLogMinutePolygon where position='PARTIAL'";
+                using (var rdr = cmd.ExecuteReader())
+                    while (rdr.Read())
+                        symbols.Add((string)rdr["Symbol"]);
+            }
+
+            if (MessageBox.Show($"You are going to download data for {symbols.Count} symbols in {folder} folder! Continue?", "", MessageBoxButtons.OKCancel) != DialogResult.OK)
+                return;
+
+            var cnt = 0;
+            foreach (var symbol in symbols)
+            {
+                Logger.AddMessage($"Downloaded {cnt++} tickers from {symbols.Count}");
+
+                var currentDate = DateTime.Today.AddYears(-5);
+                var maxDate = DateTime.Today.AddHours(-9).AddDays(-1);
+                while (currentDate < maxDate)
+                {
+                    var endDate = currentDate.AddMonths(2);
+                    if (endDate >= maxDate)
+                        endDate = maxDate;
+
+                    var jsonFileName = $"{folder}pMin_{symbol}_{currentDate:yyyyMMdd}.json";
+                    var urlTicker = symbol.Replace("+", "");
+                    var url =
+                        $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={api}";
+                    if (!File.Exists(jsonFileName))
+                    {
+                        Download.DownloadPage(url, jsonFileName);
+                        if (File.Exists(jsonFileName))
+                        {
+                        }
+                        else
+                        {
+                            // ! error
+                        }
+                    }
+
+                    currentDate = endDate;
+                }
+            }
+
+            Logger.AddMessage($"!Finished. ");//Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+        }
+
+        public static void StartWithDateRange()
+        {
+            Logger.AddMessage($"Started");
+
+            var api = CsUtils.GetApiKeys("polygon.io")[1];
             var folder = $@"E:\Quote\WebData\Minute\Polygon\Data\20230327\";
 
-            var symbolAndDates = new List<Tuple<string, DateTime,DateTime>>();
+            var symbolAndDates = new List<Tuple<string, DateTime, DateTime>>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
@@ -125,7 +185,6 @@ namespace Data.Actions.Polygon
 
         private class cItem
         {
-            private static DateTime webDateTime = new DateTime(1970, 1,1);
             public string T;
             public long v;
             public float vw;
@@ -137,8 +196,7 @@ namespace Data.Actions.Polygon
             public int n;
 
             public string Symbol => T;
-            public DateTime Date => webDateTime.AddMilliseconds(t).Date;
-
+            public DateTime Date => CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
             public float Open => o;
             public float High => h;
             public float Low => l;

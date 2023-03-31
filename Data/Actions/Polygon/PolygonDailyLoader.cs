@@ -111,7 +111,6 @@ namespace Data.Actions.Polygon
 
         private class cItem
         {
-            private static DateTime webDateTime = new DateTime(1970, 1,1);
             public string T;
             public long v;
             public float vw;
@@ -122,9 +121,8 @@ namespace Data.Actions.Polygon
             public long t;
             public int n;
 
-            public string Symbol => T;
-            public DateTime Date => webDateTime.AddMilliseconds(t).Date;
-
+            public string Symbol => T.Any(char.IsLower) ? T + "+" : T;
+            public DateTime Date => CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
             public float Open => o;
             public float High => h;
             public float Low => l;

@@ -960,21 +960,31 @@ namespace Quote2022
 
         }
 
-        private void btnMinutePolygonSaveLogToDb_Click(object sender, EventArgs e)
+        private async void btnMinutePolygonSaveLogToDb_Click(object sender, EventArgs e)
         {
             btnMinutePolygonSaveLogToDb.Enabled = false;
 
-            var dialog = new CommonOpenFileDialog
+            /*var dialog = new CommonOpenFileDialog
             {
-                InitialDirectory = @"E:\Quote\WebData\Minute\Polygon\Data",
+                InitialDirectory = @"E:\Quote\WebData\Minute\Polygon\DataBuffer",
                 IsFolderPicker = true
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(dialog.FileName));
-            }
+                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(dialog.FileName));
+            }*/
+
+            if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && File.Exists(zipFileName))
+                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(zipFileName));
 
             btnMinutePolygonSaveLogToDb.Enabled = true;
+        }
+
+        private async void btnMinutePolygonLoader_Click(object sender, EventArgs e)
+        {
+            btnMinutePolygonLoader.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.Polygon.PolygonMinuteLoader.Start);
+            btnMinutePolygonLoader.Enabled = true;
         }
     }
 }

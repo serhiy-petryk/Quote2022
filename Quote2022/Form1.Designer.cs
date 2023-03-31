@@ -32,13 +32,14 @@ namespace Quote2022
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.btnMinutePolygonSaveLogToDb = new System.Windows.Forms.Button();
             this.btnMavCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.btnMavSplitDataAndSaveToZip = new System.Windows.Forms.Button();
             this.btnMavSplitDataLog = new System.Windows.Forms.Button();
@@ -152,7 +153,7 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnMinutePolygonSaveLogToDb = new System.Windows.Forms.Button();
+            this.btnMinutePolygonLoader = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
@@ -212,6 +213,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnMinutePolygonLoader);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSaveLogToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavCopyZipInfoToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavSplitDataAndSaveToZip);
@@ -229,6 +231,16 @@ namespace Quote2022
             this.tpLoaderNew.TabIndex = 6;
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
+            // 
+            // btnMinutePolygonSaveLogToDb
+            // 
+            this.btnMinutePolygonSaveLogToDb.Location = new System.Drawing.Point(705, 53);
+            this.btnMinutePolygonSaveLogToDb.Name = "btnMinutePolygonSaveLogToDb";
+            this.btnMinutePolygonSaveLogToDb.Size = new System.Drawing.Size(168, 23);
+            this.btnMinutePolygonSaveLogToDb.TabIndex = 59;
+            this.btnMinutePolygonSaveLogToDb.Text = "MinutePolygon Save Log to DB";
+            this.btnMinutePolygonSaveLogToDb.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonSaveLogToDb.Click += new System.EventHandler(this.btnMinutePolygonSaveLogToDb_Click);
             // 
             // btnMavCopyZipInfoToDb
             // 
@@ -328,14 +340,14 @@ namespace Quote2022
             this.Started,
             this.Duration});
             this.dataGridView1.DataSource = this.loaderItemBindingSource;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.Location = new System.Drawing.Point(8, 15);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
@@ -374,9 +386,9 @@ namespace Quote2022
             // 
             this.Started.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.Started.DataPropertyName = "Started";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.Format = "HH:mm:ss";
-            this.Started.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.Format = "HH:mm:ss";
+            this.Started.DefaultCellStyle = dataGridViewCellStyle1;
             this.Started.HeaderText = "Started";
             this.Started.MinimumWidth = 2;
             this.Started.Name = "Started";
@@ -387,8 +399,8 @@ namespace Quote2022
             // 
             this.Duration.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
             this.Duration.DataPropertyName = "Duration";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Duration.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Duration.DefaultCellStyle = dataGridViewCellStyle2;
             this.Duration.HeaderText = "Time";
             this.Duration.MinimumWidth = 24;
             this.Duration.Name = "Duration";
@@ -1590,15 +1602,15 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnMinutePolygonSaveLogToDb
+            // btnMinutePolygonLoader
             // 
-            this.btnMinutePolygonSaveLogToDb.Location = new System.Drawing.Point(691, 18);
-            this.btnMinutePolygonSaveLogToDb.Name = "btnMinutePolygonSaveLogToDb";
-            this.btnMinutePolygonSaveLogToDb.Size = new System.Drawing.Size(195, 23);
-            this.btnMinutePolygonSaveLogToDb.TabIndex = 59;
-            this.btnMinutePolygonSaveLogToDb.Text = "MinutePolygon Save Log to DB";
-            this.btnMinutePolygonSaveLogToDb.UseVisualStyleBackColor = true;
-            this.btnMinutePolygonSaveLogToDb.Click += new System.EventHandler(this.btnMinutePolygonSaveLogToDb_Click);
+            this.btnMinutePolygonLoader.Location = new System.Drawing.Point(705, 18);
+            this.btnMinutePolygonLoader.Name = "btnMinutePolygonLoader";
+            this.btnMinutePolygonLoader.Size = new System.Drawing.Size(168, 23);
+            this.btnMinutePolygonLoader.TabIndex = 60;
+            this.btnMinutePolygonLoader.Text = "MinutePolygon Loader";
+            this.btnMinutePolygonLoader.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonLoader.Click += new System.EventHandler(this.btnMinutePolygonLoader_Click);
             // 
             // Form1
             // 
@@ -1762,6 +1774,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnWaEoddataSymbolsParseAndSaveToDb;
         private System.Windows.Forms.Button btnFmpCloudSplits;
         private System.Windows.Forms.Button btnMinutePolygonSaveLogToDb;
+        private System.Windows.Forms.Button btnMinutePolygonLoader;
     }
 }
 

@@ -100,6 +100,7 @@ namespace Data.Actions.Polygon
 
             public bool IsValidTicker => !(ticker.StartsWith("X:", StringComparison.InvariantCultureIgnoreCase) ||
                                            ticker.StartsWith("C:", StringComparison.InvariantCultureIgnoreCase) ||
+                                           ticker.StartsWith("I:", StringComparison.InvariantCultureIgnoreCase) ||
                                            PolygonCommon.IsTestTicker(Symbol));
             public string Symbol => PolygonCommon.GetMyTicker(ticker);
 

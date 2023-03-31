@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;
 using Data.Helpers;
 using Newtonsoft.Json;
 
@@ -23,8 +20,8 @@ namespace Data.Actions.Polygon
 
             // delete old log in database
             Logger.AddMessage($"Started. Delete old log in database.");
-            DbUtils.ExecuteSql($"DELETE dbQuote2023..FileLogMinutePolygon WHERE [file] like '{zipFileId}%'");
-            DbUtils.ExecuteSql($"DELETE dbQuote2023..FileLogMinutePolygon_BlankFiles WHERE [file] like '{zipFileId}%'");
+            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon WHERE [file] like '{zipFileId}%'");
+            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon_BlankFiles WHERE [file] like '{zipFileId}%'");
 
             var errorLog = new List<string>();
             CheckZip(zipFileName, zipFileId, errorLog);
@@ -152,11 +149,11 @@ namespace Data.Actions.Polygon
         private static void SaveToDb(List<LogEntry> log, List<BlankFile> blankFiles)
         {
             Logger.AddMessage($"Save data to database ...");
-            DbUtils.SaveToDbTable(log, "dbQuote2023..FileLogMinutePolygon", "File", "Symbol", "Date", "MinTime",
+            DbUtils.SaveToDbTable(log, "dbQ2023..FileLogMinutePolygon", "File", "Symbol", "Date", "MinTime",
                 "MaxTime", "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull",
                 "TradeCount", "Status", "Position", "Created");
 
-            DbUtils.SaveToDbTable(blankFiles, "dbQuote2023..FileLogMinutePolygon_BlankFiles", "File",
+            DbUtils.SaveToDbTable(blankFiles, "dbQ2023..FileLogMinutePolygon_BlankFiles", "File",
                 "FileCreated", "Symbol");
 
             log.Clear();

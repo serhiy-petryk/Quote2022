@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using OfficeOpenXml.DataValidation;
 using Quote2022.Actions;
 using Quote2022.Actions.MinuteAlphaVantage;
 using Quote2022.Actions.Nasdaq;
@@ -851,6 +852,32 @@ namespace Quote2022
 
             // var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.zip";
             // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveToDb(fn));
+
+            /*var url = @"https://api.openfigi.com/v3/filter";
+            var filename = @"E:\Quote\Temp\Figi\filter.Preferred.json";
+            Data.Helpers.Download.DownloadPage_POST(url, filename, "{\"exchCode\": \"US\", \"marketSecDes\":\"Equity\", \"securityType2\":\"Preferred Stock\"}");*/
+
+            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonDailyLoader.ParseAndSaveToDbAllFiles());
+
+            /*var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230327";
+            var files = Directory.GetFiles(folder, "*.json");
+            foreach (var file in files)
+            {
+                var ss = Path.GetFileNameWithoutExtension(file).Split('_');
+                var symbol = ss[1].Replace("+", "");
+                var newSymbol = Data.Actions.Polygon.PolygonCommon.GetMyTicker(symbol);
+                if (symbol != newSymbol)
+                {
+                    var newFn = file.Replace("_" + ss[1] + "_", "_" + newSymbol + "_");
+                    if (File.Exists(newFn))
+                    {
+
+                    }
+                    File.Move(file, newFn);
+                    // ss[1] = newSymbol;
+                    Debug.Print($"Symbol:\t{symbol}\t{newSymbol}\t{newFn}");
+                }
+            }*/
 
             btnTemp.Enabled = true;
         }

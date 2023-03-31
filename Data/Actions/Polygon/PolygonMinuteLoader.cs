@@ -26,7 +26,7 @@ namespace Data.Actions.Polygon
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "select distinct symbol from dbQuote2023..FileLogMinutePolygon where position='PARTIAL'";
+                cmd.CommandText = "select distinct symbol from dbQ2023..FileLogMinutePolygon where position='PARTIAL'";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         symbols.Add((string)rdr["Symbol"]);

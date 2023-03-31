@@ -107,6 +107,11 @@ namespace Data.Helpers
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
+                request.ContentType = "application/json";
+                request.MediaType = "application/json";
+                request.Accept = "application/json";
+                request.Method = "POST";
+
                 if (IsXmlHttpRequest)
                     request.Headers.Add("X-Requested-With", "XMLHttpRequest");
 

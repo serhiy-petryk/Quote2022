@@ -85,13 +85,10 @@ namespace Data.Actions.Polygon
                     var a1 = oo.results[0].Date;
                     itemCount += oo.results.Length;
 
-                    foreach (var item in oo.results)
-                        if (item.T.Any(char.IsLower))
-                            item.T = item.T + "+";
-
                     // Save data to buffer table of data server
-                    Helpers.DbUtils.SaveToDbTable(oo.results, "dbQ2023..DayPolygon", "Symbol", "Date", "Open",
-                        "High", "Low", "Close", "Volume", "WeightedVolume", "TradeCount");
+                    Helpers.DbUtils.SaveToDbTable(oo.results.Where(a => !PolygonCommon.IsTestTicker(a.Symbol)),
+                        "dbQ2023..DayPolygon", "Symbol", "Date", "Open", "High", "Low", "Close", "Volume",
+                        "WeightedVolume", "TradeCount");
                 }
 
             return itemCount;
@@ -121,7 +118,7 @@ namespace Data.Actions.Polygon
             public long t;
             public int n;
 
-            public string Symbol => T.Any(char.IsLower) ? T + "+" : T;
+            public string Symbol => PolygonCommon.GetMyTicker(T);
             public DateTime Date => CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
             public float Open => o;
             public float High => h;

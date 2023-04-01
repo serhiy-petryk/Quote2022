@@ -18,19 +18,23 @@ namespace Data.Actions.Polygon
         {
             Logger.AddMessage($"Started");
 
+            // Define the dates to download
             var dates = new List<DateTime>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "SELECT date from TradingDays WHERE date between '2018-03-27' and '2023-03-31' order by date desc";
+                // cmd.CommandText = "SELECT date from TradingDays WHERE date between '2018-03-27' and '2023-03-31' order by date desc";
+                cmd.CommandText = "SELECT [date] FROM TradingDays WHERE [date] > DATEADD(day,-30, GETDATE())";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         dates.Add((DateTime) rdr["Date"]);
             }
 
+            // Download data
             var cnt = 0;
+            var filesToParse = new List<string>();
             foreach (var date in dates)
             {
                 Logger.AddMessage($"Downloaded {cnt++} files from {dates.Count}");
@@ -44,16 +48,30 @@ namespace Data.Actions.Polygon
                     {
                         var zipFileName2 = Helpers.ZipUtils.ZipFile(jsonFileName);
                         if (File.Exists(zipFileName2))
+                        {
                             File.Delete(jsonFileName);
+                            filesToParse.Add(zipFileName2);
+                        }
                     }
                     else
                     {
                         // ! error
                     }
                 }
+                else
+                    filesToParse.Add(zipFileName);
             }
 
-            Logger.AddMessage($"!Finished. ");//Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+            var itemCount = 0;
+            var filesSize = 0;
+            for (var k = 0; k < filesToParse.Count; k++)
+            {
+                Logger.AddMessage($"Parsed {k} files from {filesToParse.Count}");
+                itemCount += ParseAndSaveToDb(filesToParse[k]);
+                filesSize += Helpers.CsUtils.GetFileSizeInKB(filesToParse[k]);
+            }
+
+            Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {filesToParse}. Size of files: {filesSize:N0}KB");
         }
 
         public static int ParseAndSaveToDbAllFiles()

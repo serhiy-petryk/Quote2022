@@ -21,7 +21,7 @@ namespace Data.Actions.Polygon
             else if (polygonTicker.Contains("r"))
                 polygonTicker = polygonTicker.Replace("r", ".RT");
             else if (polygonTicker.Contains("w"))
-                polygonTicker = polygonTicker.Replace("w", ".WW");
+                polygonTicker = polygonTicker.Replace("w", ".WI");
 
             if (polygonTicker.Any(char.IsLower))
                 throw new Exception($"Check PolygonCommon.GetMyTicker method for '{polygonTicker}' ticker");
@@ -37,8 +37,8 @@ namespace Data.Actions.Polygon
                 myTicker = myTicker.Replace(".RTW", "rw");
             else if (myTicker.Contains(".RT"))
                 myTicker = myTicker.Replace(".RT", "r");
-            else if (myTicker.Contains(".WW"))
-                myTicker = myTicker.Replace(".WW", "w");
+            else if (myTicker.Contains(".WI"))
+                myTicker = myTicker.Replace(".WI", "w");
 
             return myTicker;
         }

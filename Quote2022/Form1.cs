@@ -879,6 +879,8 @@ namespace Quote2022
                 }
             }*/
 
+            Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange();
+
             btnTemp.Enabled = true;
         }
 

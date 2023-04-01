@@ -72,7 +72,7 @@ namespace Data.Helpers
             {
                 conn.Open();
                 cmd.CommandText = sql;
-                cmd.CommandTimeout = 150;
+                cmd.CommandTimeout = 250;
                 cmd.CommandType = CommandType.Text;
                 if (paramaters != null)
                 {

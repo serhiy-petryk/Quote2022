@@ -12,7 +12,6 @@ namespace Data.Actions.Polygon
     public static class PolygonDailyLoader
     {
         private const string Folder = @"E:\Quote\WebData\Daily\Polygon\Data\";
-        private static readonly string ApiKey = CsUtils.GetApiKeys("polygon.io")[1];
 
         public static void Start()
         {
@@ -40,7 +39,7 @@ namespace Data.Actions.Polygon
                 Logger.AddMessage($"Downloaded {cnt++} files from {dates.Count}");
                 var jsonFileName = Folder + $"DayPolygon_{date:yyyyMMdd}.json";
                 var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
-                var url = $@"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date:yyyy-MM-dd}?adjusted=false&apiKey={ApiKey}";
+                var url = $@"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date:yyyy-MM-dd}?adjusted=false&apiKey={PolygonCommon.GetApiKey()}";
                 if (!File.Exists(zipFileName))
                 {
                     Download.DownloadPage(url, jsonFileName);

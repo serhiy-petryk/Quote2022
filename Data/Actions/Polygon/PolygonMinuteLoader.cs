@@ -16,7 +16,6 @@ namespace Data.Actions.Polygon
         {
             Logger.AddMessage($"Started");
 
-            var api = CsUtils.GetApiKeys("polygon.io")[1];
             var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230401\";
 
             Logger.AddMessage($"Load symbol list from database ...");
@@ -51,7 +50,7 @@ namespace Data.Actions.Polygon
                     var jsonFileName = $"{folder}pMin_{symbol}_{currentDate:yyyyMMdd}.json";
                     var urlTicker = PolygonCommon.GetPolygonTicker(symbol);
                     var url =
-                        $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={api}";
+                        $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
                     if (!File.Exists(jsonFileName))
                     {
                         Download.DownloadPage(url, jsonFileName);
@@ -75,7 +74,6 @@ namespace Data.Actions.Polygon
         {
             Logger.AddMessage($"Started");
 
-            var api = CsUtils.GetApiKeys("polygon.io")[1];
             var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331\";
 
             var symbolAndDates = new List<Tuple<string, DateTime, DateTime>>();
@@ -108,7 +106,7 @@ namespace Data.Actions.Polygon
                     var jsonFileName = $"{folder}pMin_{item.Item1}_{currentDate:yyyyMMdd}.json";
                     var urlTicker = PolygonCommon.GetPolygonTicker(item.Item1);
                     var url =
-                        $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={api}";
+                        $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
                     if (!File.Exists(jsonFileName))
                     {
                         Download.DownloadPage(url, jsonFileName);

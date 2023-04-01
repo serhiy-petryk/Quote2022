@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
+using Data.Helpers;
 
 namespace Data.Actions.Polygon
 {
     public static class PolygonCommon
     {
+        public static string GetApiKey() => CsUtils.GetApiKeys("polygon.io")[1];
+
         public static bool IsTestTicker(string ticker)
         {
             var test = ticker.Substring(1);

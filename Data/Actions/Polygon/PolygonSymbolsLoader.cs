@@ -11,7 +11,6 @@ namespace Data.Actions.Polygon
     public static class PolygonSymbolsLoader
     {
         private const string StartUrlTemplate = "https://api.polygon.io/v3/reference/tickers?active=true&limit=1000";
-        private static readonly string ApiKey = CsUtils.GetApiKeys("polygon.io")[1];
 
         public static void Start()
         {
@@ -23,7 +22,7 @@ namespace Data.Actions.Polygon
             var cnt = 0;
             while (url != null)
             {
-                url = url + "&apiKey=" + ApiKey;
+                url = url + "&apiKey=" + PolygonCommon.GetApiKey();
                 var filename = folder + $"SymbolsPolygon_{cnt:D2}_{timeStamp}.json";
                 if (!File.Exists(filename))
                 {

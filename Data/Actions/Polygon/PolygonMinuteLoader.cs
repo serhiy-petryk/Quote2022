@@ -17,7 +17,7 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"Started");
 
             var api = CsUtils.GetApiKeys("polygon.io")[1];
-            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331\";
+            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230401\";
 
             Logger.AddMessage($"Load symbol list from database ...");
             var symbols = new List<string>();
@@ -76,19 +76,20 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"Started");
 
             var api = CsUtils.GetApiKeys("polygon.io")[1];
-            var folder = $@"E:\Quote\WebData\Minute\Polygon\Data\20230327\";
+            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\20230327\";
 
             var symbolAndDates = new List<Tuple<string, DateTime, DateTime>>();
-            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            /*using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "select symbol, min(Date) MinDate, max(Date) MaxDate from dbQ2023..DayPolygon where [Close]*Volume>5000000 group by symbol";
+                cmd.CommandText = "select symbol, min(Date) MinDate, max(Date) MaxDate from dbQ2023..DayPolygon where [Close]*Volume>=5000000 group by symbol";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         symbolAndDates.Add(new Tuple<string, DateTime, DateTime>((string)rdr["Symbol"], (DateTime)rdr["MinDate"], (DateTime)rdr["MaxDate"]));
-            }
+            }*/
+            symbolAndDates.Add(new Tuple<string, DateTime, DateTime>("AAAU", new DateTime(2022,2,16), new DateTime(2022,5,13) ));
 
             var cnt = 0;
             foreach (var item in symbolAndDates)
@@ -103,18 +104,15 @@ namespace Data.Actions.Polygon
                         endDate = DateTime.Today.AddDays(-1);
 
                     var jsonFileName = $"{folder}pMin_{item.Item1}_{currentDate:yyyyMMdd}.json";
-                    var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
+                    // var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
                     var urlTicker = PolygonCommon.GetPolygonTicker(item.Item1);
                     var url =
                         $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={api}";
-                    if (!File.Exists(zipFileName))
+                    if (!File.Exists(jsonFileName))
                     {
                         Download.DownloadPage(url, jsonFileName);
                         if (File.Exists(jsonFileName))
                         {
-                            var zipFileName2 = Helpers.ZipUtils.ZipFile(jsonFileName);
-                            if (File.Exists(zipFileName2))
-                                File.Delete(jsonFileName);
                         }
                         else
                         {

@@ -86,6 +86,7 @@
     <Compile Include="Actions\FmpCloud\FmpCloudSymbolsTradableLoader.cs" />
     <Compile Include="Actions\Investing\InvestingSplitsLoader.cs" />
     <Compile Include="Actions\Nasdaq\NasdaqScreenerLoader.cs" />
+    <Compile Include="Actions\Polygon\PolygonSplitData.cs" />
     <Compile Include="Actions\Polygon\PolygonCommon.cs" />
     <Compile Include="Actions\Polygon\PolygonMinuteSaveLogToDb.cs" />
     <Compile Include="Actions\Polygon\PolygonDailyLoader.cs" />

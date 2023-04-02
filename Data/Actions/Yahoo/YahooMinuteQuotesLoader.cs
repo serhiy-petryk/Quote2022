@@ -89,7 +89,7 @@ namespace Data.Actions.Yahoo
                 cmd.CommandText = "SELECT '^DJI' Symbol UNION SELECT '^GSPC' UNION "+
                                   "SELECT b.YahooSymbol FROM dbQuote2022..DayEoddata a "+
                                   "INNER JOIN dbQuote2022..SymbolsEoddata b on a.Exchange = b.Exchange and a.Symbol = b.Symbol "+
-                                  "WHERE b.YahooSymbol is not null AND a.volume* a.[close]>= 5000000 and a.date >= DATEADD(day, -32, GetDate()) UNION "+
+                                  "WHERE b.YahooSymbol is not null AND a.volume* a.[close]>= 5000000 and a.date >= DATEADD(day, -30, GetDate()) UNION "+
                                   "SELECT b.Symbol from dbQuote2022..SymbolsEoddata a "+
                                   "RIGHT JOIN(SELECT * from dbQuote2022..ScreenerNasdaqStock "+
                                   "WHERE Deleted is null or Deleted > DATEADD(day, -30, GetDate())) b "+

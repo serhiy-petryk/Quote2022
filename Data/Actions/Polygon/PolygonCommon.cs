@@ -45,5 +45,41 @@ namespace Data.Actions.Polygon
 
             return myTicker;
         }
+
+        #region ========  Json classes  ===========
+        public class cMinuteRoot
+        {
+            public string ticker;
+            public int queryCount;
+            public int resultsCount;
+            public int count;
+            public bool adjusted;
+            public string status;
+            public string next_url;
+            public string request_id;
+            public cMinuteItem[] results;
+            public string Symbol => PolygonCommon.GetMyTicker(ticker);
+        }
+        public class cMinuteItem
+        {
+            public long t;
+            public float o;
+            public float h;
+            public float l;
+            public float c;
+            public long v;
+            public float vw;
+            public int n;
+
+            public DateTime DateTime => CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
+            public float Open => o;
+            public float High => h;
+            public float Low => l;
+            public float Close => c;
+            public long Volume => v;
+            public float WeightedVolume => vw;
+            public int TradeCount => n;
+        }
+        #endregion
     }
 }

@@ -39,6 +39,7 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.btnMinutePolygonLoader = new System.Windows.Forms.Button();
             this.btnMinutePolygonSaveLogToDb = new System.Windows.Forms.Button();
             this.btnMavCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.btnMavSplitDataAndSaveToZip = new System.Windows.Forms.Button();
@@ -153,7 +154,7 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnMinutePolygonLoader = new System.Windows.Forms.Button();
+            this.btnMinutePolygonSplitFilesByDates = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
@@ -213,6 +214,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSplitFilesByDates);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonLoader);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSaveLogToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavCopyZipInfoToDb);
@@ -231,6 +233,16 @@ namespace Quote2022
             this.tpLoaderNew.TabIndex = 6;
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
+            // 
+            // btnMinutePolygonLoader
+            // 
+            this.btnMinutePolygonLoader.Location = new System.Drawing.Point(705, 18);
+            this.btnMinutePolygonLoader.Name = "btnMinutePolygonLoader";
+            this.btnMinutePolygonLoader.Size = new System.Drawing.Size(168, 23);
+            this.btnMinutePolygonLoader.TabIndex = 60;
+            this.btnMinutePolygonLoader.Text = "MinutePolygon Loader";
+            this.btnMinutePolygonLoader.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonLoader.Click += new System.EventHandler(this.btnMinutePolygonLoader_Click);
             // 
             // btnMinutePolygonSaveLogToDb
             // 
@@ -1602,15 +1614,15 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnMinutePolygonLoader
+            // btnMinutePolygonSplitFilesByDates
             // 
-            this.btnMinutePolygonLoader.Location = new System.Drawing.Point(705, 18);
-            this.btnMinutePolygonLoader.Name = "btnMinutePolygonLoader";
-            this.btnMinutePolygonLoader.Size = new System.Drawing.Size(168, 23);
-            this.btnMinutePolygonLoader.TabIndex = 60;
-            this.btnMinutePolygonLoader.Text = "MinutePolygon Loader";
-            this.btnMinutePolygonLoader.UseVisualStyleBackColor = true;
-            this.btnMinutePolygonLoader.Click += new System.EventHandler(this.btnMinutePolygonLoader_Click);
+            this.btnMinutePolygonSplitFilesByDates.Location = new System.Drawing.Point(705, 95);
+            this.btnMinutePolygonSplitFilesByDates.Name = "btnMinutePolygonSplitFilesByDates";
+            this.btnMinutePolygonSplitFilesByDates.Size = new System.Drawing.Size(168, 40);
+            this.btnMinutePolygonSplitFilesByDates.TabIndex = 61;
+            this.btnMinutePolygonSplitFilesByDates.Text = "MinutePolygon split files by dates";
+            this.btnMinutePolygonSplitFilesByDates.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonSplitFilesByDates.Click += new System.EventHandler(this.btnMinutePolygonSplitFilesByDates_Click);
             // 
             // Form1
             // 
@@ -1775,6 +1787,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnFmpCloudSplits;
         private System.Windows.Forms.Button btnMinutePolygonSaveLogToDb;
         private System.Windows.Forms.Button btnMinutePolygonLoader;
+        private System.Windows.Forms.Button btnMinutePolygonSplitFilesByDates;
     }
 }
 

@@ -879,7 +879,16 @@ namespace Quote2022
                 }
             }*/
 
-            Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange();
+            // Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange();
+
+            var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331";
+            var files = Directory.GetFiles(folder, "*.WW_*.json");
+            foreach (var file in files)
+            {
+                var newFN = file.Replace(".WW_", ".WI_");
+                File.Move(file, newFN);
+                Debug.Print($"{file}\t{newFN}");
+            }
 
             btnTemp.Enabled = true;
         }
@@ -1014,6 +1023,16 @@ namespace Quote2022
             btnMinutePolygonLoader.Enabled = false;
             await Task.Factory.StartNew(Data.Actions.Polygon.PolygonMinuteLoader.Start);
             btnMinutePolygonLoader.Enabled = true;
+        }
+
+        private async void btnMinutePolygonSplitFilesByDates_Click(object sender, EventArgs e)
+        {
+            btnMinutePolygonSplitFilesByDates.Enabled = false;
+
+            if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && !string.IsNullOrEmpty(zipFileName))
+                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSplitData.Start(zipFileName));
+
+            btnMinutePolygonSplitFilesByDates.Enabled = true;
         }
     }
 }

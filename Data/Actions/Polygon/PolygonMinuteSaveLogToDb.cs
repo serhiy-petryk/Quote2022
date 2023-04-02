@@ -27,7 +27,7 @@ namespace Data.Actions.Polygon
             CheckZip(zipFileName, zipFileId, errorLog);
 
             // Save errors to file
-            var errorFileName = Path.ChangeExtension(zipFileName, ".txt");
+            var errorFileName = Path.ChangeExtension(zipFileName, ".SaveToDbError.txt");
             if (File.Exists(errorFileName))
                 File.Delete(errorFileName);
             File.AppendAllText(errorFileName, $"File\tMessage\tContent{Environment.NewLine}");
@@ -56,16 +56,14 @@ namespace Data.Actions.Polygon
                             $"Processed {cnt} from {zip.Entries.Count} entries in {Path.GetFileName(zipFileName)}");
 
                     var fileId = $@"{folderId}\{Path.GetFileName(entry.Name)}";
-                    var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
+                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
                     if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
-                    {
-                        Debug.Print($"{entry.FullName}\t{oo.next_url}");
                         throw new Exception("Check parser");
-                    }
 
                     if (!string.IsNullOrEmpty(oo.next_url))
                     {
                         Debug.Print($"NEXT URL:\t{entry.FullName}\t{oo.next_url}");
+                        errorLog.Add($"{fileId}\tPartial downloading\tNext url: {oo.next_url}");
                     }
 
                     if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
@@ -160,14 +158,14 @@ namespace Data.Actions.Polygon
         }
 
         #region ========  SubClasses  =========
-        public class BlankFile
+        private class BlankFile
         {
             public string File;
             public DateTime FileCreated;
             public string Symbol;
         }
 
-        public class LogEntry
+        private class LogEntry
         {
             public string File;
             public string Symbol;
@@ -188,42 +186,6 @@ namespace Data.Actions.Polygon
             public DateTime Created;
 
             public override string ToString() => $"{File}\t{Symbol}\t{Date:yyyy-MM-dd}\t{Helpers.CsUtils.GetString(MinTime)}\t{Helpers.CsUtils.GetString(MaxTime)}\t{Count}\t{Open}\t{High}\t{Low}\t{Close}\t{Volume}";
-        }
-        #endregion
-
-        #region ========  Json Classes  =========
-        private class cRoot
-        {
-            public string ticker;
-            public int queryCount;
-            public int resultsCount;
-            public int count;
-            public bool adjusted;
-            public string status;
-            public string next_url;
-            public string request_id;
-            public cItem[] results;
-            public string Symbol => PolygonCommon.GetMyTicker(ticker);
-        }
-        private class cItem
-        {
-            public long t;
-            public float o;
-            public float h;
-            public float l;
-            public float c;
-            public long v;
-            public float vw;
-            public int n;
-
-            public DateTime DateTime => CsUtils.GetEstDateTimeFromUnixSeconds(t/1000);
-            public float Open => o;
-            public float High => h;
-            public float Low => l;
-            public float Close => c;
-            public long Volume => v;
-            public float WeightedVolume => vw;
-            public int TradeCount => n;
         }
         #endregion
 

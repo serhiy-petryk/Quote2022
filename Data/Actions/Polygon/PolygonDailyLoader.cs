@@ -65,7 +65,7 @@ namespace Data.Actions.Polygon
             var filesSize = 0;
             for (var k = 0; k < filesToParse.Count; k++)
             {
-                Logger.AddMessage($"Parsed {k} files from {filesToParse.Count}");
+                Logger.AddMessage($"Parsed and saved to database {k} files from {filesToParse.Count}");
                 itemCount += ParseAndSaveToDb(filesToParse[k]);
                 filesSize += Helpers.CsUtils.GetFileSizeInKB(filesToParse[k]);
             }

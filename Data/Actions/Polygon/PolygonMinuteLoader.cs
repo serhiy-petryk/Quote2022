@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -12,7 +13,90 @@ namespace Data.Actions.Polygon
 {
     public static class PolygonMinuteLoader
     {
+        private const string UrlTemplate = "https://api.polygon.io/v2/aggs/ticker/{0}/range/1/minute/{1}/{2}?adjusted=false&sort=asc&limit=50000&apiKey={3}";
+        private const string FolderTemplate = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_{0}\";
+
         public static void Start()
+        {
+            Logger.AddMessage($"Started");
+
+            Logger.AddMessage($"Define symbols to download ...");
+            var symbols = new List<string>();
+            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandTimeout = 150;
+                cmd.CommandText = "SELECT DISTINCT symbol FROM dbQ2023..DayPolygon WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate())";
+                using (var rdr = cmd.ExecuteReader())
+                    while (rdr.Read())
+                        symbols.Add((string)rdr["Symbol"]);
+            }
+
+            var previousFriday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Friday);
+            var from = previousFriday.AddDays(-11);
+
+            Start(symbols, from, previousFriday);
+        }
+
+        public static void Start(List<string> mySymbols, DateTime from, DateTime to)
+        {
+            Logger.AddMessage($"Started");
+
+            var folder = string.Format(FolderTemplate, to.AddDays(1).ToString("yyyyMMdd"));
+            if (MessageBox.Show(
+                    $"You are going to download data for {mySymbols.Count} symbols in {folder} folder! Continue?", "",
+                    MessageBoxButtons.OKCancel) != DialogResult.OK)
+            {
+                Logger.AddMessage($"!Canceled.");
+                return;
+            }
+
+            var cnt = 0;
+            var missingFiles = new List<string>();
+            foreach (var mySymbol in mySymbols)
+            {
+                Logger.AddMessage($"Downloaded {cnt++} tickers from {mySymbols.Count}");
+
+                var jsonFileName = $"{folder}pMin_{mySymbol}_{from:yyyyMMdd}.json";
+                var urlTicker = PolygonCommon.GetPolygonTicker(mySymbol);
+                if (PolygonCommon.IsTestTicker(urlTicker))
+                    continue;
+
+                // var url = $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{from:yyyy-MM-dd}/{to:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
+                var url = string.Format(UrlTemplate, urlTicker, from.ToString("yyyy-MM-dd"),
+                    to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey());
+                if (!File.Exists(jsonFileName))
+                {
+                    Download.DownloadPage(url, jsonFileName);
+                    if (File.Exists(jsonFileName))
+                    {
+                    }
+                    else
+                    {
+                        Debug.Print($"Missing file: \t{jsonFileName}");
+                        missingFiles.Add(jsonFileName);
+                        // ! error
+                    }
+                }
+            }
+
+            if (missingFiles.Count ==0)
+            {
+                Logger.AddMessage($"Zip data of '{Path.GetDirectoryName(folder)}' folder ...");
+                var zipFileName = ZipUtils.ZipFolder(folder);
+                if (File.Exists(zipFileName))
+                    Directory.Delete(folder, true);
+
+                Logger.AddMessage($"!Finished. No errors. {mySymbols.Count} symbols. Zip file name: {zipFileName}");
+            }
+            else
+            {
+                Logger.AddMessage($"!Finished. {missingFiles.Count} files are missing. {mySymbols.Count} symbols.");
+            }
+        }
+
+        public static void StartTemp()
         {
             Logger.AddMessage($"Started");
 

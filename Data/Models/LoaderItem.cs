@@ -21,7 +21,7 @@ namespace Data.Models
             new LoaderItem {Name = "Eoddata Symbols", Action = Actions.Eoddata.EoddataSymbolsLoader.Start, Checked = false},
             // new LoaderItem {Name = "Yahoo Profiles", Action=Actions.Yahoo.YahooProfileLoader.Start},
             new LoaderItem {Name = "Yahoo Indices & Update Trading days", Action = Actions.Yahoo.YahooIndicesLoader.Start, Checked = false},
-            new LoaderItem {Name = "Polygon Daily Quotes", Action = Actions.Polygon.PolygonDailyLoader.Start, Checked = true},
+            new LoaderItem {Name = "Polygon Daily Quotes", Action = Actions.Polygon.PolygonDailyLoader.Start, Checked = false},
             new LoaderItem {Name = "Eoddata Daily Quotes", Action = Actions.Eoddata.EoddataDailyLoader.Start, Checked = false},
             new LoaderItem {Name = "Eoddata Splits", Action = Actions.Eoddata.EoddataSplitsLoader.Start, Checked = false},
             new LoaderItem {Name = "Investing Splits", Action = Actions.Investing.InvestingSplitsLoader.Start, Checked = false},
@@ -29,6 +29,7 @@ namespace Data.Models
             new LoaderItem {Name = "StockAnalysis IPOs", Action = Actions.StockAnaysis.StockAnalysisIPOs.Start, Checked=false},
             new LoaderItem {Name = "Refresh Split data", Action = Models.SplitModel.RefreshSplitData, Checked = false},
             new LoaderItem {Name = "Index components from Wikipedia", Action = Actions.Wikipedia.WikipediaIndexLoader.Start, Checked = false},
+            new LoaderItem {Name = "Polygon Minute Quotes", Action = Actions.Polygon.PolygonMinuteLoader.Start, Checked = false},
             new LoaderItem {Name = "Yahoo Minute Quotes", Action = Actions.Yahoo.YahooMinuteQuotesLoader.Start, Checked = false},
         };
 

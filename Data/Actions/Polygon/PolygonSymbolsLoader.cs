@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,8 +13,111 @@ namespace Data.Actions.Polygon
     public static class PolygonSymbolsLoader
     {
         private const string StartUrlTemplate = "https://api.polygon.io/v3/reference/tickers?active=true&limit=1000";
+        private const string UrlTemplate = "https://api.polygon.io/v3/reference/tickers?date={0}&active=true&limit=1000";
+        private const string ZipFileNameTemplate = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_{0}.zip";
 
         public static void Start()
+        {
+            Logger.AddMessage($"Started");
+
+            // Define list of dates
+            var dates = new List<DateTime>();
+            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandTimeout = 150;
+                cmd.CommandText = "select date from dbQuote2022..TradingDays where date>=(select min(date) from dbQ2023..DayPolygon) order by 1";
+                using (var rdr = cmd.ExecuteReader())
+                    while (rdr.Read())
+                        dates.Add((DateTime)rdr["Date"]);
+            }
+
+            foreach (var date in dates)
+            {
+                var zipFileName = string.Format(ZipFileNameTemplate, date.ToString("yyyyMMdd"));
+
+                if (!File.Exists(zipFileName))
+                {
+                    var folder = zipFileName.Substring(0, zipFileName.Length - 4);
+                    var url = string.Format(UrlTemplate, date.ToString("yyyy-MM-dd"));
+                    var cnt = 0;
+                    while (url != null)
+                    {
+                        url = url + "&apiKey=" + PolygonCommon.GetApiKey();
+                        var filename = folder + $@"\SymbolsPolygon_{cnt:D2}_{date:yyyyMMdd}.json";
+                        Logger.AddMessage($"Downloading {cnt} data chunk into {Path.GetFileName(filename)} for {date:yyyy-MM-dd}");
+
+                        var result = Download.DownloadPage(url, filename);
+                        if (result != null)
+                            throw new Exception($"Error! {result}");
+
+                        var oo = JsonConvert.DeserializeObject<cRoot>(File.ReadAllText(filename));
+                        if (oo.status != "OK")
+                            throw new Exception("Wrong status of response!");
+
+                        url = oo.next_url;
+                        cnt++;
+                    }
+
+                    var zipFileName2 = ZipUtils.ZipFolder(folder);
+                    if (File.Exists(zipFileName2))
+                        Directory.Delete(folder, true);
+                    else
+                    {
+
+                    }
+                }
+            }
+
+            /*var timeStamp = CsUtils.GetTimeStamp().Item2;
+            var folder = $@"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_{timeStamp}\";
+
+
+            var itemCount = ParseAndSaveToDb(zipFileName);
+
+            Directory.Delete(folder, true);
+
+            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");*/
+            Logger.AddMessage($"!Finished.");
+        }
+
+        public static void ParseAllZip()
+        {
+            var folder = Path.GetDirectoryName(ZipFileNameTemplate);
+            var files = Directory.GetFiles(folder, "*.zip").OrderBy(a => a).ToArray();
+            foreach (var zipFileName in files)
+            {
+                var items = new List<cItem>();
+                using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                    foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                    {
+                        var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
+
+                        var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
+                        var date = DateTime.ParseExact(ss[ss.Length - 1], "yyyyMMdd", CultureInfo.InstalledUICulture);
+                        foreach (var item in oo.results)
+                        {
+                            item.Date = date;
+                            item.TimeStamp = entry.LastWriteTime.DateTime;
+                        }
+
+                        items.AddRange(oo.results.Where(a => a.IsValidTicker && a.market == "stocks"));
+                    }
+
+                Helpers.DbUtils.SaveToDbTable(items, "dbQ2023..SymbolsPolygonDetails",
+                    "Symbol", "Date", "primary_exchange", "name", "type", "cik", "composite_figi", "share_class_figi",
+                    "last_updated_utc", "TimeStamp");
+            }
+        }
+
+
+
+
+
+
+
+        public static void StartOld()
         {
             Logger.AddMessage($"Started");
             var timeStamp = CsUtils.GetTimeStamp().Item2;
@@ -64,9 +169,9 @@ namespace Data.Actions.Polygon
                     items.AddRange(oo.results.Where(a => a.IsValidTicker));
                 }
 
-            Helpers.DbUtils.SaveToDbTable(items, "dbQ2023..Bfr_SymbolsPolygon", "Symbol", "primary_exchange",
-                "name", "type", "market", "cik", "composite_figi", "share_class_figi", "active", "last_updated_utc",
-                "TimeStamp");
+            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.IsValidTicker), "dbQ2023..Bfr_SymbolsPolygon",
+                "Symbol", "primary_exchange", "name", "type", "market", "cik", "composite_figi", "share_class_figi",
+                "active", "last_updated_utc", "TimeStamp");
 
             return items.Count;
         }
@@ -102,7 +207,8 @@ namespace Data.Actions.Polygon
                                            ticker.StartsWith("I:", StringComparison.InvariantCultureIgnoreCase) ||
                                            PolygonCommon.IsTestTicker(Symbol));
             public string Symbol => PolygonCommon.GetMyTicker(ticker);
-
+            public DateTime Date;
+            public string Name => string.IsNullOrEmpty(name) ? null : name;
             public DateTime TimeStamp;
         }
         #endregion

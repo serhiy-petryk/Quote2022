@@ -27,7 +27,7 @@ namespace Data.Actions.FmpCloud
                 cmd.CommandText = "SELECT date from TradingDays WHERE date between '2019-01-01' and '2023-03-31' order by date desc";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
-                        dates.Add((DateTime) rdr["Date"]);
+                        dates.Add((DateTime)rdr["Date"]);
             }
 
             var cnt = 0;
@@ -58,7 +58,10 @@ namespace Data.Actions.FmpCloud
         public static int ParseAndSaveToDbAllFiles()
         {
             var folder = @"E:\Quote\WebData\Daily\FmpCloud\Data";
-            var files = Directory.GetFiles(folder, "*02.zip");
+            var files = Directory.GetFiles(folder, "*.zip")
+                .Where(a => int.Parse(Path.GetFileNameWithoutExtension(a).Split('_')[1]) > 20180000).OrderBy(a => a)
+                .ToArray();
+
             var itemCnt = 0;
             var fileCnt = 0;
             foreach (var file in files)

@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json;
 using Quote2022.Helpers;
-using Quote2022.Models;
 
 namespace Quote2022.Actions.TradingView
 {

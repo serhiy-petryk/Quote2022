@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Data.Helpers;
 
@@ -6,10 +7,22 @@ namespace Data.Actions.Polygon
 {
     public static class PolygonCommon
     {
+        private static readonly Dictionary<string, object> TestSymbols = new Dictionary<string, object>
+        {
+            {"BVNSC", null}, {"CBO", null}, {"CBO^A", null}, {"CBOpA", null}, {"CBX", null}, {"CGVIC", null},
+            {"CIVEC", null}, {"CRUSC", null}, {"EVFTC", null}, {"FOANC", null}, {"GRBIC", null}, {"HFGIC", null},
+            {"IBO", null}, {"IGZ", null}, {"MOGLC", null}, {"OKDCC", null}, {"PETZC", null}, {"RPIBC", null},
+            {"ZAZZT", null}, {"ZBZX", null}, {"ZBZZT", null}, {"ZCZZT", null}, {"ZEXIT", null}, {"ZIEXT", null},
+            {"ZJZZT", null}, {"ZTST", null}, {"ZVV", null}, {"ZVZZC", null}, {"ZVZZT", null}, {"ZWZZT", null},
+            {"ZXIET", null}, {"ZXYZ.A", null}, {"ZXZZT", null}
+        };
+
         public static string GetApiKey() => CsUtils.GetApiKeys("polygon.io")[1];
 
         public static bool IsTestTicker(string ticker)
         {
+            if (TestSymbols.ContainsKey(ticker)) return true;
+
             var test = ticker.Substring(1);
             return (test == "TEST" || test.StartsWith("TEST.") || test.StartsWith("TEST^") ||
                     test.StartsWith("TESTr") || test.StartsWith("TESTw") || test.StartsWith("TESTp"));

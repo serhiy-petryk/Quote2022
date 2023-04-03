@@ -123,8 +123,10 @@ namespace Data.Actions.Polygon
             {
                 Logger.AddMessage($"Downloaded {cnt++} tickers from {symbols.Count}");
 
-                var currentDate = DateTime.Today.AddYears(-5);
-                var maxDate = DateTime.Today.AddHours(-9).AddDays(-1);
+                // var currentDate = DateTime.Today.AddYears(-5);
+                // var maxDate = DateTime.Today.AddHours(-9).AddDays(-1);
+                var currentDate = new DateTime(2018,4,3);
+                var maxDate = new DateTime(2023,3,31);
                 while (currentDate < maxDate)
                 {
                     var endDate = currentDate.AddMonths(2);
@@ -158,7 +160,7 @@ namespace Data.Actions.Polygon
         {
             Logger.AddMessage($"Started");
 
-            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331\";
+            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230402\";
 
             var symbolAndDates = new List<Tuple<string, DateTime, DateTime>>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
@@ -166,26 +168,26 @@ namespace Data.Actions.Polygon
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "select a.Symbol, min(a.Date) MinDate, max(a.Date) MaxDate from dbQ2023..DayPolygon a "+
-                                  "left join dbQ2023..FileLogMinutePolygon b on a.Symbol=b.Symbol and a.Date=b.Date " +
-                                  "where a.[Close]*a.Volume>=5000000 and b.Symbol is null and a.Date>'2018-03-28' "+
-                                  "group by a.Symbol";
+                cmd.CommandText = "select symbol, min(date) MinDate, max(date) MaxDate from dbQ2023..DayPolygon "+
+                                  "where [close]*[volume]>=5000000 and date>= '2018-04-03' group by symbol";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         symbolAndDates.Add(new Tuple<string, DateTime, DateTime>((string)rdr["Symbol"], (DateTime)rdr["MinDate"], (DateTime)rdr["MaxDate"]));
             }
 
             var cnt = 0;
+            var maxDate = new DateTime(2023, 3, 31);
             foreach (var item in symbolAndDates)
             {
                 Logger.AddMessage($"Downloaded {cnt++} tickers from {symbolAndDates.Count}");
 
                 var currentDate = item.Item2;
-                while (currentDate <= item.Item3)
+                while (currentDate < item.Item3)
                 {
                     var endDate = currentDate.AddMonths(2);
-                    if (endDate > DateTime.Today)
-                        endDate = DateTime.Today.AddDays(-1);
+                    if (endDate > maxDate)
+                        endDate = maxDate;
+                    currentDate = currentDate.AddDays(-5); // overlay between day
 
                     var jsonFileName = $"{folder}pMin_{item.Item1}_{currentDate:yyyyMMdd}.json";
                     var urlTicker = PolygonCommon.GetPolygonTicker(item.Item1);

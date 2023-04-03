@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using OfficeOpenXml.DataValidation;
 using Quote2022.Actions;
 using Quote2022.Actions.MinuteAlphaVantage;
 using Quote2022.Actions.Nasdaq;
@@ -881,14 +879,16 @@ namespace Quote2022
 
             // Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange();
 
-            var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331";
+            /*var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331";
             var files = Directory.GetFiles(folder, "*.WW_*.json");
             foreach (var file in files)
             {
                 var newFN = file.Replace(".WW_", ".WI_");
                 File.Move(file, newFN);
                 Debug.Print($"{file}\t{newFN}");
-            }
+            }*/
+
+            await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange());
 
             btnTemp.Enabled = true;
         }

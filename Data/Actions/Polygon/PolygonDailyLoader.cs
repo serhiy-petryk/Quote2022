@@ -28,7 +28,7 @@ namespace Data.Actions.Polygon
                 cmd.CommandText = "SELECT [date] FROM TradingDays WHERE [date] > DATEADD(day,-30, GETDATE())";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
-                        dates.Add((DateTime) rdr["Date"]);
+                        dates.Add((DateTime)rdr["Date"]);
             }
 
             // Download data

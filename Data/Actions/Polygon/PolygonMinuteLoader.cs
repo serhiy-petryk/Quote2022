@@ -127,11 +127,12 @@ namespace Data.Actions.Polygon
                 // var maxDate = DateTime.Today.AddHours(-9).AddDays(-1);
                 var currentDate = new DateTime(2018,4,3);
                 var maxDate = new DateTime(2023,3,31);
-                while (currentDate < maxDate)
+                while (currentDate <= maxDate)
                 {
                     var endDate = currentDate.AddMonths(2);
                     if (endDate >= maxDate)
                         endDate = maxDate;
+                    currentDate = currentDate.AddDays(-5);
 
                     var jsonFileName = $"{folder}pMin_{symbol}_{currentDate:yyyyMMdd}.json";
                     var urlTicker = PolygonCommon.GetPolygonTicker(symbol);
@@ -148,6 +149,9 @@ namespace Data.Actions.Polygon
                             // ! error
                         }
                     }
+
+                    if (endDate == maxDate)
+                        break;
 
                     currentDate = endDate;
                 }
@@ -182,7 +186,7 @@ namespace Data.Actions.Polygon
                 Logger.AddMessage($"Downloaded {cnt++} tickers from {symbolAndDates.Count}");
 
                 var currentDate = item.Item2;
-                while (currentDate < item.Item3)
+                while (currentDate <= item.Item3)
                 {
                     var endDate = currentDate.AddMonths(2);
                     if (endDate > maxDate)
@@ -204,6 +208,9 @@ namespace Data.Actions.Polygon
                             // ! error
                         }
                     }
+
+                    if (endDate == maxDate)
+                        break;
 
                     currentDate = endDate;
                 }

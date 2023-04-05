@@ -26,7 +26,7 @@ namespace Data.Actions.Polygon
             CheckFiles(folder, errorLog);
 
             // Save errors to file
-            var errorFileName = folder + @".SaveToDbError.txt";
+            var errorFileName = folder + @".SaveLogToDbError.txt";
             if (File.Exists(errorFileName))
                 File.Delete(errorFileName);
             File.AppendAllText(errorFileName, $"File\tMessage\tContent{Environment.NewLine}");

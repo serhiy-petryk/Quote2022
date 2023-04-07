@@ -13,8 +13,11 @@ namespace Data.Actions.Yahoo
 
         public static void Start()
         {
-            var previousFriday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Friday);
+            /*var previousFriday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Friday);
             var previousMonday = previousFriday.AddDays(-4);
+            Start(previousMonday, 5, GetDefaultYahooSymbolList());*/
+            var previousThursday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Thursday);
+            var previousMonday = previousThursday.AddDays(-3);
             Start(previousMonday, 5, GetDefaultYahooSymbolList());
         }
 
@@ -23,7 +26,7 @@ namespace Data.Actions.Yahoo
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var folder = $@"E:\Quote\WebData\Minute\Yahoo\Data\YahooMinute_{timeStamp.Item2}\";
+            var folder = $@"C:\Quote\WebData\Minute\Yahoo\Data\YahooMinute_{timeStamp.Item2}\";
 
             var fromInSeconds = GetYahooDate(from);
             var toInSeconds = GetYahooDate(from.AddDays(days));

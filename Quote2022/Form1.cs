@@ -879,16 +879,24 @@ namespace Quote2022
 
             // Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange();
 
-            /*var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230331";
-            var files = Directory.GetFiles(folder, "*.WW_*.json");
+            /*var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\Minute5Years_20230401";
+            var files = Directory.GetFiles(folder, "*.json");
             foreach (var file in files)
             {
-                var newFN = file.Replace(".WW_", ".WI_");
-                File.Move(file, newFN);
-                Debug.Print($"{file}\t{newFN}");
+                var d1 = File.GetCreationTime(file);
+                var d2 = File.GetLastWriteTime(file);
+                if (d1.Date != d2.Date && d2<d1)
+                {
+                    File.SetCreationTime(file, d2);
+                }
             }*/
 
-            await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange());
+            //await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange());
+
+            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.StartFolder(@"E:\Quote\WebData\Minute\Polygon\DataBuffer\Minute5Years_20230401"));
+            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange());
+
+            // Data.Actions.Polygon.PolygonTemp.UnzipMissingFiles();
 
             btnTemp.Enabled = true;
         }
@@ -1029,8 +1037,18 @@ namespace Quote2022
         {
             btnMinutePolygonSplitFilesByDates.Enabled = false;
 
-            if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && !string.IsNullOrEmpty(zipFileName))
-                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSplitData.Start(zipFileName));
+            var dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = @"E:\Quote\WebData\Minute\Polygon\DataBuffer",
+                IsFolderPicker = true
+            };
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSplitData.Start(dialog.FileName));
+            }
+
+            // if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && !string.IsNullOrEmpty(zipFileName))
+               //  await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSplitData.Start(zipFileName));
 
             btnMinutePolygonSplitFilesByDates.Enabled = true;
         }

@@ -26,19 +26,21 @@ namespace Data.Actions.Polygon
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandTimeout = 150;
+                cmd.CommandTimeout = 300;
                 cmd.CommandText = "select date from dbQuote2022..TradingDays where date>=(select min(date) from dbQ2023..DayPolygon) order by 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         dates.Add((DateTime)rdr["Date"]);
             }
 
+            var itemCount = 0;
+            var fileCount = 0;
             foreach (var date in dates)
             {
                 var zipFileName = string.Format(ZipFileNameTemplate, date.ToString("yyyyMMdd"));
-
                 if (!File.Exists(zipFileName))
                 {
+                    fileCount++;
                     var folder = zipFileName.Substring(0, zipFileName.Length - 4);
                     var url = string.Format(UrlTemplate, date.ToString("yyyy-MM-dd"));
                     var cnt = 0;
@@ -62,24 +64,16 @@ namespace Data.Actions.Polygon
 
                     var zipFileName2 = ZipUtils.ZipFolder(folder);
                     if (File.Exists(zipFileName2))
-                        Directory.Delete(folder, true);
-                    else
                     {
-
+                        itemCount += ParseAndSaveToDb(zipFileName);
+                        Directory.Delete(folder, true);
                     }
+                    else
+                        throw new Exception("Error in PolygonSymbolsLoader downloader & parser");
                 }
             }
 
-            /*var timeStamp = CsUtils.GetTimeStamp().Item2;
-            var folder = $@"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_{timeStamp}\";
-
-
-            var itemCount = ParseAndSaveToDb(zipFileName);
-
-            Directory.Delete(folder, true);
-
-            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");*/
-            Logger.AddMessage($"!Finished.");
+            Logger.AddMessage($"!Finished. Processed {fileCount} files with {itemCount:N0} items");
         }
 
         public static void ParseAllZip()
@@ -111,67 +105,31 @@ namespace Data.Actions.Polygon
             }
         }
 
-
-
-
-
-
-
-        public static void StartOld()
-        {
-            Logger.AddMessage($"Started");
-            var timeStamp = CsUtils.GetTimeStamp().Item2;
-            var folder = $@"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_{timeStamp}\";
-
-            var url = StartUrlTemplate;
-            var cnt = 0;
-            while (url != null)
-            {
-                url = url + "&apiKey=" + PolygonCommon.GetApiKey();
-                var filename = folder + $"SymbolsPolygon_{cnt:D2}_{timeStamp}.json";
-                if (!File.Exists(filename))
-                {
-                    Logger.AddMessage($"Downloading {cnt} data chunk into {Path.GetFileName(filename)}");
-
-                    var result = Download.DownloadPage(url, filename);
-                    if (result != null)
-                        throw new Exception("Error!");
-                }
-
-                var oo = JsonConvert.DeserializeObject<cRoot>(File.ReadAllText(filename));
-                if (oo.status != "OK")
-                    throw new Exception("Wrong status of response!");
-
-                url = oo.next_url;
-                cnt++;
-            }
-
-            var zipFileName = ZipUtils.ZipFolder(folder);
-
-            var itemCount = ParseAndSaveToDb(zipFileName);
-
-            Directory.Delete(folder, true);
-
-            Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
-        }
-
         public static int ParseAndSaveToDb(string zipFileName)
         {
+            Logger.AddMessage($"Parsing and saving to database: {Path.GetFileName(zipFileName)}");
+
             var items = new List<cItem>();
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
                 foreach (var entry in zip.Entries.Where(a => a.Length > 0))
                 {
                     var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
 
+                    var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
+                    var date = DateTime.ParseExact(ss[ss.Length - 1], "yyyyMMdd", CultureInfo.InstalledUICulture);
                     foreach (var item in oo.results)
+                    {
+                        item.Date = date;
                         item.TimeStamp = entry.LastWriteTime.DateTime;
+                    }
 
-                    items.AddRange(oo.results.Where(a => a.IsValidTicker));
+                    items.AddRange(oo.results.Where(a => a.IsValidTicker && a.market == "stocks"));
                 }
 
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.IsValidTicker), "dbQ2023..Bfr_SymbolsPolygon",
-                "Symbol", "primary_exchange", "name", "type", "market", "cik", "composite_figi", "share_class_figi",
-                "active", "last_updated_utc", "TimeStamp");
+            DbUtils.ClearAndSaveToDbTable(items, "dbQ2023..Bfr_SymbolsPolygon", "Symbol", "Date", "primary_exchange",
+                "name", "type", "cik", "composite_figi", "share_class_figi", "last_updated_utc", "TimeStamp");
+
+            DbUtils.RunProcedure("dbQ2023..pUpdateSymbolsPolygon");
 
             return items.Count;
         }

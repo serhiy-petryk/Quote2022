@@ -109,12 +109,12 @@ namespace Data.Actions.StockAnaysis
         #endregion
 
         #region =======  Json subclasses  =============
-        public class cRoot
+        private class cRoot
         {
             public string type;
             public cData data;
         }
-        public class cData
+        private class cData
         {
             public string action;
             public string type;

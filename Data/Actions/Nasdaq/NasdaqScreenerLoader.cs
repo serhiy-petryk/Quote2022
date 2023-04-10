@@ -120,17 +120,17 @@ namespace Data.Actions.Nasdaq
         #region =========  Json classes  ============
         //========================
         private static CultureInfo culture = new CultureInfo("en-US");
-        public class cStockRoot
+        private class cStockRoot
         {
             public cStockData data;
             public object message;
             public cStatus status;
         }
-        public class cStockData
+        private class cStockData
         {
             public cStockRow[] rows;
         }
-        public class cStockRow
+        private class cStockRow
         {
             // "symbol", "name", "LastSale", "Volume", "netChange", "Change", "MarketCap", "country", "ipoYear", "sector", "industry", "timeStamp"
             // github: symbol, name, lastsale, volume, netchange, pctchange, marketCap, country, ipoyear, industry, sector, url
@@ -179,22 +179,22 @@ namespace Data.Actions.Nasdaq
         private static string NullCheck(string s) => string.IsNullOrEmpty(s) ? null : s.Trim();
 
         //========================
-        public class cEtfRoot
+        private class cEtfRoot
         {
             public cEtfData data;
             public object message;
             public cStatus status;
         }
-        public class cEtfData
+        private class cEtfData
         {
             public string dataAsOf;
             public cEtfData2 data;
         }
-        public class cEtfData2
+        private class cEtfData2
         {
             public cEtfRow[] rows;
         }
-        public class cEtfRow
+        private class cEtfRow
         {
             // "symbol", "name", "LastSale", "netChange", "Change", "TimeStamp"
             public string symbol;
@@ -209,7 +209,7 @@ namespace Data.Actions.Nasdaq
         }
 
         //=====================
-        public class cStatus
+        private class cStatus
         {
             public int rCode;
             public object bCodeMessage;

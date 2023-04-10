@@ -25,7 +25,9 @@ namespace Data.Actions.Polygon
                 conn.Open();
                 cmd.CommandTimeout = 150;
                 // cmd.CommandText = "SELECT date from TradingDays WHERE date between '2018-03-27' and '2023-03-31' order by date desc";
-                cmd.CommandText = "SELECT [date] FROM TradingDays WHERE [date] > DATEADD(day,-30, GETDATE())";
+                cmd.CommandText = "select a.Date from (select date from dbQuote2022..TradingDays "+
+                                  "where date >= (select min(date) from dbQ2023..DayPolygon)) a "+
+                                  "left join dbQ2023..DayPolygon b on a.Date = b.Date where b.Date is null order by 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         dates.Add((DateTime)rdr["Date"]);
@@ -33,9 +35,12 @@ namespace Data.Actions.Polygon
 
             // Download data
             var cnt = 0;
-            var filesToParse = new List<string>();
+            var itemCount = 0;
+            var filesCount = 0;
+            var filesSize = 0;
             foreach (var date in dates)
             {
+                filesCount++;
                 Logger.AddMessage($"Downloaded {cnt++} files from {dates.Count}");
                 var jsonFileName = Folder + $"DayPolygon_{date:yyyyMMdd}.json";
                 var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
@@ -47,30 +52,25 @@ namespace Data.Actions.Polygon
                     {
                         var zipFileName2 = Helpers.ZipUtils.ZipFile(jsonFileName);
                         if (File.Exists(zipFileName2))
-                        {
                             File.Delete(jsonFileName);
-                            filesToParse.Add(zipFileName2);
-                        }
                     }
                     else
                     {
                         // ! error
                     }
                 }
+
+                if (File.Exists(zipFileName))
+                {
+                    itemCount += ParseAndSaveToDb(zipFileName);
+                    filesSize += Helpers.CsUtils.GetFileSizeInKB(zipFileName);
+
+                }
                 else
-                    filesToParse.Add(zipFileName);
+                    throw new Exception("Error in PolygonDailyLoader downloader & parser");
             }
 
-            var itemCount = 0;
-            var filesSize = 0;
-            for (var k = 0; k < filesToParse.Count; k++)
-            {
-                Logger.AddMessage($"Parsed and saved to database {k} files from {filesToParse.Count}");
-                itemCount += ParseAndSaveToDb(filesToParse[k]);
-                filesSize += Helpers.CsUtils.GetFileSizeInKB(filesToParse[k]);
-            }
-
-            Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {filesToParse}. Size of files: {filesSize:N0}KB");
+            Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");
         }
 
         public static int ParseAndSaveToDbAllFiles()
@@ -91,6 +91,8 @@ namespace Data.Actions.Polygon
 
         public static int ParseAndSaveToDb(string zipFileName)
         {
+            Logger.AddMessage($"Parsed and saved to database {zipFileName}");
+
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
                 foreach (var entry in zip.Entries.Where(a => a.Length > 0))

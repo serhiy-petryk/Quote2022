@@ -59,18 +59,18 @@ namespace Data.Actions.StockAnaysis
         }
 
         #region =======  Json subclasses  =============
-        public class cRoot
+        private class cRoot
         {
             public int status;
             public cData data;
         }
 
-        public class cData
+        private class cData
         {
             public int resultsCount;
             public cItem[] data;
         }
-        public class cItem
+        private class cItem
         {
             public string s;
             public DateTime ipoDate;

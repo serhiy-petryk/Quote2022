@@ -22,21 +22,29 @@ namespace Data.Actions.Polygon
 
             Logger.AddMessage($"Define symbols to download ...");
             var symbols = new List<string>();
+            var from = DateTime.MaxValue;
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "SELECT DISTINCT symbol FROM dbQ2023..DayPolygon WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate())";
+                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate FROM dbQ2023..DayPolygon "+
+                                  "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) "+
+                                  "GROUP BY Symbol ORDER BY 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
-                        symbols.Add((string)rdr["Symbol"]);
+                    {
+                        symbols.Add((string) rdr["Symbol"]);
+                        var minDate = (DateTime) rdr["MinDate"];
+                        if (minDate < from) from = minDate;
+                    }
             }
 
-            var previousFriday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Friday);
-            var from = previousFriday.AddDays(-11);
+            // var previousFriday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Friday);
+            //var from = previousFriday.AddDays(-11);
+            var to = DateTime.Now.AddHours(-9).Date.AddDays(-1);
 
-            Start(symbols, from, previousFriday);
+            Start(symbols, from, to);
         }
 
         public static void Start(List<string> mySymbols, DateTime from, DateTime to)

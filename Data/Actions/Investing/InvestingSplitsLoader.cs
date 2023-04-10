@@ -171,7 +171,7 @@ namespace Data.Actions.Investing
         }
 
         #region =======  Json subclasses  =============
-        public class cRoot
+        private class cRoot
         {
             public string data;
             public int rows_num;

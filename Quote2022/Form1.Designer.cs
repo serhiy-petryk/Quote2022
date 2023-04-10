@@ -39,7 +39,7 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
-            this.btnMinutePolygonLoader = new System.Windows.Forms.Button();
+            this.btnMinutePolygonSplitFilesByDates = new System.Windows.Forms.Button();
             this.btnMinutePolygonSaveLogToDb = new System.Windows.Forms.Button();
             this.btnMavCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.btnMavSplitDataAndSaveToZip = new System.Windows.Forms.Button();
@@ -50,12 +50,9 @@ namespace Quote2022
             this.btnRunMultiItemsLoader = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Image = new System.Windows.Forms.DataGridViewImageColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Started = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Duration = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tpOneTime = new System.Windows.Forms.TabPage();
             this.btnWaEoddataSymbolsParseAndSaveToDb = new System.Windows.Forms.Button();
             this.btnFmpCloudSplits = new System.Windows.Forms.Button();
@@ -154,12 +151,13 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnMinutePolygonSplitFilesByDates = new System.Windows.Forms.Button();
+            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.tpOneTime.SuspendLayout();
             this.tabLoader.SuspendLayout();
             this.tabLayers.SuspendLayout();
@@ -177,6 +175,7 @@ namespace Quote2022
             this.gbIntradayDataList.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -215,7 +214,6 @@ namespace Quote2022
             // tpLoaderNew
             // 
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSplitFilesByDates);
-            this.tpLoaderNew.Controls.Add(this.btnMinutePolygonLoader);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSaveLogToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavCopyZipInfoToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavSplitDataAndSaveToZip);
@@ -234,19 +232,19 @@ namespace Quote2022
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
             // 
-            // btnMinutePolygonLoader
+            // btnMinutePolygonSplitFilesByDates
             // 
-            this.btnMinutePolygonLoader.Location = new System.Drawing.Point(705, 18);
-            this.btnMinutePolygonLoader.Name = "btnMinutePolygonLoader";
-            this.btnMinutePolygonLoader.Size = new System.Drawing.Size(168, 23);
-            this.btnMinutePolygonLoader.TabIndex = 60;
-            this.btnMinutePolygonLoader.Text = "MinutePolygon Loader";
-            this.btnMinutePolygonLoader.UseVisualStyleBackColor = true;
-            this.btnMinutePolygonLoader.Click += new System.EventHandler(this.btnMinutePolygonLoader_Click);
+            this.btnMinutePolygonSplitFilesByDates.Location = new System.Drawing.Point(705, 60);
+            this.btnMinutePolygonSplitFilesByDates.Name = "btnMinutePolygonSplitFilesByDates";
+            this.btnMinutePolygonSplitFilesByDates.Size = new System.Drawing.Size(168, 40);
+            this.btnMinutePolygonSplitFilesByDates.TabIndex = 61;
+            this.btnMinutePolygonSplitFilesByDates.Text = "MinutePolygon split files by dates";
+            this.btnMinutePolygonSplitFilesByDates.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonSplitFilesByDates.Click += new System.EventHandler(this.btnMinutePolygonSplitFilesByDates_Click);
             // 
             // btnMinutePolygonSaveLogToDb
             // 
-            this.btnMinutePolygonSaveLogToDb.Location = new System.Drawing.Point(705, 53);
+            this.btnMinutePolygonSaveLogToDb.Location = new System.Drawing.Point(705, 18);
             this.btnMinutePolygonSaveLogToDb.Name = "btnMinutePolygonSaveLogToDb";
             this.btnMinutePolygonSaveLogToDb.Size = new System.Drawing.Size(168, 23);
             this.btnMinutePolygonSaveLogToDb.TabIndex = 59;
@@ -369,14 +367,6 @@ namespace Quote2022
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
-            // dataGridViewCheckBoxColumn1
-            // 
-            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
-            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
-            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            this.dataGridViewCheckBoxColumn1.Width = 5;
-            // 
             // Image
             // 
             this.Image.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
@@ -385,14 +375,6 @@ namespace Quote2022
             this.Image.Name = "Image";
             this.Image.ReadOnly = true;
             this.Image.Width = 5;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
-            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // Started
             // 
@@ -420,10 +402,6 @@ namespace Quote2022
             this.Duration.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Duration.ToolTipText = "Duration, seconds";
             this.Duration.Width = 24;
-            // 
-            // loaderItemBindingSource
-            // 
-            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
             // 
             // tpOneTime
             // 
@@ -1614,15 +1592,25 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnMinutePolygonSplitFilesByDates
+            // dataGridViewCheckBoxColumn1
             // 
-            this.btnMinutePolygonSplitFilesByDates.Location = new System.Drawing.Point(705, 95);
-            this.btnMinutePolygonSplitFilesByDates.Name = "btnMinutePolygonSplitFilesByDates";
-            this.btnMinutePolygonSplitFilesByDates.Size = new System.Drawing.Size(168, 40);
-            this.btnMinutePolygonSplitFilesByDates.TabIndex = 61;
-            this.btnMinutePolygonSplitFilesByDates.Text = "MinutePolygon split files by dates";
-            this.btnMinutePolygonSplitFilesByDates.UseVisualStyleBackColor = true;
-            this.btnMinutePolygonSplitFilesByDates.Click += new System.EventHandler(this.btnMinutePolygonSplitFilesByDates_Click);
+            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
+            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
+            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            this.dataGridViewCheckBoxColumn1.Width = 5;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // loaderItemBindingSource
+            // 
+            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
             // 
             // Form1
             // 
@@ -1638,7 +1626,6 @@ namespace Quote2022
             this.tabControl1.ResumeLayout(false);
             this.tpLoaderNew.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.tpOneTime.ResumeLayout(false);
             this.tabLoader.ResumeLayout(false);
             this.tabLayers.ResumeLayout(false);
@@ -1659,6 +1646,7 @@ namespace Quote2022
             this.gbIntradayDataList.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1786,7 +1774,6 @@ namespace Quote2022
         private System.Windows.Forms.Button btnWaEoddataSymbolsParseAndSaveToDb;
         private System.Windows.Forms.Button btnFmpCloudSplits;
         private System.Windows.Forms.Button btnMinutePolygonSaveLogToDb;
-        private System.Windows.Forms.Button btnMinutePolygonLoader;
         private System.Windows.Forms.Button btnMinutePolygonSplitFilesByDates;
     }
 }

@@ -1026,13 +1026,6 @@ namespace Quote2022
             btnMinutePolygonSaveLogToDb.Enabled = true;
         }
 
-        private async void btnMinutePolygonLoader_Click(object sender, EventArgs e)
-        {
-            btnMinutePolygonLoader.Enabled = false;
-            await Task.Factory.StartNew(Data.Actions.Polygon.PolygonMinuteLoader.Start);
-            btnMinutePolygonLoader.Enabled = true;
-        }
-
         private async void btnMinutePolygonSplitFilesByDates_Click(object sender, EventArgs e)
         {
             btnMinutePolygonSplitFilesByDates.Enabled = false;

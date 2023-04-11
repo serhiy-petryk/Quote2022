@@ -50,9 +50,12 @@ namespace Quote2022
             this.btnRunMultiItemsLoader = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Image = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Started = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Duration = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tpOneTime = new System.Windows.Forms.TabPage();
             this.btnWaEoddataSymbolsParseAndSaveToDb = new System.Windows.Forms.Button();
             this.btnFmpCloudSplits = new System.Windows.Forms.Button();
@@ -151,13 +154,12 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.loaderItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnPolygonCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.tpOneTime.SuspendLayout();
             this.tabLoader.SuspendLayout();
             this.tabLayers.SuspendLayout();
@@ -175,7 +177,6 @@ namespace Quote2022
             this.gbIntradayDataList.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -213,6 +214,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnPolygonCopyZipInfoToDb);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSplitFilesByDates);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSaveLogToDb);
             this.tpLoaderNew.Controls.Add(this.btnMavCopyZipInfoToDb);
@@ -367,6 +369,14 @@ namespace Quote2022
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
+            // dataGridViewCheckBoxColumn1
+            // 
+            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
+            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
+            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            this.dataGridViewCheckBoxColumn1.Width = 5;
+            // 
             // Image
             // 
             this.Image.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
@@ -375,6 +385,14 @@ namespace Quote2022
             this.Image.Name = "Image";
             this.Image.ReadOnly = true;
             this.Image.Width = 5;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // Started
             // 
@@ -402,6 +420,10 @@ namespace Quote2022
             this.Duration.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Duration.ToolTipText = "Duration, seconds";
             this.Duration.Width = 24;
+            // 
+            // loaderItemBindingSource
+            // 
+            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
             // 
             // tpOneTime
             // 
@@ -1592,25 +1614,15 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // dataGridViewCheckBoxColumn1
+            // btnPolygonCopyZipInfoToDb
             // 
-            this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewCheckBoxColumn1.DataPropertyName = "Checked";
-            this.dataGridViewCheckBoxColumn1.HeaderText = "Checked";
-            this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            this.dataGridViewCheckBoxColumn1.Width = 5;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
-            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // loaderItemBindingSource
-            // 
-            this.loaderItemBindingSource.DataSource = typeof(Data.Models.LoaderItem);
+            this.btnPolygonCopyZipInfoToDb.Location = new System.Drawing.Point(705, 123);
+            this.btnPolygonCopyZipInfoToDb.Name = "btnPolygonCopyZipInfoToDb";
+            this.btnPolygonCopyZipInfoToDb.Size = new System.Drawing.Size(168, 42);
+            this.btnPolygonCopyZipInfoToDb.TabIndex = 62;
+            this.btnPolygonCopyZipInfoToDb.Text = "MinutePolygon copy info from zip to DB";
+            this.btnPolygonCopyZipInfoToDb.UseVisualStyleBackColor = true;
+            this.btnPolygonCopyZipInfoToDb.Click += new System.EventHandler(this.btnPolygonCopyZipInfoToDb_Click);
             // 
             // Form1
             // 
@@ -1626,6 +1638,7 @@ namespace Quote2022
             this.tabControl1.ResumeLayout(false);
             this.tpLoaderNew.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.tpOneTime.ResumeLayout(false);
             this.tabLoader.ResumeLayout(false);
             this.tabLayers.ResumeLayout(false);
@@ -1646,7 +1659,6 @@ namespace Quote2022
             this.gbIntradayDataList.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1775,6 +1787,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnFmpCloudSplits;
         private System.Windows.Forms.Button btnMinutePolygonSaveLogToDb;
         private System.Windows.Forms.Button btnMinutePolygonSplitFilesByDates;
+        private System.Windows.Forms.Button btnPolygonCopyZipInfoToDb;
     }
 }
 

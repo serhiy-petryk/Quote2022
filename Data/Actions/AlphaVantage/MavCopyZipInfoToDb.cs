@@ -34,7 +34,6 @@ namespace Data.Actions.AlphaVantage
                         var symbol = ss[0];
                         var date = DateTime.ParseExact(ss[1], "yyyyMMdd", CultureInfo.InvariantCulture);
                         var lines = Convert.ToInt16(entry.GetLinesOfZipEntry().Count() - 1);
-                        var key = new Tuple<string, DateTime>(symbol, date);
                         items.Add(new Item { Symbol = symbol, Date = date, Lines = lines });
                     }
 

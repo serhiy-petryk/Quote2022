@@ -1045,6 +1045,13 @@ namespace Quote2022
 
             btnMinutePolygonSplitFilesByDates.Enabled = true;
         }
+
+        private async void btnPolygonCopyZipInfoToDb_Click(object sender, EventArgs e)
+        {
+            btnPolygonCopyZipInfoToDb.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.Polygon.PolygonCopyZipInfoToDb.Start);
+            btnPolygonCopyZipInfoToDb.Enabled = true;
+        }
     }
 }
 

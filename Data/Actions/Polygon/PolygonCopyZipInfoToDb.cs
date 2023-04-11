@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using Data.Helpers;
 
 namespace Data.Actions.Polygon
@@ -11,6 +13,7 @@ namespace Data.Actions.Polygon
     public static class PolygonCopyZipInfoToDb
     {
         private const string ZipFolder = @"E:\Quote\WebData\Minute\Polygon\Data";
+        private static readonly object LockObject= new object();
 
         public static void Start()
         {
@@ -19,14 +22,19 @@ namespace Data.Actions.Polygon
             var files = Directory.GetFiles(ZipFolder, "*.zip");
 
             // Clear data base table
-            var items = new List<LogEntry>();
-            DbUtils.ClearAndSaveToDbTable(items, "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date");
+            // var items = new ConcurrentBag<LogEntry>();
+            DbUtils.ClearAndSaveToDbTable(new LogEntry[0], "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date");
             var fileCount = 0;
             var itemCount = 0;
-            foreach (var file in files)
+
+            Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = 8 }, (file) =>
             {
                 fileCount++;
-                Logger.AddMessage($"Processed {fileCount} files from {files.Length}");
+
+                lock (LockObject)
+                    Logger.AddMessage($"Processed {fileCount} files from {files.Length}");
+
+                var items = new List<LogEntry>();
 
                 using (var zipArchive = ZipFile.Open(file, ZipArchiveMode.Read))
                     foreach (var entry in zipArchive.Entries.Where(a => a.Name.EndsWith(".csv")))
@@ -35,12 +43,12 @@ namespace Data.Actions.Polygon
                         var symbol = ss[0];
                         var date = DateTime.ParseExact(ss[1], "yyyyMMdd", CultureInfo.InvariantCulture);
                         var lines = entry.GetLinesOfZipEntry().ToArray();
-                        var logEntry = new LogEntry {Symbol = symbol, Date = date, Created = entry.LastWriteTime.DateTime};
-                        items.Add(logEntry);
+                        var logEntry = new LogEntry { Symbol = symbol, Date = date, Created = entry.LastWriteTime.DateTime };
                         for (var k = 1; k < lines.Length; k++)
                         {
                             ss = lines[k].Split(',');
-                            var dateTime = DateTime.ParseExact(ss[0], "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+                            var dateTime = DateTime.ParseExact(ss[0], "yyyy-MM-dd HH:mm",
+                                CultureInfo.InvariantCulture);
                             var open = float.Parse(ss[1], CultureInfo.InvariantCulture);
                             var high = float.Parse(ss[2], CultureInfo.InvariantCulture);
                             var low = float.Parse(ss[3], CultureInfo.InvariantCulture);
@@ -59,7 +67,8 @@ namespace Data.Actions.Polygon
                             logEntry.MaxTime = dateTime.TimeOfDay;
                             logEntry.TradeCount += tradeCount;
 
-                            if (dateTime.TimeOfDay >= CsUtils.StartTrading && dateTime.TimeOfDay < CsUtils.EndTrading)
+                            if (dateTime.TimeOfDay >= CsUtils.StartTrading &&
+                                dateTime.TimeOfDay < CsUtils.EndTrading)
                             {
                                 logEntry.Count++;
                                 logEntry.Volume += volume;
@@ -77,29 +86,31 @@ namespace Data.Actions.Polygon
                                     if (low < logEntry.Low) logEntry.Low = low;
                                 }
                             }
-
                         }
+
+                        items.Add(logEntry);
                     }
 
-                if (items.Count > 100000)
+                lock (LockObject)
                 {
-                    Logger.AddMessage("Save to database ...");
+                    // Logger.AddMessage("Save to database ...");
                     DbUtils.SaveToDbTable(items, "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date", "MinTime", "MaxTime",
                         "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull", "TradeCount",
                         "Created");
                     itemCount += items.Count;
-                    items.Clear();
                 }
-            }
 
-            if (items.Count > 0)
+            });
+
+            /*if (items.Count > 0)
             {
                 DbUtils.SaveToDbTable(items, "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date", "MinTime", "MaxTime",
                     "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull", "TradeCount",
                     "Created");
                 itemCount += items.Count;
-                items.Clear();
-            }
+                lock (lockObject)
+                    items = new ConcurrentBag<LogEntry>();
+            }*/
 
             Logger.AddMessage($"!Finished. Processed {fileCount} zip files. Logged {itemCount} date&time items");
         }

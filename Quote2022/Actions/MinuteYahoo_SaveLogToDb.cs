@@ -27,8 +27,6 @@ namespace Quote2022.Actions
         }
 
         private static bool _isBusy = false;
-        private static TimeSpan _startTrading = new TimeSpan(9, 30, 0);
-        private static TimeSpan _endTrading = new TimeSpan(16, 0, 0);
 
         public static void Start(string[] zipFiles, Action<string> showStatusAction)
         {

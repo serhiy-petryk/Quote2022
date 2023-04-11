@@ -42,8 +42,6 @@ namespace Quote2022.Actions.MinuteAlphaVantage
 
         private static bool _isBusy = false;
         private static Action<string> _showStatusAction;
-        private static TimeSpan _startTrading = new TimeSpan(9, 30, 0);
-        private static TimeSpan _endTrading = new TimeSpan(16, 0, 0);
 
         public static void Start(string folder, Action<string> showStatusAction)
         {
@@ -192,7 +190,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                     // if (logEntry.MinTime > time) logEntry.MinTime = time;
                     // if (logEntry.MaxTime < time) logEntry.MaxTime = time;
 
-                    if (time > _startTrading && time <= _endTrading)
+                    if (time > Data.Helpers.CsUtils.StartTrading && time <= Data.Helpers.CsUtils.EndTrading)
                     {
                         logEntry.Count++;
                         logEntry.Volume += volume;
@@ -357,7 +355,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                             // if (logEntry.MinTime > time) logEntry.MinTime = time;
                             // if (logEntry.MaxTime < time) logEntry.MaxTime = time;
 
-                            if (time > _startTrading && time <= _endTrading)
+                            if (time > Data.Helpers.CsUtils.StartTrading && time <= Data.Helpers.CsUtils.EndTrading)
                             {
                                 logEntry.Count++;
                                 logEntry.Volume += volume;

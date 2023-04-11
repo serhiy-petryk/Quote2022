@@ -11,9 +11,6 @@ namespace Data.Actions.Polygon
 {
     public static class PolygonMinuteSaveLogToDb
     {
-        private static readonly TimeSpan StartTrading = new TimeSpan(9, 30, 0);
-        private static readonly TimeSpan EndTrading = new TimeSpan(16, 0, 0);
-
         public static void StartFolder(string folder)
         {
             var folderName = Path.GetFileName(folder);
@@ -144,7 +141,7 @@ namespace Data.Actions.Polygon
                     logEntry.MaxTime = item.DateTime.TimeOfDay;
                     logEntry.TradeCount += item.TradeCount;
 
-                    if (item.DateTime.TimeOfDay >= StartTrading && item.DateTime.TimeOfDay < EndTrading)
+                    if (item.DateTime.TimeOfDay >= CsUtils.StartTrading && item.DateTime.TimeOfDay < CsUtils.EndTrading)
                     {
                         logEntry.Count++;
                         logEntry.Volume += item.Volume;
@@ -253,7 +250,7 @@ namespace Data.Actions.Polygon
                         logEntry.MaxTime = item.DateTime.TimeOfDay;
                         logEntry.TradeCount += item.TradeCount;
 
-                        if (item.DateTime.TimeOfDay >= StartTrading && item.DateTime.TimeOfDay < EndTrading)
+                        if (item.DateTime.TimeOfDay >= CsUtils.StartTrading && item.DateTime.TimeOfDay < CsUtils.EndTrading)
                         {
                             logEntry.Count++;
                             logEntry.Volume += item.Volume;

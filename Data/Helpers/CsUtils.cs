@@ -6,6 +6,9 @@ namespace Data.Helpers
 {
     public static class CsUtils
     {
+        public static readonly TimeSpan StartTrading = new TimeSpan(9, 30, 0);
+        public static readonly TimeSpan EndTrading = new TimeSpan(16, 0, 0);
+
         public static string[] GetApiKeys(string dataProvider)
         {
             const string filename = @"E:\Quote\WebData\ApiKeys.txt";

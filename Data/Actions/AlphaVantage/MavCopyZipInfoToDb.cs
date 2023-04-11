@@ -52,7 +52,7 @@ namespace Data.Actions.AlphaVantage
             Logger.AddMessage("!Finished");
         }
 
-        public class Item
+        private class Item
         {
             public string Symbol;
             public DateTime Date;

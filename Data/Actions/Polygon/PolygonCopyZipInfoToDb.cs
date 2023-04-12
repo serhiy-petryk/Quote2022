@@ -22,19 +22,16 @@ namespace Data.Actions.Polygon
             var files = Directory.GetFiles(ZipFolder, "*.zip");
 
             // Clear data base table
-            // var items = new ConcurrentBag<LogEntry>();
-            DbUtils.ClearAndSaveToDbTable(new LogEntry[0], "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date");
+            var items = new ConcurrentBag<LogEntry>();
+            DbUtils.ClearAndSaveToDbTable(items, "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date");
             var fileCount = 0;
             var itemCount = 0;
 
-            Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = 8 }, (file) =>
+            Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = 32 }, (file) =>
             {
                 fileCount++;
 
-                lock (LockObject)
-                    Logger.AddMessage($"Processed {fileCount} files from {files.Length}");
-
-                var items = new List<LogEntry>();
+                Logger.AddMessage($"Processed {fileCount} files from {files.Length}");
 
                 using (var zipArchive = ZipFile.Open(file, ZipArchiveMode.Read))
                     foreach (var entry in zipArchive.Entries.Where(a => a.Name.EndsWith(".csv")))
@@ -88,29 +85,34 @@ namespace Data.Actions.Polygon
                             }
                         }
 
-                        items.Add(logEntry);
+                        lock (LockObject) items.Add(logEntry);
+
                     }
 
                 lock (LockObject)
                 {
-                    // Logger.AddMessage("Save to database ...");
-                    DbUtils.SaveToDbTable(items, "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date", "MinTime", "MaxTime",
-                        "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull", "TradeCount",
-                        "Created");
-                    itemCount += items.Count;
+                    if (items.Count > 100000)
+                    {
+                        DbUtils.SaveToDbTable(items, "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date", "MinTime",
+                            "MaxTime", "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull",
+                            "TradeCount", "Created");
+                        itemCount += items.Count;
+
+                        items = new ConcurrentBag<LogEntry>();
+                    }
                 }
 
             });
 
-            /*if (items.Count > 0)
+            if (items.Count > 0)
             {
                 DbUtils.SaveToDbTable(items, "dbQ2023..ZipLogMinutePolygon", "Symbol", "Date", "MinTime", "MaxTime",
                     "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull", "TradeCount",
                     "Created");
                 itemCount += items.Count;
-                lock (lockObject)
+                lock (LockObject)
                     items = new ConcurrentBag<LogEntry>();
-            }*/
+            }
 
             Logger.AddMessage($"!Finished. Processed {fileCount} zip files. Logged {itemCount} date&time items");
         }

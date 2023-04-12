@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Data.Helpers
@@ -9,7 +9,7 @@ namespace Data.Helpers
         public delegate void MessageAddedEventHandler(object sender, MessageAddedEventArgs e);
         public static event MessageAddedEventHandler MessageAdded;
 
-        private static readonly List<MessageAddedEventArgs> Messages = new List<MessageAddedEventArgs>();
+        private static readonly ConcurrentBag<MessageAddedEventArgs> Messages = new ConcurrentBag<MessageAddedEventArgs>();
 
         public static void AddMessage(string message)
         {

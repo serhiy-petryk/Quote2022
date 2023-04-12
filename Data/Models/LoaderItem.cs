@@ -30,7 +30,8 @@ namespace Data.Models
             new LoaderItem {Name = "StockAnalysis IPOs", Action = Actions.StockAnaysis.StockAnalysisIPOs.Start, Checked=false},
             new LoaderItem {Name = "Refresh Split data", Action = Models.SplitModel.RefreshSplitData, Checked = false},
             new LoaderItem {Name = "Index components from Wikipedia", Action = Actions.Wikipedia.WikipediaIndexLoader.Start, Checked = false},
-            new LoaderItem {Name = "Polygon Minute Quotes", Action = Actions.Polygon.PolygonMinuteLoader.Start, Checked = false},
+            new LoaderItem {Name = "Polygon Minute Quotes (2 last weeks)", Action = Actions.Polygon.PolygonMinuteLoader.Start, Checked = false},
+            // new LoaderItem {Name = "Polygon Minute Quotes (date range)", Action = Actions.Polygon.PolygonMinuteLoader.StartWithDateRange, Checked = false},
             new LoaderItem {Name = "Yahoo Minute Quotes", Action = Actions.Yahoo.YahooMinuteQuotesLoader.Start, Checked = false},
         };
 

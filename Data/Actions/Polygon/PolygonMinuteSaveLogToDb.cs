@@ -35,7 +35,7 @@ namespace Data.Actions.Polygon
                 Logger.AddMessage($"!Finished. No errors.");
         }
 
-        public static void Start(string zipFileName)
+        public static void StartZip(string zipFileName)
         {
             var zipFileId = Path.GetFileNameWithoutExtension(zipFileName);
 

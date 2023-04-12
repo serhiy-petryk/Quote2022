@@ -89,7 +89,7 @@ namespace Data.Actions.Polygon
                 }
             }
 
-            if (missingFiles.Count ==0)
+            if (missingFiles.Count == 0)
             {
                 Logger.AddMessage($"Zip data of '{Path.GetDirectoryName(folder)}' folder ...");
                 var zipFileName = ZipUtils.ZipFolder(folder);
@@ -104,91 +104,31 @@ namespace Data.Actions.Polygon
             }
         }
 
-        public static void StartTemp()
-        {
-            Logger.AddMessage($"Started");
-
-            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230401\";
-
-            Logger.AddMessage($"Load symbol list from database ...");
-            var symbols = new List<string>();
-            using (var conn = new SqlConnection(Settings.DbConnectionString))
-            using (var cmd = conn.CreateCommand())
-            {
-                conn.Open();
-                cmd.CommandTimeout = 150;
-                cmd.CommandText = "select distinct symbol from dbQ2023..FileLogMinutePolygon where position='PARTIAL'";
-                using (var rdr = cmd.ExecuteReader())
-                    while (rdr.Read())
-                        symbols.Add((string)rdr["Symbol"]);
-            }
-
-            if (MessageBox.Show($"You are going to download data for {symbols.Count} symbols in {folder} folder! Continue?", "", MessageBoxButtons.OKCancel) != DialogResult.OK)
-                return;
-
-            var cnt = 0;
-            foreach (var symbol in symbols)
-            {
-                Logger.AddMessage($"Downloaded {cnt++} tickers from {symbols.Count}");
-
-                // var currentDate = DateTime.Today.AddYears(-5);
-                // var maxDate = DateTime.Today.AddHours(-9).AddDays(-1);
-                var currentDate = new DateTime(2018,4,3);
-                var maxDate = new DateTime(2023,3,31);
-                while (currentDate <= maxDate)
-                {
-                    var endDate = currentDate.AddMonths(2);
-                    if (endDate >= maxDate)
-                        endDate = maxDate;
-                    currentDate = currentDate.AddDays(-5);
-
-                    var jsonFileName = $"{folder}pMin_{symbol}_{currentDate:yyyyMMdd}.json";
-                    var urlTicker = PolygonCommon.GetPolygonTicker(symbol);
-                    var url =
-                        $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
-                    if (!File.Exists(jsonFileName))
-                    {
-                        Download.DownloadPage(url, jsonFileName);
-                        if (File.Exists(jsonFileName))
-                        {
-                        }
-                        else
-                        {
-                            // ! error
-                        }
-                    }
-
-                    if (endDate == maxDate)
-                        break;
-
-                    currentDate = endDate;
-                }
-            }
-
-            Logger.AddMessage($"!Finished. ");//Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
-        }
-
         public static void StartWithDateRange()
         {
             Logger.AddMessage($"Started");
 
-            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230402\";
+            var folder = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\Minute5Years_20230412.1\";
 
             var symbolAndDates = new List<Tuple<string, DateTime, DateTime>>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandTimeout = 150;
-                cmd.CommandText = "select symbol, min(date) MinDate, max(date) MaxDate from dbQ2023..DayPolygon "+
-                                  "where [close]*[volume]>=5000000 and date>= '2018-04-03' group by symbol";
+                cmd.CommandTimeout = 500;
+                //cmd.CommandText = "select symbol, min(date) MinDate, max(date) MaxDate from dbQ2023..DayPolygon " +
+                  //                "where [close]*[volume]>=5000000 and date>= '2018-04-03' group by symbol";
+                cmd.CommandText = "select a.Symbol, min(a.Date) MinDate, max(a.Date) MaxDate from dbQ2023..DayPolygon a "+
+                                  "left join dbQ2023..ZipLogMinutePolygon b on a.Symbol = b.Symbol and a.Date = b.Date " +
+                                  "where a.[Close]*a.Volume >= 5000000 and b.Date is null and a.Date >= '2018-04-10' "+
+                                  "group by a.Symbol order by 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         symbolAndDates.Add(new Tuple<string, DateTime, DateTime>((string)rdr["Symbol"], (DateTime)rdr["MinDate"], (DateTime)rdr["MaxDate"]));
             }
 
             var cnt = 0;
-            var maxDate = new DateTime(2023, 3, 31);
+            var maxDate = new DateTime(2023, 4, 06);
             foreach (var item in symbolAndDates)
             {
                 Logger.AddMessage($"Downloaded {cnt++} tickers from {symbolAndDates.Count}");
@@ -213,6 +153,7 @@ namespace Data.Actions.Polygon
                         }
                         else
                         {
+                            throw new Exception($"Error while downloading. Url: {url}. Filename: {Path.GetFileName(jsonFileName)}");
                             // ! error
                         }
                     }
@@ -224,7 +165,7 @@ namespace Data.Actions.Polygon
                 }
             }
 
-            Logger.AddMessage($"!Finished. ");//Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+            Logger.AddMessage($"!Finished. Downloaded data for {cnt} tickers");
         }
 
         public static int ParseAndSaveToDbAllFiles()

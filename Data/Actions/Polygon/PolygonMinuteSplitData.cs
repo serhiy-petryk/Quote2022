@@ -16,7 +16,7 @@ namespace Data.Actions.Polygon
 
         public static void Start(string folder)
         {
-            var skipIfExists = false;
+            var skipIfExists = true;
 
             var folderName = Path.GetFileName(folder);
 

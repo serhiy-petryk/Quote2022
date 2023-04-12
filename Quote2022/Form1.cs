@@ -1021,7 +1021,7 @@ namespace Quote2022
             }*/
 
             if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && File.Exists(zipFileName))
-                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(zipFileName));
+                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.StartZip(zipFileName));
 
             btnMinutePolygonSaveLogToDb.Enabled = true;
         }

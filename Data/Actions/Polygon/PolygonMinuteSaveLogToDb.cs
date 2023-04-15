@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using Data.Helpers;
 using Newtonsoft.Json;
 
@@ -11,19 +9,19 @@ namespace Data.Actions.Polygon
 {
     public static class PolygonMinuteSaveLogToDb
     {
-        public static void StartFolder(string folder)
+        public static void Start(string zipFileNameOrFolderName)
         {
-            var folderName = Path.GetFileName(folder);
-            // delete old log in database
+            var folderId = FolderReader.GetFolderId(zipFileNameOrFolderName);
+
             Logger.AddMessage($"Started. Delete old log in database.");
-            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon WHERE folder='{folderName}'");
-            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon_BlankFiles WHERE folder='{folderName}'");
+            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon WHERE folder='{folderId}'");
+            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon_BlankFiles WHERE folder='{folderId}'");
 
             var errorLog = new List<string>();
-            CheckFiles(folder, errorLog);
+            ProcessEntry(zipFileNameOrFolderName, errorLog);
 
             // Save errors to file
-            var errorFileName = folder + @".SaveLogToDbError.txt";
+            var errorFileName = folderId + @".SaveLogToDbError.txt";
             if (File.Exists(errorFileName))
                 File.Delete(errorFileName);
             File.AppendAllText(errorFileName, $"File\tMessage\tContent{Environment.NewLine}");
@@ -35,173 +33,38 @@ namespace Data.Actions.Polygon
                 Logger.AddMessage($"!Finished. No errors.");
         }
 
-        public static void StartZip(string zipFileName)
-        {
-            var zipFileId = Path.GetFileNameWithoutExtension(zipFileName);
-
-            // delete old log in database
-            Logger.AddMessage($"Started. Delete old log in database.");
-            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon WHERE folder='{zipFileId}'");
-            DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon_BlankFiles WHERE folder='{zipFileId}'");
-
-            var errorLog = new List<string>();
-            CheckZip(zipFileName, zipFileId, errorLog);
-
-            // Save errors to file
-            var errorFileName = Path.ChangeExtension(zipFileName, ".SaveToDbError.txt");
-            if (File.Exists(errorFileName))
-                File.Delete(errorFileName);
-            File.AppendAllText(errorFileName, $"File\tMessage\tContent{Environment.NewLine}");
-            File.AppendAllLines(errorFileName, errorLog);
-
-            if (errorLog.Count > 0)
-                Logger.AddMessage($"!Finished. Found {errorLog.Count} errors. Error filename: {errorFileName}");
-            else
-                Logger.AddMessage($"!Finished. No errors.");
-        }
-
-        private static void CheckFiles(string folder, List<string> errorLog)
-        {
-            var folderName = Path.GetFileName(folder);
-            var log = new List<LogEntry>();
-            var blankFiles = new List<BlankFile>();
-
-            var files = Directory.GetFiles(folder, "*.json");
-            var cnt = 0;
-            foreach (var file in files)
-            {
-                cnt++;
-                if (cnt % 10 == 0)
-                    Logger.AddMessage(
-                        $"Processed {cnt} from {files.Length} entries in {folderName}");
-
-                var filename = Path.GetFileName(file);
-                var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(File.ReadAllText(file));
-                if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
-                    throw new Exception("Check parser");
-
-                if (!string.IsNullOrEmpty(oo.next_url))
-                {
-                    Debug.Print($"NEXT URL:\t{filename}\t{oo.next_url}");
-                    errorLog.Add($"{filename}\tPartial downloading\tNext url: {oo.next_url}");
-                }
-
-                if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
-                {
-                    blankFiles.Add(new BlankFile
-                    {
-                        Folder = folderName,
-                        FileName = filename,
-                        FileCreated = File.GetCreationTime(file),
-                        Symbol = oo.Symbol
-                    });
-                    continue;
-                }
-
-                LogEntry logEntry = null;
-                var lastDate = DateTime.MinValue;
-                for (var k = 0; k < oo.results.Length; k++)
-                {
-                    var item = oo.results[k];
-                    if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
-                        item.Close < item.Low || item.Low < 0)
-                        errorLog.Add(
-                            $"{filename}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-                    if (item.Volume < 0)
-                        errorLog.Add(
-                            $"{filename}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-                    if (item.Volume == 0 && item.High != item.Low)
-                        errorLog.Add(
-                            $"{filename}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-
-                    if (item.DateTime.Date != lastDate)
-                    {
-                        if (log.Count > 100000)
-                            SaveToDb(log, blankFiles);
-
-                        var position = (logEntry == null ? "First" : "Middle");
-                        logEntry = new LogEntry
-                        {
-                            Folder = folderName,
-                            FileName = filename,
-                            Symbol = oo.Symbol,
-                            Date = item.DateTime.Date,
-                            Position = position,
-                            Status = oo.status,
-                            Created = File.GetCreationTime(file)
-                        };
-                        log.Add(logEntry);
-                        logEntry.MinTime = item.DateTime.TimeOfDay;
-
-                        lastDate = item.DateTime.Date;
-                    }
-
-                    logEntry.CountFull++;
-                    logEntry.VolumeFull += item.Volume;
-                    logEntry.MaxTime = item.DateTime.TimeOfDay;
-                    logEntry.TradeCount += item.TradeCount;
-
-                    if (item.DateTime.TimeOfDay >= CsUtils.StartTrading && item.DateTime.TimeOfDay < CsUtils.EndTrading)
-                    {
-                        logEntry.Count++;
-                        logEntry.Volume += item.Volume;
-                        if (logEntry.Count == 1)
-                        {
-                            logEntry.Open = item.Open;
-                            logEntry.High = item.High;
-                            logEntry.Low = item.Low;
-                            logEntry.Close = item.Close;
-                        }
-                        else
-                        {
-                            logEntry.Close = item.Close;
-                            if (item.High > logEntry.High) logEntry.High = item.High;
-                            if (item.Low < logEntry.Low) logEntry.Low = item.Low;
-                        }
-                    }
-                }
-
-                if (logEntry != null)
-                    logEntry.Position = oo.next_url == null ? "Last" : "PARTIAL";
-            }
-
-            if (log.Count > 0 || blankFiles.Count > 0)
-                SaveToDb(log, blankFiles);
-        }
-
-        private static void CheckZip(string zipFileName, string zipFileId, List<string> errorLog)
+        private static void ProcessEntry(string zipFileNameOrFolderName, List<string> errorLog)
         {
             var log = new List<LogEntry>();
             var blankFiles = new List<BlankFile>();
 
             var cnt = 0;
-            var folderId = Path.GetFileNameWithoutExtension(zipFileName);
-            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+            using (var reader = new FolderReader(zipFileNameOrFolderName, ".json"))
             {
-                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
+                foreach (var entry in reader.Entries)
                 {
                     cnt++;
                     if (cnt % 10 == 0)
                         Logger.AddMessage(
-                            $"Processed {cnt} from {zip.Entries.Count} entries in {Path.GetFileName(zipFileName)}");
+                            $"Processed {cnt} from {reader.Entries.Length} entries in {Path.GetFileName(zipFileNameOrFolderName)}");
 
-                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
+                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.AllText);
                     if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
                         throw new Exception("Check parser");
 
                     if (!string.IsNullOrEmpty(oo.next_url))
                     {
-                        Debug.Print($"NEXT URL:\t{entry.FullName}\t{oo.next_url}");
-                        errorLog.Add($"{entry.Name}\tPartial downloading\tNext url: {oo.next_url}");
+                        Debug.Print($"NEXT URL:\t{entry.FileName}\t{oo.next_url}");
+                        errorLog.Add($"{entry.FileName}\tPartial downloading\tNext url: {oo.next_url}");
                     }
 
                     if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
                     {
                         blankFiles.Add(new BlankFile
                         {
-                            Folder = folderId,
-                            FileName = entry.Name,
-                            FileCreated = entry.LastWriteTime.DateTime,
+                            Folder = reader.FolderId,
+                            FileName = entry.FileName,
+                            FileCreated = entry.Created,
                             Symbol = oo.Symbol
                         });
                         continue;
@@ -215,13 +78,13 @@ namespace Data.Actions.Polygon
                         if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
                             item.Close < item.Low || item.Low < 0)
                             errorLog.Add(
-                                $"{entry.Name}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                                $"{entry.FileName}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
                         if (item.Volume < 0)
                             errorLog.Add(
-                                $"{entry.Name}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                                $"{entry.FileName}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
                         if (item.Volume == 0 && item.High != item.Low)
                             errorLog.Add(
-                                $"{entry.Name}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                                $"{entry.FileName}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
 
                         if (item.DateTime.Date != lastDate)
                         {
@@ -231,13 +94,13 @@ namespace Data.Actions.Polygon
                             var position = (logEntry == null ? "First" : "Middle");
                             logEntry = new LogEntry
                             {
-                                Folder = folderId,
-                                FileName = entry.Name,
+                                Folder = entry.FolderId,
+                                FileName = entry.FileName,
                                 Symbol = oo.Symbol,
                                 Date = item.DateTime.Date,
                                 Position = position,
                                 Status = oo.status,
-                                Created = entry.LastWriteTime.DateTime
+                                Created = entry.Created
                             };
                             log.Add(logEntry);
                             logEntry.MinTime = item.DateTime.TimeOfDay;
@@ -279,6 +142,7 @@ namespace Data.Actions.Polygon
             if (log.Count > 0 || blankFiles.Count > 0)
                 SaveToDb(log, blankFiles);
         }
+
 
         private static void SaveToDb(List<LogEntry> log, List<BlankFile> blankFiles)
         {

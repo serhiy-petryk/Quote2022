@@ -107,6 +107,7 @@
     <Compile Include="Helpers\CsUtils.cs" />
     <Compile Include="Helpers\DbUtils.cs" />
     <Compile Include="Helpers\Download.cs" />
+    <Compile Include="Helpers\FolderReader.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\ZipUtils.cs" />
     <Compile Include="Images.Designer.cs">

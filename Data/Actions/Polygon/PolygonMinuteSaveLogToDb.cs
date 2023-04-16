@@ -40,7 +40,6 @@ namespace Data.Actions.Polygon
 
             var cnt = 0;
             using (var reader = new FolderReader(zipFileNameOrFolderName, ".json"))
-            {
                 foreach (var entry in reader.Entries)
                 {
                     cnt++;
@@ -113,7 +112,8 @@ namespace Data.Actions.Polygon
                         logEntry.MaxTime = item.DateTime.TimeOfDay;
                         logEntry.TradeCount += item.TradeCount;
 
-                        if (item.DateTime.TimeOfDay >= CsUtils.StartTrading && item.DateTime.TimeOfDay < CsUtils.EndTrading)
+                        if (item.DateTime.TimeOfDay >= CsUtils.StartTrading &&
+                            item.DateTime.TimeOfDay < CsUtils.EndTrading)
                         {
                             logEntry.Count++;
                             logEntry.Volume += item.Volume;
@@ -137,12 +137,9 @@ namespace Data.Actions.Polygon
                         logEntry.Position = oo.next_url == null ? "Last" : "PARTIAL";
                 }
 
-            }
-
             if (log.Count > 0 || blankFiles.Count > 0)
                 SaveToDb(log, blankFiles);
         }
-
 
         private static void SaveToDb(List<LogEntry> log, List<BlankFile> blankFiles)
         {

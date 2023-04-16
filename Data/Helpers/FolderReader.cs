@@ -39,7 +39,7 @@ namespace Data.Helpers
                         ? Zip.Entries.Where(a => a.Length > 0)
                         : Zip.Entries.Where(a => a.Length > 0 &&
                             a.Name.EndsWith(fileNameEndsWith, StringComparison.InvariantCultureIgnoreCase)))
-                    .Select(a => new ReaderEntry(a)).ToArray();
+                    .Select(a => new ReaderEntry(a, FolderId)).ToArray();
             }
             else if (Directory.Exists(zipFileNameOrFolderName))
             {
@@ -77,9 +77,9 @@ namespace Data.Helpers
                 Created = System.IO.File.GetLastWriteTime(file);
             }
 
-            public ReaderEntry(ZipArchiveEntry entry)
+            public ReaderEntry(ZipArchiveEntry entry, string folderId)
             {
-                // FolderId = entry.Archive.
+                FolderId = folderId;
                 Entry = entry;
                 FileName = Entry.Name;
                 Created = Entry.LastWriteTime.DateTime;

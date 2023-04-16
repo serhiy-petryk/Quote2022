@@ -14,84 +14,83 @@ namespace Data.Actions.Polygon
     {
         private const string DestinationDataFolder = @"E:\Quote\WebData\Minute\Polygon\Data\";
 
-        public static void Start(string folder)
+        public static void Start(string zipFileNameOrFolderName)
         {
             var skipIfExists = true;
 
-            var folderName = Path.GetFileName(folder);
+            var folderId = FolderReader.GetFolderId(zipFileNameOrFolderName);
 
-            Logger.AddMessage($"Get file list");
-            var files = Directory.GetFiles(folder, "*.json").OrderBy(a=>a.Split('_')[3]).ToArray();
-
-            var log = new Log($"{folder}.SplitLog.txt");
-            var errorLog = new Log($"{folder}.SplitErrors.txt");
+            var log = new Log($"{folderId}.SplitLog.txt");
+            var errorLog = new Log($"{folderId}.SplitErrors.txt");
             errorLog.Add($"File\tMessage\tContent");
 
             var statusCounts = new int[3];
             var items = new Dictionary<DateTime, List<FileItem>>();
             var cnt = 0;
-            foreach (var file in files)
+
+            using (var reader = new FolderReader(zipFileNameOrFolderName, ".json"))
             {
-                cnt++;
-                if (cnt % 10 == 0)
-                    Logger.AddMessage($"Processed {cnt} from {files.Length} files");
-
-                var filename = Path.GetFileName(file);
-                var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(File.ReadAllText(file));
-
-                if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
-                    throw new Exception("Check parser");
-
-                if (!string.IsNullOrEmpty(oo.next_url))
+                var entries = reader.Entries.OrderBy(a => a.FileName.Split('_')[2]).ToArray();
+                foreach (var entry in entries)
                 {
-                    Debug.Print($"NEXT URL:\t{filename}\t{oo.next_url}");
-                    errorLog.Add($"{filename}\tPartial downloading\tNext url: {oo.next_url}");
-                    continue;
-                }
+                    cnt++;
+                    if (cnt % 10 == 0)
+                        Logger.AddMessage($"Processed {cnt} from {entries.Length} files");
 
-                if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
-                    continue;
+                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.AllText);
 
-                // if (PolygonCommon.IsTestTicker(oo.Symbol)) continue;
+                    if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
+                        throw new Exception("Check parser");
 
-                var lastDate = DateTime.MinValue;
-                var linesToSave = new List<string>();
-                for (var k = 0; k < oo.results.Length; k++)
-                {
-                    var item = oo.results[k];
-                    if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
-                        item.Close < item.Low || item.Low < 0)
-                        errorLog.Add($"{filename}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-                    if (item.Volume < 0)
-                        errorLog.Add($"{filename}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-                    if (item.Volume == 0 && item.High != item.Low)
-                        errorLog.Add($"{filename}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-
-                    if (item.DateTime.Date != lastDate)
+                    if (!string.IsNullOrEmpty(oo.next_url))
                     {
-                        FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, File.GetLastWriteTime(file));
-
-                        linesToSave = new List<string>
-                        {
-                            $"# DateTime,Open,High,Low,Close,Volume,WeightedVolume,TradeCount. File {filename}. Created at {File.GetLastWriteTime(file):yyyy-MM-dd HH:mm:ss}"
-                        };
-
-                        lastDate = item.DateTime.Date;
-                        if (lastDate > File.GetLastWriteTime(file).AddHours(-9).AddDays(-1))
-                            break; // Fresh quotes => all day data is not ready
+                        Debug.Print($"NEXT URL:\t{entry.FileName}\t{oo.next_url}");
+                        errorLog.Add($"{entry.FileName}\tPartial downloading\tNext url: {oo.next_url}");
+                        continue;
                     }
 
-                    var line =
-                        $"{item.DateTime:yyyy-MM-dd HH:mm},{FloatToString(item.Open)},{FloatToString(item.High)},{FloatToString(item.Low)},{FloatToString(item.Close)},{item.Volume},{FloatToString(item.WeightedVolume)},{item.TradeCount}";
-                    linesToSave.Add(line);
-                }
+                    if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
+                        continue;
 
-                if (linesToSave.Count > 0 && string.IsNullOrEmpty(oo.next_url))
-                    FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, File.GetLastWriteTime(file));
+                    var lastDate = DateTime.MinValue;
+                    var linesToSave = new List<string>();
+                    for (var k = 0; k < oo.results.Length; k++)
+                    {
+                        var item = oo.results[k];
+                        if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
+                            item.Close < item.Low || item.Low < 0)
+                            errorLog.Add($"{entry.FileName}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                        if (item.Volume < 0)
+                            errorLog.Add($"{entry.FileName}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                        if (item.Volume == 0 && item.High != item.Low)
+                            errorLog.Add($"{entry.FileName}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
 
-                if (cnt % 200 == 0)
-                {
-                    ProcessFileItems(items, log, statusCounts, skipIfExists);
+                        if (item.DateTime.Date != lastDate)
+                        {
+                            FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.Created);
+
+                            linesToSave = new List<string>
+                            {
+                                $"# DateTime,Open,High,Low,Close,Volume,WeightedVolume,TradeCount. File {entry.FileName}. Created at {entry.Created:yyyy-MM-dd HH:mm:ss}"
+                            };
+
+                            lastDate = item.DateTime.Date;
+                            if (lastDate > entry.Created.AddHours(-9).AddDays(-1))
+                                break; // Fresh quotes => all day data is not ready
+                        }
+
+                        var line =
+                            $"{item.DateTime:yyyy-MM-dd HH:mm},{FloatToString(item.Open)},{FloatToString(item.High)},{FloatToString(item.Low)},{FloatToString(item.Close)},{item.Volume},{FloatToString(item.WeightedVolume)},{item.TradeCount}";
+                        linesToSave.Add(line);
+                    }
+
+                    if (linesToSave.Count > 0 && string.IsNullOrEmpty(oo.next_url))
+                        FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave,entry.Created);
+
+                    if (cnt % 200 == 0)
+                    {
+                        ProcessFileItems(items, log, statusCounts, skipIfExists);
+                    }
                 }
             }
 
@@ -101,9 +100,9 @@ namespace Data.Actions.Polygon
             errorLog.SaveAndClear();
 
             if (errorCount > 0)
-                Logger.AddMessage($"!Finished for folder {folderName}. Found {errorCount} errors. New items: {statusCounts[0]:N0}. Overwritten items: {statusCounts[1]:N0}. Skipped items: {statusCounts[2]:N0}. Error filename: {errorLog.FileName}");
+                Logger.AddMessage($"!Finished for folder {folderId}. Found {errorCount} errors. New items: {statusCounts[0]:N0}. Overwritten items: {statusCounts[1]:N0}. Skipped items: {statusCounts[2]:N0}. Error filename: {errorLog.FileName}");
             else
-                Logger.AddMessage($"!Finished for folder {folderName}. No errors. New items: {statusCounts[0]:N0}. Overwritten items: {statusCounts[1]:N0}. Skipped items: {statusCounts[2]:N0}.");
+                Logger.AddMessage($"!Finished for folder {folderId}. No errors. New items: {statusCounts[0]:N0}. Overwritten items: {statusCounts[1]:N0}. Skipped items: {statusCounts[2]:N0}.");
         }
 
         private static string FloatToString(float f) => f.ToString(CultureInfo.InvariantCulture);
@@ -119,7 +118,7 @@ namespace Data.Actions.Polygon
                     foreach (var fileItem in kvp.Value)
                     {
                         cnt++;
-                        if (cnt % 1000 == 0)
+                        if (cnt % 100 == 0)
                             Logger.AddMessage($"Process {cnt} file items from {totalItemsCount} of data chunk ");
 
                         var entryName = $"MP_{kvp.Key:yyyyMMdd}/{fileItem.FileId}";

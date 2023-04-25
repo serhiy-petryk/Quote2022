@@ -72,7 +72,6 @@ namespace Data.Actions.Polygon
 
 
             Logger.AddMessage($"Refresh summary data (~10 minutes)");
-
             DbUtils.RunProcedure("pUpdateDayPolygon");
 
             Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");

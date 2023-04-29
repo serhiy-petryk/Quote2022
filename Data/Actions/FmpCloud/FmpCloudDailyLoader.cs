@@ -47,9 +47,7 @@ namespace Data.Actions.FmpCloud
                             File.Delete(jsonFileName);
                     }
                     else
-                    {
-                        // ! error
-                    }
+                        throw new Exception("Error in FmpCloudDailyLoader");
                 }
             }
             Logger.AddMessage($"!Finished. ");//Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");

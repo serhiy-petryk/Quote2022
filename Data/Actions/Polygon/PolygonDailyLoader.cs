@@ -55,9 +55,7 @@ namespace Data.Actions.Polygon
                             File.Delete(jsonFileName);
                     }
                     else
-                    {
-                        // ! error
-                    }
+                        throw new Exception("Error in PolygonDailyLoader");
                 }
 
                 if (File.Exists(zipFileName))
@@ -72,7 +70,7 @@ namespace Data.Actions.Polygon
 
 
             Logger.AddMessage($"Refresh summary data (~10 minutes)");
-            DbUtils.RunProcedure("pUpdateDayPolygon");
+            DbUtils.RunProcedure("dbQ2023..pUpdateDayPolygon");
 
             Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");
         }

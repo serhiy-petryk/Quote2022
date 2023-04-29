@@ -41,13 +41,10 @@ namespace Data.Actions.Yahoo
 
                 var url = string.Format(UrlTemplate, symbol, fromInSeconds, toInSeconds);
                 var filename = folder + $"yMin-{symbol}.txt";
-                // if (!File.Exists(filename))
-                {
-                    var error = Download.DownloadPage(url, filename);
-                    if (error!=null)
-                        downloadErrors.Add($"{symbol}\t{error}");
-                    Thread.Sleep(300);
-                }
+                var error = Download.DownloadPage(url, filename);
+                if (error != null)
+                    downloadErrors.Add($"{symbol}\t{error}");
+                Thread.Sleep(300);
             }
 
             if (downloadErrors.Count > 0)
@@ -61,7 +58,7 @@ namespace Data.Actions.Yahoo
             var zipFileName = Helpers.ZipUtils.ZipFolder(folder);
 
             // Remove json files
-            // Directory.Delete(folder, true);
+            Directory.Delete(folder, true);
 
             if (downloadErrors.Count > 0)
                 Logger.AddMessage($"!Finished. Found {downloadErrors.Count} ERRORS. Items: {yahooSymbols.Count:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");

@@ -26,7 +26,7 @@ namespace Data.Actions.Yahoo
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var folder = $@"C:\Quote\WebData\Minute\Yahoo\Data\YahooMinute_{timeStamp.Item2}\";
+            var folder = $@"D:\Quote\WebData\Minute\Yahoo\Data\YahooMinute_{timeStamp.Item2}\";
 
             var fromInSeconds = GetYahooDate(from);
             var toInSeconds = GetYahooDate(from.AddDays(days));

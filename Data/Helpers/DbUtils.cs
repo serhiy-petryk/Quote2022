@@ -54,7 +54,7 @@ namespace Data.Helpers
             {
                 conn.Open();
                 cmd.CommandText = procedureName;
-                cmd.CommandTimeout = 150;
+                cmd.CommandTimeout = 15*60;
                 cmd.CommandType = CommandType.StoredProcedure;
                 if (paramaters != null)
                 {

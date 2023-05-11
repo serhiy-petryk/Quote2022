@@ -13,21 +13,21 @@ namespace Quote2022
         internal const string DbConnectionString = "Data Source=localhost;Initial Catalog=dbQuote2022;Integrated Security=True;Connect Timeout=150;";
 
         private const string BaseFolder = @"E:\Quote\";
-        private const string BaseFolderC = @"C:\Quote\";
+        private const string BaseFolderD = @"D:\Quote\";
 
         internal const string DayYahooFolder = BaseFolder + @"WebData\Daily\Yahoo\";
         internal const string DayYahooIndicesFolder = BaseFolder + @"WebData\Daily\Yahoo\Indices\";
         internal const string SplitYahooFolder = BaseFolder + @"WebData\Splits\Yahoo\";
         internal const string SymbolsYahooLookupFolder = BaseFolder + @"WebData\Symbols\YahooLookup\";
 
-        internal const string MinuteYahooDataFolder = BaseFolderC + @"WebData\Minute\Yahoo\Data\";
-        internal const string MinuteYahooCacheFolder = BaseFolderC + @"WebData\Minute\Yahoo\Cache\";
-        internal const string MinuteYahooLogFolder = BaseFolderC + @"WebData\Minute\Yahoo\Logs\";
-        internal const string MinuteYahooReportFolder = BaseFolderC + @"WebData\Minute\Yahoo\Reports\";
+        internal const string MinuteYahooDataFolder = BaseFolderD + @"WebData\Minute\Yahoo\Data\";
+        internal const string MinuteYahooCacheFolder = BaseFolderD + @"WebData\Minute\Yahoo\Cache\";
+        internal const string MinuteYahooLogFolder = BaseFolderD + @"WebData\Minute\Yahoo\Logs\";
+        internal const string MinuteYahooReportFolder = BaseFolderD + @"WebData\Minute\Yahoo\Reports\";
         internal const string MinuteYahooTextCacheFileTemplate = MinuteYahooCacheFolder + "Cache_{0}.txt";
         internal const string MinuteYahooCorrectionFiles = MinuteYahooDataFolder + "YahooMinuteCorrections.txt";
 
-        internal const string MinuteAlphaVantageFolder = BaseFolderC + @"WebData\Minute\AlphaVantage\";
+        internal const string MinuteAlphaVantageFolder = BaseFolderD + @"WebData\Minute\AlphaVantage\";
         internal const string MinuteAlphaVantageDataBufferFolder = MinuteAlphaVantageFolder + @"DataBuffer\";
 
         internal const string DayAlphaVantageFolder = BaseFolder + @"WebData\Daily\AlphaVantage\";
@@ -47,8 +47,8 @@ namespace Quote2022
         internal const string ScreenerNasdaqFolder = BaseFolder + @"WebData\Screener\Nasdaq\";
         internal const string SymbolsNasdaqFolder = BaseFolder + @"WebData\Symbols\Nasdaq\";
         internal const string TimeSalesNasdaqUrlTemplate = @"https://api.nasdaq.com/api/quote/{1}/realtime-trades?&limit=200000&fromTime={0}";
-        internal const string TimeSalesNasdaqFolder = BaseFolderC + @"WebData\Minute\Nasdaq\";
-        internal const string TimeSalesNasdaqFileTemplate = BaseFolderC + @"WebData\Minute\Nasdaq\TS_{2}\ts_{1}_{2}_{0}.json";
+        internal const string TimeSalesNasdaqFolder = BaseFolderD + @"WebData\Minute\Nasdaq\";
+        internal const string TimeSalesNasdaqFileTemplate = BaseFolderD + @"WebData\Minute\Nasdaq\TS_{2}\ts_{1}_{2}_{0}.json";
 
         internal const string StockSplitHistoryFolder = BaseFolder + @"WebData\Splits\StockSplitHistory\";
 

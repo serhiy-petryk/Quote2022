@@ -93,7 +93,6 @@
     <Compile Include="Actions\Polygon\PolygonDailyLoader.cs" />
     <Compile Include="Actions\Polygon\PolygonMinuteLoader.cs" />
     <Compile Include="Actions\Polygon\PolygonSymbolsLoader.cs" />
-    <Compile Include="Actions\Polygon\PolygonTemp.cs" />
     <Compile Include="Actions\Russell\RussellIndexLoader.cs" />
     <Compile Include="Actions\StockAnaysis\StockAnalysisIPOs.cs" />
     <Compile Include="Actions\StockAnaysis\StockAnalysisActions.cs" />

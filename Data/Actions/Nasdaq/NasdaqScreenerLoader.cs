@@ -25,30 +25,40 @@ namespace Data.Actions.Nasdaq
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var folder = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}\";
+            var virtualFileEntries = new Dictionary<string, VirtualFileEntry>();
 
             // Download data
             foreach (var exchange in Exchanges)
             {
-                var stockFile = folder + $@"StockScreener_{exchange}_{timeStamp.Item2}.json";
                 var stockUrl = string.Format(StockUrlTemplate, exchange);
-                Logger.AddMessage($"Download STOCK data for {exchange} from {StockUrlTemplate} to {stockFile}");
-                Helpers.Download.DownloadPage(stockUrl, stockFile, true);
+                Logger.AddMessage($"Download STOCK data for {exchange} from {stockUrl}");
+                var content = Helpers.Download.DownloadToString(stockUrl, true);
+                if (content is string s)
+                {
+                    var entry = new VirtualFileEntry($"StockScreener_{exchange}_{timeStamp.Item2}.json", s);
+                    virtualFileEntries.Add(entry.Name, entry);
+                }
+                else
+                    throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {StockUrlTemplate}. Error message: {((Exception)content).Message}");
             }
 
-            var etfFile = folder + $@"EtfScreener_{timeStamp.Item2}.json";
-            Logger.AddMessage($"Download ETF data from {EtfUrl} to {etfFile}");
-            Helpers.Download.DownloadPage(EtfUrl, etfFile, true);
+            Logger.AddMessage($"Download ETF data from {EtfUrl}");
+            var content2 = Helpers.Download.DownloadToString(EtfUrl, true);
+            if (content2 is string s2)
+            {
+                var entry = new VirtualFileEntry($"EtfScreener_{timeStamp.Item2}.json", s2);
+                virtualFileEntries.Add(entry.Name, entry);
+            }
+            else
+                throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {EtfUrl}. Error message: {((Exception)content2).Message}");
 
             // Zip data
-            var zipFileName = Helpers.ZipUtils.ZipFolder(folder);
+            var zipFileName = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}.zip";
+            Helpers.ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries.Values);
 
             // Parse and save data to database
             Logger.AddMessage($"Parse and save files to database");
             var itemCount = ParseAndSaveToDb(zipFileName);
-
-            // Remove json files
-            Directory.Delete(folder, true);
 
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }

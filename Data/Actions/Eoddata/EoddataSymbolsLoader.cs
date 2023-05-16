@@ -32,7 +32,7 @@ namespace Data.Actions.Eoddata
                 Logger.AddMessage($"Download Symbols data for {exchange}");
                 var url = string.Format(UrlTemplate, exchange);
                 var filename = $"{folder}{exchange}_{timeStamp.Item2}.txt";
-                Helpers.Download.DownloadPage(url, filename, false, cookieContainer);
+                Helpers.Download.DownloadToFile(url, filename, false, cookieContainer);
             }
 
             // Zip data

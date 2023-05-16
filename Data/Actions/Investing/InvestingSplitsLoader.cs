@@ -27,7 +27,7 @@ namespace Data.Actions.Investing
             var jsonFileName = $@"E:\Quote\WebData\Splits\Investing\InvestingSplits_{timeStamp.Item2}.json";
 
             // Download data to html file
-            Helpers.Download.DownloadPage_POST(URL, jsonFileName, postData, true);
+            Helpers.Download.PostToFile(URL, jsonFileName, postData, true);
 
             // Zip data
             var zipFileName = Helpers.ZipUtils.ZipFile(jsonFileName);

@@ -76,7 +76,7 @@ namespace Data.Actions.Polygon
                     to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey());
                 if (!File.Exists(jsonFileName))
                 {
-                    Download.DownloadPage(url, jsonFileName);
+                    Download.DownloadToFile(url, jsonFileName);
                     if (File.Exists(jsonFileName))
                     {
                     }
@@ -147,7 +147,7 @@ namespace Data.Actions.Polygon
                         $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
                     if (!File.Exists(jsonFileName))
                     {
-                        Download.DownloadPage(url, jsonFileName);
+                        Download.DownloadToFile(url, jsonFileName);
                         if (File.Exists(jsonFileName))
                         {
                         }

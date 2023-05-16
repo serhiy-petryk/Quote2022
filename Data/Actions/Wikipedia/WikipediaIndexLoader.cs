@@ -43,7 +43,7 @@ namespace Data.Actions.Wikipedia
             {
                 var filename = folder + string.Format(Filenames[k], timeStamp.Item2);
                 Logger.AddMessage($"Download IndexComponents from {Urls[k]} into '{filename}' file");
-                Helpers.Download.DownloadPage(Urls[k], filename);
+                Helpers.Download.DownloadToFile(Urls[k], filename);
             }
 
             // Zip data

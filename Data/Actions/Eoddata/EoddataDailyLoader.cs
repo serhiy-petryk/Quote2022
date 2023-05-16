@@ -61,7 +61,7 @@ namespace Data.Actions.Eoddata
 
                 // Get k parameter of eoddata url
                 var tempFn = tempFolder + @"download.html";
-                Helpers.Download.DownloadPage(URL_HOME, tempFn, false, cookieContainer);
+                Helpers.Download.DownloadToFile(URL_HOME, tempFn, false, cookieContainer);
 
                 var s = File.ReadAllText(tempFn);
                 var i1 = s.IndexOf("/data/filedownload.aspx?e=", StringComparison.InvariantCulture);
@@ -76,7 +76,7 @@ namespace Data.Actions.Eoddata
                     Logger.AddMessage($"Download Eoddata daily data for {fileId.Item1} and {fileId.Item2}");
                     var url = string.Format(URL_TEMPLATE, fileId.Item1, fileId.Item2, kParameter.Substring(2));
                     var textFilename = string.Format(textFileNameTemplate, fileId.Item1, fileId.Item2);
-                    Helpers.Download.DownloadPage(url, textFilename, false, cookieContainer);
+                    Helpers.Download.DownloadToFile(url, textFilename, false, cookieContainer);
                 }
 
                 // Zip data and remove text files

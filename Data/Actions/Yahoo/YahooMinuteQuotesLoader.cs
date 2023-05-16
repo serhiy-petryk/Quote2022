@@ -41,7 +41,7 @@ namespace Data.Actions.Yahoo
 
                 var url = string.Format(UrlTemplate, symbol, fromInSeconds, toInSeconds);
                 var filename = folder + $"yMin-{symbol}.txt";
-                var error = Download.DownloadPage(url, filename);
+                var error = Download.DownloadToFile(url, filename);
                 if (error != null)
                     downloadErrors.Add($"{symbol}\t{error}");
                 Thread.Sleep(300);

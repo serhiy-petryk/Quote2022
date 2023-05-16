@@ -47,7 +47,7 @@ namespace Data.Actions.Polygon
                 var url = $@"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date:yyyy-MM-dd}?adjusted=false&apiKey={PolygonCommon.GetApiKey()}";
                 if (!File.Exists(zipFileName))
                 {
-                    Download.DownloadPage(url, jsonFileName);
+                    Download.DownloadToFile(url, jsonFileName);
                     if (File.Exists(jsonFileName))
                     {
                         var zipFileName2 = Helpers.ZipUtils.ZipFile(jsonFileName);

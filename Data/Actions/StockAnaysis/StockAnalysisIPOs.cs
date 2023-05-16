@@ -21,7 +21,7 @@ namespace Data.Actions.StockAnaysis
             var zipFileName = Folder + $"StockAnalysisIPOs_{timeStamp.Item2}.zip";
 
             // Download data to html file
-            Helpers.Download.DownloadPage(Url, jsonFileName);
+            Helpers.Download.DownloadToFile(Url, jsonFileName);
 
             // Zip data
            Helpers.ZipUtils.ZipFile(jsonFileName, zipFileName);

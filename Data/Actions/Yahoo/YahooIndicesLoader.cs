@@ -44,7 +44,7 @@ namespace Data.Actions.Yahoo
                 Logger.AddMessage($"Download data for {symbol}");
                 var url = string.Format(UrlTemplate, from, to, symbol);
                 var filename = $"{folder}{symbol}_{timeStamp.Item2}.csv";
-                Helpers.Download.DownloadPage(url, filename);
+                Helpers.Download.DownloadToFile(url, filename);
             }
 
             // Parse and save data to database

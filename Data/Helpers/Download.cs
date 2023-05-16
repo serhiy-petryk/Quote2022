@@ -9,7 +9,7 @@ namespace Data.Helpers
 {
     public static class Download
     {
-        public static string DownloadPage(string url, string filename, bool isXmlHttpRequest = false, CookieContainer cookies = null)
+        public static object DownloadToString(string url, bool isXmlHttpRequest = false, CookieContainer cookies = null)
         {
             using (var wc = new WebClientEx())
             {
@@ -21,25 +21,14 @@ namespace Data.Helpers
                 {
                     var bb = wc.DownloadData(url);
                     var response = Encoding.UTF8.GetString(bb);
-                    if (!string.IsNullOrEmpty(filename))
-                    {
-                        if (File.Exists(filename))
-                            File.Delete(filename);
-                        var folder = Path.GetDirectoryName(filename);
-                        if (!Directory.Exists(folder))
-                            Directory.CreateDirectory(folder);
-
-                        File.WriteAllText(filename, response, Encoding.UTF8);
-                    }
-
-                    return null;
+                    return response;
                 }
                 catch (Exception ex)
                 {
                     if (ex is WebException)
                     {
                         Debug.Print($"{DateTime.Now}. Web Exception: {url}. Message: {ex.Message}");
-                        return ex.Message;
+                        return ex;
                     }
                     else
                         throw ex;
@@ -47,7 +36,7 @@ namespace Data.Helpers
             }
         }
 
-        public static string DownloadPage_POST(string url, string filename, object parameters, bool isXmlHttpRequest = false)
+        public static object PostToString(string url, string parameters, bool isXmlHttpRequest = false)
         {
             // see https://stackoverflow.com/questions/5401501/how-to-post-data-to-specific-url-using-webclient-in-c-sharp
             using (var wc = new WebClientEx())
@@ -59,38 +48,57 @@ namespace Data.Helpers
 
                 try
                 {
-                    string response = null;
-                    if (parameters is NameValueCollection nvc)
-                        response = Encoding.UTF8.GetString(wc.UploadValues(url, "POST", nvc));
-                    else if (parameters is string json)
-                        response = wc.UploadString(url, "POST", json);
-                    else
-                        throw new Exception("DownloadPage_POST. Invalid type of request parameters");
-
-                    if (!string.IsNullOrEmpty(filename))
-                    {
-                        if (File.Exists(filename))
-                            File.Delete(filename);
-                        var folder = Path.GetDirectoryName(filename);
-                        if (!Directory.Exists(folder))
-                            Directory.CreateDirectory(folder);
-
-                        File.WriteAllText(filename, response, Encoding.UTF8);
-                    }
-
-                    return null;
+                    var response = wc.UploadString(url, "POST", parameters);
+                    return response;
                 }
                 catch (Exception ex)
                 {
                     if (ex is WebException)
                     {
                         Debug.Print($"{DateTime.Now}. Web Exception: {url}. Message: {ex.Message}");
-                        return ex.Message;
+                        return ex;
                     }
                     else
                         throw ex;
                 }
             }
+        }
+
+        public static string DownloadToFile(string url, string filename, bool isXmlHttpRequest = false, CookieContainer cookies = null)
+        {
+            var o = DownloadToString(url, isXmlHttpRequest, cookies);
+            if (o is string response)
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+                var folder = Path.GetDirectoryName(filename);
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+
+                File.WriteAllText(filename, response, Encoding.UTF8);
+                return null;
+            }
+
+            return ((Exception) o).Message;
+        }
+
+        public static string PostToFile(string url, string filename, string parameters, bool isXmlHttpRequest = false)
+        {
+            // see https://stackoverflow.com/questions/5401501/how-to-post-data-to-specific-url-using-webclient-in-c-sharp
+            var o = PostToString(url, parameters, isXmlHttpRequest);
+            if (o is string response)
+            {
+                if (File.Exists(filename))
+                    File.Delete(filename);
+                var folder = Path.GetDirectoryName(filename);
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+
+                File.WriteAllText(filename, response, Encoding.UTF8);
+                return null;
+            }
+
+            return ((Exception)o).Message;
         }
 
         public class WebClientEx : WebClient

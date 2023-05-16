@@ -21,7 +21,7 @@ namespace Data.Actions.TradingView
             var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp}.json";
 
             Logger.AddMessage($"Download data to {filename}");
-            Helpers.Download.DownloadPage_POST(@"https://scanner.tradingview.com/america/scan", filename, parameters);
+            Helpers.Download.PostToFile(@"https://scanner.tradingview.com/america/scan", filename, parameters);
 
             // Zip data
             var zipFileName = ZipUtils.ZipFile(filename);

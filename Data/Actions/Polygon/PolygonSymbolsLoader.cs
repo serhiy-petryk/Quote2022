@@ -50,7 +50,7 @@ namespace Data.Actions.Polygon
                         var filename = folder + $@"\SymbolsPolygon_{cnt:D2}_{date:yyyyMMdd}.json";
                         Logger.AddMessage($"Downloading {cnt} data chunk into {Path.GetFileName(filename)} for {date:yyyy-MM-dd}");
 
-                        var result = Download.DownloadPage(url, filename);
+                        var result = Download.DownloadToFile(url, filename);
                         if (result != null)
                             throw new Exception($"Error! {result}");
 

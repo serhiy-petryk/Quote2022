@@ -12,6 +12,23 @@ namespace Data.Helpers
          *  using (var zipArchive = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
          */
 
+        public static void ZipVirtualFileEntries(string zipFileName, IEnumerable<VirtualFileEntry> entries)
+        {
+            using (var zipArchive = System.IO.Compression.ZipFile.Open(zipFileName, ZipArchiveMode.Update))
+                foreach (var entry in entries)
+                {
+                    var oldEntries = zipArchive.Entries.Where(a =>
+                        string.Equals(a.FullName, entry.Name, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+                    foreach (var o in oldEntries)
+                        o.Delete();
+
+                    var zipEntry = zipArchive.CreateEntry(entry.Name);
+                    using (var writer = new StreamWriter(zipEntry.Open()))
+                        writer.Write(entry.Content);
+                    zipEntry.LastWriteTime = new DateTimeOffset(entry.Timestamp);
+                }
+        }
+
         /// <summary>
         /// Zip folder
         /// </summary>
@@ -115,7 +132,7 @@ namespace Data.Helpers
         }
 
         // From https://stackoverflow.com/questions/69482441/copy-files-from-one-zip-file-to-another
-        static void CopyZipEntries(string sourceZipFile, string targetZipFile)
+        private static void CopyZipEntries(string sourceZipFile, string targetZipFile)
         {
             if (!File.Exists(targetZipFile))
             {

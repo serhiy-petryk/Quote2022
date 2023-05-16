@@ -24,7 +24,7 @@ namespace Data.Actions.StockAnaysis
             var zipFileName = Folder + $"StockAnalysisActions_{timeStamp.Item2}.zip";
 
             // Download data to html file
-            Helpers.Download.DownloadPage(Url, htmlFileName);
+            Helpers.Download.DownloadToFile(Url, htmlFileName);
 
             // Zip data
             Helpers.ZipUtils.ZipFile(htmlFileName, zipFileName);

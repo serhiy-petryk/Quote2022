@@ -26,7 +26,7 @@ namespace Data.Actions.FmpCloud
                     fromDate.ToString("yyyy-MM-dd"), FmpCloudCommon.GetApiKey());
                 if (!File.Exists(filename))
                 {
-                    Download.DownloadPage(url, filename);
+                    Download.DownloadToFile(url, filename);
                     if (!File.Exists(filename))
                     {
                     }

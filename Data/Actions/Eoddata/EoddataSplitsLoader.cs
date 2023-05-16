@@ -20,7 +20,7 @@ namespace Data.Actions.Eoddata
             var htmlFileName = $@"E:\Quote\WebData\Splits\Eoddata\EoddataSplits_{timeStamp.Item2}.html";
 
             // Download data to html file
-            Helpers.Download.DownloadPage(URL, htmlFileName);
+            Helpers.Download.DownloadToFile(URL, htmlFileName);
 
             // Split and save to database
             var items = new List<SplitModel>();

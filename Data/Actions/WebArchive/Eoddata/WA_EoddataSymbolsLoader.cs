@@ -42,7 +42,7 @@ namespace Data.Actions.WebArchive.Eoddata
                     var fn = $@"{dataFolder}{exchange}\{exchange}_{item.Symbol}_{item.TimeStamp}.html";
                     if (!File.Exists(fn))
                     {
-                        Download.DownloadPage(url, fn);
+                        Download.DownloadToFile(url, fn);
                         if (!File.Exists(fn))
                         {
 

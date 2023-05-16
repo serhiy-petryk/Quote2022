@@ -39,7 +39,7 @@ namespace Data.Actions.FmpCloud
                 var url = $@"https://fmpcloud.io/api/v3/batch-request-end-of-day-prices?date={date:yyyy-MM-dd}&apikey={api}";
                 if (!File.Exists(zipFileName))
                 {
-                    Download.DownloadPage(url, jsonFileName);
+                    Download.DownloadToFile(url, jsonFileName);
                     if (File.Exists(jsonFileName))
                     {
                         var zipFileName2 = Helpers.ZipUtils.ZipFile(jsonFileName);

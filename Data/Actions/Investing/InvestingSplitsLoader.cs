@@ -24,19 +24,17 @@ namespace Data.Actions.Investing
                 timeStamp.Item1.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                 timeStamp.Item1.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
 
-            var jsonFileName = $@"E:\Quote\WebData\Splits\Investing\InvestingSplits_{timeStamp.Item2}.json";
-
             // Download data to html file
-            Helpers.Download.PostToFile(URL, jsonFileName, postData, true);
+            var o = Download.PostToString(URL, postData, true);
+            if (o is Exception ex)
+                throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {URL}. Error message: {ex.Message}");
 
-            // Zip data
-            var zipFileName = Helpers.ZipUtils.ZipFile(jsonFileName);
+            var entry = new VirtualFileEntry($"InvestingSplits_{timeStamp.Item2}.json", (string)o);
+            var zipFileName = $@"E:\Quote\WebData\Splits\Investing\InvestingSplits_{timeStamp.Item2}.zip";
+            ZipUtils.ZipVirtualFileEntries(zipFileName, new []{entry});
 
             // Parse and save to database
             var itemCount = ParseZipAndSaveToDb(zipFileName);
-
-            // Delete json file
-            File.Delete(jsonFileName);
 
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
@@ -161,13 +159,13 @@ namespace Data.Actions.Investing
 
         private static void SaveToDb(IEnumerable<SplitModel> items)
         {
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= a.TimeStamp), "Bfr_SplitInvesting",
+            DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= a.TimeStamp), "Bfr_SplitInvesting",
                 "Symbol", "Date", "Name", "Ratio", "K", "TimeStamp");
 
-            Helpers.DbUtils.ExecuteSql("INSERT INTO SplitInvesting (Symbol,[Date],Name,Ratio,K,[TimeStamp]) " +
-                                       "SELECT a.Symbol, a.[Date], a.Name, a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitInvesting a " +
-                                       "LEFT JOIN SplitInvesting b ON a.Symbol = b.Symbol AND a.Date = b.Date " +
-                                       "WHERE b.Symbol IS NULL");
+            DbUtils.ExecuteSql("INSERT INTO SplitInvesting (Symbol,[Date],Name,Ratio,K,[TimeStamp]) " +
+                               "SELECT a.Symbol, a.[Date], a.Name, a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitInvesting a " +
+                               "LEFT JOIN SplitInvesting b ON a.Symbol = b.Symbol AND a.Date = b.Date " +
+                               "WHERE b.Symbol IS NULL");
         }
 
         #region =======  Json subclasses  =============

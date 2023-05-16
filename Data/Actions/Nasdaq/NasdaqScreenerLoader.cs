@@ -32,29 +32,25 @@ namespace Data.Actions.Nasdaq
             {
                 var stockUrl = string.Format(StockUrlTemplate, exchange);
                 Logger.AddMessage($"Download STOCK data for {exchange} from {stockUrl}");
-                var content = Helpers.Download.DownloadToString(stockUrl, true);
-                if (content is string s)
-                {
-                    var entry = new VirtualFileEntry($"StockScreener_{exchange}_{timeStamp.Item2}.json", s);
-                    virtualFileEntries.Add(entry.Name, entry);
-                }
-                else
-                    throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {StockUrlTemplate}. Error message: {((Exception)content).Message}");
+                var o = Download.DownloadToString(stockUrl, true);
+                if (o is Exception ex)
+                    throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {StockUrlTemplate}. Error message: {ex.Message}");
+
+                var entry = new VirtualFileEntry($"StockScreener_{exchange}_{timeStamp.Item2}.json", (string)o);
+                virtualFileEntries.Add(entry.Name, entry);
             }
 
             Logger.AddMessage($"Download ETF data from {EtfUrl}");
-            var content2 = Helpers.Download.DownloadToString(EtfUrl, true);
-            if (content2 is string s2)
-            {
-                var entry = new VirtualFileEntry($"EtfScreener_{timeStamp.Item2}.json", s2);
-                virtualFileEntries.Add(entry.Name, entry);
-            }
-            else
-                throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {EtfUrl}. Error message: {((Exception)content2).Message}");
+            var o2 = Download.DownloadToString(EtfUrl, true);
+            if (o2 is Exception ex2)
+                throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {EtfUrl}. Error message: {ex2.Message}");
+
+            var entry2 = new VirtualFileEntry($"EtfScreener_{timeStamp.Item2}.json", (string)o2);
+            virtualFileEntries.Add(entry2.Name, entry2);
 
             // Zip data
             var zipFileName = $@"E:\Quote\WebData\Screener\Nasdaq\NasdaqScreener_{timeStamp.Item2}.zip";
-            Helpers.ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries.Values);
+            ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries.Values);
 
             // Parse and save data to database
             Logger.AddMessage($"Parse and save files to database");

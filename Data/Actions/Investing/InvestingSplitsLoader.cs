@@ -17,23 +17,23 @@ namespace Data.Actions.Investing
 
         public static void Start()
         {
-            Logger.AddMessage($"Started");
-
             var timeStamp = CsUtils.GetTimeStamp(-9 - 24);
             var postData = string.Format(POST_DATA_TEMPLATE,
                 timeStamp.Item1.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                 timeStamp.Item1.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            var zipFileName = $@"E:\Quote\WebData\Splits\Investing\InvestingSplits_{timeStamp.Item2}.zip";
 
-            // Download data to html file
+            // Download data
+            Logger.AddMessage($"Download data from {URL}");
             var o = Download.PostToString(URL, postData, true);
             if (o is Exception ex)
-                throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {URL}. Error message: {ex.Message}");
+                throw new Exception($"InvestingSplitsLoader.Start. Error while download from {URL}. Error message: {ex.Message}");
 
-            var entry = new VirtualFileEntry($"InvestingSplits_{timeStamp.Item2}.json", (string)o);
-            var zipFileName = $@"E:\Quote\WebData\Splits\Investing\InvestingSplits_{timeStamp.Item2}.zip";
+            var entry = new VirtualFileEntry($"{Path.GetFileNameWithoutExtension(zipFileName)}.json", (string)o);
             ZipUtils.ZipVirtualFileEntries(zipFileName, new []{entry});
 
             // Parse and save to database
+            Logger.AddMessage($"Parse and save to database");
             var itemCount = ParseZipAndSaveToDb(zipFileName);
 
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");

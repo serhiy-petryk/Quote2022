@@ -10,6 +10,7 @@ namespace Data.Actions.TradingView
 {
     public class TvScreenerLoader
     {
+        private const string URL = @"https://scanner.tradingview.com/america/scan";
         private const string parameters = @"{""filter"":[{""left"":""exchange"",""operation"":""in_range"",""right"":[""AMEX"",""NASDAQ"",""NYSE""]}],""options"":{""lang"":""en""},""markets"":[""america""],""symbols"":{""query"":{""types"":[]},""tickers"":[]},""columns"":[""minmov"",""name"",""close"",""change"",""change_abs"",""Recommend.All"",""volume"",""Value.Traded"",""market_cap_basic"",""price_earnings_ttm"",""earnings_per_share_basic_ttm"",""number_of_employees"",""sector"",""industry"",""description"",""type"",""subtype""],""sort"":{""sortBy"":""name"",""sortOrder"":""asc""},""range"":[0,20000]}";
 
         public static void Start()
@@ -18,20 +19,19 @@ namespace Data.Actions.TradingView
 
             // Download
             var timeStamp = DateTime.Now.ToString("yyyyMMddHHmm");
-            var filename = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp}.json";
+            var zipFileName = $@"E:\Quote\WebData\Screener\TradingView\TVScreener_{timeStamp}.zip";
 
-            Logger.AddMessage($"Download data to {filename}");
-            Helpers.Download.PostToFile(@"https://scanner.tradingview.com/america/scan", filename, parameters);
+            Logger.AddMessage($"Download data from {URL}");
+            var o = Download.PostToString(URL, parameters);
+            if (o is Exception ex)
+                throw new Exception($"TvScreenerLoader.Start. Error while download from {URL}. Error message: {ex.Message}");
 
-            // Zip data
-            var zipFileName = ZipUtils.ZipFile(filename);
-
+            var entry = new VirtualFileEntry( $"{Path.GetFileNameWithoutExtension(zipFileName)}.json", (string)o);
+            ZipUtils.ZipVirtualFileEntries(zipFileName, new[] { entry });
+            
             // Parse and save data to database
-            Logger.AddMessage($"Parse and save files to database");
+            Logger.AddMessage($"Parse and save to database");
             var itemCount = ParseAndSaveToDb(zipFileName);
-
-            // Remove text files
-            File.Delete(filename);
 
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }
@@ -47,9 +47,9 @@ namespace Data.Actions.TradingView
 
                     if (items.Length > 0)
                     {
-                        DbUtils.ClearAndSaveToDbTable(items, "Bfr_ScreenerTradingView", "Symbol", "Exchange",
-                            "Name", "Type", "Subtype", "Sector", "Industry", "Close", "MarketCap", "Volume",
-                            "Recommend", "TimeStamp");
+                        DbUtils.ClearAndSaveToDbTable(items, "Bfr_ScreenerTradingView", "Symbol", "Exchange", "Name",
+                            "Type", "Subtype", "Sector", "Industry", "Close", "MarketCap", "Volume", "Recommend",
+                            "TimeStamp");
                         DbUtils.RunProcedure("pUpdateScreenerTradingView");
                     }
 

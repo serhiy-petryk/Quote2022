@@ -82,25 +82,6 @@ namespace Data.Helpers
             return ((Exception) o).Message;
         }
 
-        public static string PostToFile(string url, string filename, string parameters, bool isXmlHttpRequest = false)
-        {
-            // see https://stackoverflow.com/questions/5401501/how-to-post-data-to-specific-url-using-webclient-in-c-sharp
-            var o = PostToString(url, parameters, isXmlHttpRequest);
-            if (o is string response)
-            {
-                if (File.Exists(filename))
-                    File.Delete(filename);
-                var folder = Path.GetDirectoryName(filename);
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
-
-                File.WriteAllText(filename, response, Encoding.UTF8);
-                return null;
-            }
-
-            return ((Exception)o).Message;
-        }
-
         public class WebClientEx : WebClient
         {
             public int? TimeoutInMilliseconds;

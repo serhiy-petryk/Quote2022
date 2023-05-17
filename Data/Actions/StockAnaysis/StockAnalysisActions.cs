@@ -20,19 +20,19 @@ namespace Data.Actions.StockAnaysis
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var htmlFileName = Folder + $"StockAnalysisActions_{timeStamp.Item2}.html";
             var zipFileName = Folder + $"StockAnalysisActions_{timeStamp.Item2}.zip";
 
-            // Download data to html file
-            Helpers.Download.DownloadToFile(Url, htmlFileName);
+            // Download html data
+            var o = Download.DownloadToString(Url);
+            if (o is Exception ex)
+                throw new Exception($"StockAnalysisActions.Start. Error while download from {Url}. Error message: {ex.Message}");
 
-            // Zip data
-            Helpers.ZipUtils.ZipFile(htmlFileName, zipFileName);
+            // Save html data to zip
+            var entry = new VirtualFileEntry($"StockAnalysisActions_{timeStamp.Item2}.html", (string) o);
+            ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {entry});
 
             // Parse and save to database
             var itemCount = ParseAndSaveToDb(zipFileName);
-
-            File.Delete(htmlFileName);
 
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }

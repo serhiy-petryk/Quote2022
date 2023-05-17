@@ -35,19 +35,17 @@ namespace Data.Actions.FmpCloud
             {
                 Logger.AddMessage($"Downloaded {cnt++} files from {dates.Count}");
                 var jsonFileName = folder + $"DayFmpCloud_{date:yyyyMMdd}.json";
-                var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
+                var zipFileName = folder + $"DayFmpCloud_{date:yyyyMMdd}.zip";
+                // var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
                 var url = $@"https://fmpcloud.io/api/v3/batch-request-end-of-day-prices?date={date:yyyy-MM-dd}&apikey={api}";
                 if (!File.Exists(zipFileName))
                 {
-                    Download.DownloadToFile(url, jsonFileName);
-                    if (File.Exists(jsonFileName))
-                    {
-                        var zipFileName2 = Helpers.ZipUtils.ZipFile(jsonFileName);
-                        if (File.Exists(zipFileName2))
-                            File.Delete(jsonFileName);
-                    }
-                    else
-                        throw new Exception("Error in FmpCloudDailyLoader");
+                    var o = Download.DownloadToString(url);
+                    if (o is Exception ex)
+                        throw new Exception($"FmpCloudDailyLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+
+                    var entry = new VirtualFileEntry($"DayFmpCloud_{date:yyyyMMdd}.json", (string)o);
+                    ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {entry});
                 }
             }
             Logger.AddMessage($"!Finished. ");//Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");

@@ -9,7 +9,7 @@ namespace Data.Actions.Finnhub
 {
     public static class FinnhubMinuteDownloader
     {
-        private const string filenameTemplate = @"E:\Quote\WebData\Minute\Finnhub\Data\Finnhub_20230325\fMin_{0}_{1}.json";
+        private const string filenameTemplate = @"D:\Quote\WebData\Minute\Finnhub\Data\Finnhub_20230325\fMin_{0}_{1}.json";
         private static string apiKey = CsUtils.GetApiKeys("finnhub.io")[0];
 
         public static void Start(string[] symbols)

@@ -29,7 +29,7 @@ namespace Data.Actions.StockAnaysis
 
             // Save html data to zip
             var entry = new VirtualFileEntry($"StockAnalysisActions_{timeStamp.Item2}.html", (string) o);
-            ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {entry});
+            ZipUtils.ZipVirtualFileEntries(zipFileName, new[] { entry });
 
             // Parse and save to database
             var itemCount = ParseAndSaveToDb(zipFileName);

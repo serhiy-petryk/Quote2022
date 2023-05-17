@@ -22,11 +22,6 @@ namespace Data.Actions.Eoddata
         {
             Logger.AddMessage($"Started");
 
-            var timeStamp = CsUtils.GetTimeStamp();
-            var tempFolder =  FILE_FOLDER + timeStamp.Item2 + @"\";
-            var tempZipFileNameTemplate = tempFolder + @"{0}_{1}.zip";
-            var textFileNameTemplate = tempFolder + @"{0}_{1}.txt";
-
             var tradingDays = new List<DateTime>();
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
@@ -35,9 +30,7 @@ namespace Data.Actions.Eoddata
                 cmd.CommandText = "SELECT [date] FROM TradingDays WHERE [date] > DATEADD(day,-30, GETDATE())";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
-                    {
-                        tradingDays.Add((DateTime)rdr["Date"]);
-                    }
+                        tradingDays.Add((DateTime) rdr["Date"]);
             }
 
             var missingFiles = new List<Tuple<string, string>>();
@@ -55,41 +48,35 @@ namespace Data.Actions.Eoddata
             if (missingFiles.Count > 0)
             {
                 // Prepare cookies
-                var cookieContainer = Helpers.CookiesGoogle.GetCookies(URL_FOR_COOKIES);
+                var cookieContainer = CookiesGoogle.GetCookies(URL_FOR_COOKIES);
                 if (cookieContainer.Count == 0)
                     throw new Exception("Check login to www.eoddata.com in Chrome browser");
 
                 // Get k parameter of eoddata url
-                var tempFn = tempFolder + @"download.html";
-                Helpers.Download.DownloadToFile(URL_HOME, tempFn, false, cookieContainer);
+                var o = Download.DownloadToString(URL_HOME, false, cookieContainer);
+                if (o is Exception ex)
+                    throw new Exception($"EoddataDailyLoader.Start. Error while download from {URL_HOME}. Error message: {ex.Message}");
 
-                var s = File.ReadAllText(tempFn);
+                var s = (string)o;
                 var i1 = s.IndexOf("/data/filedownload.aspx?e=", StringComparison.InvariantCulture);
                 var i2 = s.IndexOf("\"", i1 + 20, StringComparison.InvariantCulture);
                 var kParameter = s.Substring(i1 + 20, i2 - i1 - 20).Split('&').FirstOrDefault(a => a.StartsWith("k="));
                 if (kParameter == null)
                     throw new Exception("Can not define 'k' parameter of url request for www.eoddata.com");
 
-                // Download text files
+                // Download and zip missing files
                 foreach (var fileId in missingFiles)
                 {
                     Logger.AddMessage($"Download Eoddata daily data for {fileId.Item1} and {fileId.Item2}");
                     var url = string.Format(URL_TEMPLATE, fileId.Item1, fileId.Item2, kParameter.Substring(2));
-                    var textFilename = string.Format(textFileNameTemplate, fileId.Item1, fileId.Item2);
-                    Helpers.Download.DownloadToFile(url, textFilename, false, cookieContainer);
-                }
+                    o = Download.DownloadToString(url, false, cookieContainer);
+                    if (o is Exception ex2)
+                        throw new Exception($"EoddataDailyLoader.Start. Error while download from {url}. Error message: {ex2.Message}");
 
-                // Zip data and remove text files
-                foreach (var fileId in missingFiles)
-                {
-                    var textFilename = string.Format(textFileNameTemplate, fileId.Item1, fileId.Item2);
-                    var newZipFilename = Helpers.ZipUtils.ZipFile(textFilename);
-                    var destinationZipFileName = $"{FILE_FOLDER}{fileId.Item1}_{fileId.Item2}.zip";
-                    File.Move(newZipFilename, destinationZipFileName);
+                    var zipFileName = $"{FILE_FOLDER}{fileId.Item1}_{fileId.Item2}.zip";
+                    var entry = new VirtualFileEntry($"{Path.GetFileNameWithoutExtension(zipFileName)}.txt", (string)o);
+                    ZipUtils.ZipVirtualFileEntries(zipFileName, new[]{entry});
                 }
-
-                // Remove temp folder
-                Directory.Delete(tempFolder, true);
 
                 Logger.AddMessage($"!Downloaded {missingFiles.Count} files");
             }
@@ -122,14 +109,14 @@ namespace Data.Actions.Eoddata
                     newFileCount++;
                     Logger.AddMessage($"Save to database quotes from file {Path.GetFileName(file)}");
                     itemCount += ParseAndSaveToDb(file);
-                    fileSize += Helpers.CsUtils.GetFileSizeInKB(file);
+                    fileSize += CsUtils.GetFileSizeInKB(file);
                 }
             }
 
             if (newFileCount > 0)
             {
                 Logger.AddMessage($"Update data in database ('pUpdateDayEoddata' procedure)");
-                Helpers.DbUtils.RunProcedure("pUpdateDayEoddata");
+                DbUtils.RunProcedure("pUpdateDayEoddata");
             }
 
             Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {newFileCount}. Size of files: {fileSize:N0}KB");
@@ -159,7 +146,7 @@ namespace Data.Actions.Eoddata
                 }
             }
 
-            Helpers.DbUtils.SaveToDbTable(quotes, "DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
+            DbUtils.SaveToDbTable(quotes, "DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
             return itemCount;
         }
 

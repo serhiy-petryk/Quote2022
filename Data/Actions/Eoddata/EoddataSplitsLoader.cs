@@ -17,27 +17,22 @@ namespace Data.Actions.Eoddata
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var htmlFileName = $@"E:\Quote\WebData\Splits\Eoddata\EoddataSplits_{timeStamp.Item2}.html";
+            var zipFileName = $@"E:\Quote\WebData\Splits\Eoddata\EoddataSplits_{timeStamp.Item2}.zip";
 
-            // Download data to html file
-            Helpers.Download.DownloadToFile(URL, htmlFileName);
+            // Download html data
+            var o = Download.DownloadToString(URL, true);
+            if (o is Exception ex2)
+                throw new Exception($"EoddataSplitsLoader.Start. Error while download from {URL}. Error message: {ex2.Message}");
+            var htmlContent = (string)o;
 
-            // Split and save to database
+            // Convert data to text format
+            var now = DateTime.Now;
             var items = new List<SplitModel>();
-            var zipFileName = ParseAndSaveToDb(htmlFileName, items, timeStamp.Item1);
+            var fileLines = new List<string> { "Exchange\tSymbol\tDate\tRatio" };
 
-            Logger.AddMessage($"!Finished. Items: {items.Count:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
-        }
-
-        private static string ParseAndSaveToDb(string htmlFileName, List<SplitModel> items, DateTime maxDate)
-        {
-            var timeStamp = File.GetCreationTime(htmlFileName);
-            var fileLines = new List<string>{ "Exchange\tSymbol\tDate\tRatio" };
-
-            var content = File.ReadAllText(htmlFileName);
-            var i1 = content.IndexOf("<th>Ratio</th>", StringComparison.InvariantCulture);
-            var i2 = content.IndexOf("</table>", i1+14, StringComparison.InvariantCulture);
-            var rows = content.Substring(i1 + 14,i2 - i1 - 14).Trim().Split(new [] {"</tr>"}, StringSplitOptions.RemoveEmptyEntries);
+            var i1 = htmlContent.IndexOf("<th>Ratio</th>", StringComparison.InvariantCulture);
+            var i2 = htmlContent.IndexOf("</table>", i1 + 14, StringComparison.InvariantCulture);
+            var rows = htmlContent.Substring(i1 + 14, i2 - i1 - 14).Trim().Split(new[] { "</tr>" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var row in rows)
             {
                 var cells = row.Trim().Split(new[] { "</td>" }, StringSplitOptions.RemoveEmptyEntries);
@@ -48,41 +43,33 @@ namespace Data.Actions.Eoddata
                 var ratio = GetCellValue(cells[3]);
                 fileLines.Add($"{exchange}\t{symbol}\t{sDate}\t{ratio}");
                 ratio = ratio.Replace('-', ':');
-                var item = new SplitModel(exchange, symbol, date, ratio, timeStamp);
+                var item = new SplitModel(exchange, symbol, date, ratio, now);
                 items.Add(item);
             }
 
-            // Save data to text file
-            var txtFileName = Path.ChangeExtension(htmlFileName, ".txt");
-            if (File.Exists(txtFileName))
-                File.Delete(txtFileName);
-
-            File.WriteAllLines(txtFileName, fileLines);
-
-            // Zip data
-            var zipFileName = Helpers.ZipUtils.ZipFile(txtFileName);
-
-            // Remove unnecessary files
-            File.Delete(htmlFileName);
-            File.Delete(txtFileName);
+            // Save data to zip file
+            var entry = new VirtualFileEntry($"{Path.GetFileNameWithoutExtension(zipFileName)}.txt",
+                string.Join(Environment.NewLine, fileLines));
+            ZipUtils.ZipVirtualFileEntries(zipFileName, new[] { entry });
 
             // Save data to database
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= maxDate), "Bfr_SplitEoddata",
-                "Exchange", "Symbol", "Date", "Ratio", "K", "TimeStamp");
-            Helpers.DbUtils.ExecuteSql("INSERT INTO SplitEoddata (Exchange,Symbol,[Date],Ratio,K,[TimeStamp]) " +
-                                       "SELECT a.Exchange, a.Symbol, a.[Date], a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitEoddata a " +
-                                       "LEFT JOIN SplitEoddata b ON a.Exchange=b.Exchange AND a.Symbol = b.Symbol AND a.Date = b.Date " +
-                                       "WHERE b.Symbol IS NULL");
-            return zipFileName;
+            var maxDate = timeStamp.Item1;
+            DbUtils.ClearAndSaveToDbTable(items.Where(a => a.Date <= maxDate), "Bfr_SplitEoddata", "Exchange", "Symbol",
+                "Date", "Ratio", "K", "TimeStamp");
+            DbUtils.ExecuteSql("INSERT INTO SplitEoddata (Exchange,Symbol,[Date],Ratio,K,[TimeStamp]) " +
+                               "SELECT a.Exchange, a.Symbol, a.[Date], a.Ratio, a.K, a.[TimeStamp] FROM Bfr_SplitEoddata a " +
+                               "LEFT JOIN SplitEoddata b ON a.Exchange=b.Exchange AND a.Symbol = b.Symbol AND a.Date = b.Date " +
+                               "WHERE b.Symbol IS NULL");
 
-            string GetCellValue(string cell)
-            {
-                var s = cell.Replace("</a>", "").Trim();
-                i1 = s.LastIndexOf('>');
-                s = System.Net.WebUtility.HtmlDecode(s.Substring(i1 + 1)).Trim();
-                return s;
+            Logger.AddMessage($"!Finished. Items: {items.Count:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+        }
 
-            }
+        private static string GetCellValue(string cell)
+        {
+            var s = cell.Replace("</a>", "").Trim();
+            var i1 = s.LastIndexOf('>');
+            s = System.Net.WebUtility.HtmlDecode(s.Substring(i1 + 1)).Trim();
+            return s;
         }
     }
 }

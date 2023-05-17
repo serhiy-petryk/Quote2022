@@ -17,19 +17,19 @@ namespace Data.Actions.StockAnaysis
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var jsonFileName = Folder + $"StockAnalysisIPOs_{timeStamp.Item2}.json";
             var zipFileName = Folder + $"StockAnalysisIPOs_{timeStamp.Item2}.zip";
 
-            // Download data to html file
-            Helpers.Download.DownloadToFile(Url, jsonFileName);
+            // Download html data
+            var o = Download.DownloadToString(Url);
+            if (o is Exception ex)
+                throw new Exception($"StockAnalysisIPOs.Start. Error while download from {Url}. Error message: {ex.Message}");
 
-            // Zip data
-           Helpers.ZipUtils.ZipFile(jsonFileName, zipFileName);
+            // Save html data to zip
+            var entry = new VirtualFileEntry($"StockAnalysisIPOs_{timeStamp.Item2}.json", (string)o);
+            ZipUtils.ZipVirtualFileEntries(zipFileName, new[] { entry });
 
             // Parse and save to database
             var itemCount = ParseAndSaveToDb(zipFileName);
-
-            File.Delete(jsonFileName);
 
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }

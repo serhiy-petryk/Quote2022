@@ -60,9 +60,10 @@ namespace Data.Actions.Finnhub
                     Logger.AddMessage($"Downloaded {urlOffset} items from {urlsAndFilenames.Count}");
                     while (!File.Exists(urlAndFilename.Item2))
                     {
-                        Download.DownloadToFile(urlAndFilename.Item1, urlAndFilename.Item2);
-
-                        if (!File.Exists(urlAndFilename.Item2))
+                        var o = Download.DownloadToString(urlAndFilename.Item1);
+                        if (o is string content)
+                            File.WriteAllText(urlAndFilename.Item2, content);
+                        else
                             Thread.Sleep(5000);
                     }
                     downloadedItems++;

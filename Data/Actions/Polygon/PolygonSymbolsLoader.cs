@@ -38,6 +38,7 @@ namespace Data.Actions.Polygon
             foreach (var date in dates)
             {
                 var zipFileName = string.Format(ZipFileNameTemplate, date.ToString("yyyyMMdd"));
+                var virtualFileEntries = new List<VirtualFileEntry>();
                 if (!File.Exists(zipFileName))
                 {
                     fileCount++;
@@ -50,11 +51,14 @@ namespace Data.Actions.Polygon
                         var filename = folder + $@"\SymbolsPolygon_{cnt:D2}_{date:yyyyMMdd}.json";
                         Logger.AddMessage($"Downloading {cnt} data chunk into {Path.GetFileName(filename)} for {date:yyyy-MM-dd}");
 
-                        var result = Download.DownloadToFile(url, filename);
-                        if (result != null)
-                            throw new Exception($"Error! {result}");
+                        var o = Download.DownloadToString(url);
+                        if (o is Exception ex)
+                            throw new Exception($"PolygonSymbolsLoader.Start. Error while download from {url}. Error message: {ex.Message}");
 
-                        var oo = JsonConvert.DeserializeObject<cRoot>(File.ReadAllText(filename));
+                        var entry = new VirtualFileEntry($@"SymbolsPolygon_{cnt:D2}_{date:yyyyMMdd}.json", (string) o);
+                        virtualFileEntries.Add(entry);
+
+                        var oo = JsonConvert.DeserializeObject<cRoot>((string)o);
                         if (oo.status != "OK")
                             throw new Exception("Wrong status of response!");
 
@@ -62,14 +66,8 @@ namespace Data.Actions.Polygon
                         cnt++;
                     }
 
-                    var zipFileName2 = ZipUtils.ZipFolder(folder);
-                    if (File.Exists(zipFileName2))
-                    {
-                        itemCount += ParseAndSaveToDb(zipFileName);
-                        Directory.Delete(folder, true);
-                    }
-                    else
-                        throw new Exception("Error in PolygonSymbolsLoader downloader & parser");
+                    ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries);
+                    itemCount += ParseAndSaveToDb(zipFileName);
                 }
             }
 
@@ -99,9 +97,8 @@ namespace Data.Actions.Polygon
                         items.AddRange(oo.results.Where(a => a.IsValidTicker && a.market == "stocks"));
                     }
 
-                Helpers.DbUtils.SaveToDbTable(items, "dbQ2023..SymbolsPolygonDetails",
-                    "Symbol", "Date", "primary_exchange", "name", "type", "cik", "composite_figi", "share_class_figi",
-                    "last_updated_utc", "TimeStamp");
+                DbUtils.SaveToDbTable(items, "dbQ2023..SymbolsPolygonDetails", "Symbol", "Date", "primary_exchange",
+                    "name", "type", "cik", "composite_figi", "share_class_figi", "last_updated_utc", "TimeStamp");
             }
         }
 

@@ -42,32 +42,21 @@ namespace Data.Actions.Polygon
             {
                 filesCount++;
                 Logger.AddMessage($"Downloaded {cnt++} files from {dates.Count}");
-                var jsonFileName = Folder + $"DayPolygon_{date:yyyyMMdd}.json";
-                var zipFileName = Path.ChangeExtension(jsonFileName, ".zip");
+                var zipFileName = Folder + $"DayPolygon_{date:yyyyMMdd}.zip";
                 var url = $@"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date:yyyy-MM-dd}?adjusted=false&apiKey={PolygonCommon.GetApiKey()}";
                 if (!File.Exists(zipFileName))
                 {
-                    Download.DownloadToFile(url, jsonFileName);
-                    if (File.Exists(jsonFileName))
-                    {
-                        var zipFileName2 = Helpers.ZipUtils.ZipFile(jsonFileName);
-                        if (File.Exists(zipFileName2))
-                            File.Delete(jsonFileName);
-                    }
-                    else
-                        throw new Exception("Error in PolygonDailyLoader");
+                    var o = Download.DownloadToString(url);
+                    if (o is Exception ex)
+                        throw new Exception($"PolygonDailyLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+
+                    var entry = new VirtualFileEntry($"DayPolygon_{date:yyyyMMdd}.json", (string)o);
+                    ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {entry});
                 }
 
-                if (File.Exists(zipFileName))
-                {
-                    itemCount += ParseAndSaveToDb(zipFileName);
-                    filesSize += Helpers.CsUtils.GetFileSizeInKB(zipFileName);
-
-                }
-                else
-                    throw new Exception("Error in PolygonDailyLoader downloader & parser");
+                itemCount += ParseAndSaveToDb(zipFileName);
+                filesSize += Helpers.CsUtils.GetFileSizeInKB(zipFileName);
             }
-
 
             Logger.AddMessage($"Refresh summary data (~10 minutes)");
             DbUtils.RunProcedure("dbQ2023..pUpdateDayPolygon");

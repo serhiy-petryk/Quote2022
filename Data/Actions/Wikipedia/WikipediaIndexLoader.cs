@@ -12,23 +12,13 @@ namespace Data.Actions.Wikipedia
 {
     public static class WikipediaIndexLoader
     {
-        private static readonly string[] Urls = new string[]
+        private static readonly Tuple<string,string>[] UrlsAndFilenames = new []
         {
-            "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
-            "https://en.wikipedia.org/wiki/List_of_S%26P_400_companies",
-            "https://en.wikipedia.org/wiki/List_of_S%26P_600_companies",
-            "https://en.wikipedia.org/wiki/Nasdaq-100"
+            Tuple.Create("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies", "Components_SP500_{0}.html"),
+            Tuple.Create("https://en.wikipedia.org/wiki/List_of_S%26P_400_companies", "Components_SP400_{0}.html"),
+            Tuple.Create("https://en.wikipedia.org/wiki/List_of_S%26P_600_companies", "Components_SP600_{0}.html"),
+            Tuple.Create("https://en.wikipedia.org/wiki/Nasdaq-100", "Components_Nasdaq100_{0}.html")
             // old: https://en.wikipedia.org/wiki/List_of_NASDAQ-100_companies
-        };
-
-        private const string FolderTemplate = @"E:\Quote\WebData\Indices\Wikipedia\IndexComponents\IndexComponents_{0}\";
-
-        private static readonly string[] Filenames = new string[]
-        {
-            "Components_SP500_{0}.html",
-            "Components_SP400_{0}.html",
-            "Components_SP600_{0}.html",
-            "Components_Nasdaq100_{0}.html",
         };
 
         public static void Start()
@@ -36,24 +26,26 @@ namespace Data.Actions.Wikipedia
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var folder = string.Format(FolderTemplate, timeStamp.Item2);
+            var zipFileName =
+                $@"E:\Quote\WebData\Indices\Wikipedia\IndexComponents\IndexComponents_{timeStamp.Item2}.zip";
+            var virtualFileEntries = new List<VirtualFileEntry>();
 
             // Download data
-            for (var k = 0; k < Urls.Length; k++)
+            foreach (var oo in UrlsAndFilenames)
             {
-                var filename = folder + string.Format(Filenames[k], timeStamp.Item2);
-                Logger.AddMessage($"Download IndexComponents from {Urls[k]} into '{filename}' file");
-                Helpers.Download.DownloadToFile(Urls[k], filename);
+                var o = Download.DownloadToString(oo.Item1);
+                if (o is Exception ex)
+                    throw new Exception($"WikipediaIndexLoader. Error while download from {oo.Item1}. Error message: {ex.Message}");
+
+                var entry = new VirtualFileEntry(string.Format(oo.Item2, timeStamp.Item2), (string) o);
+                virtualFileEntries.Add(entry);
             }
 
             // Zip data
-            var zipFileName = ZipUtils.ZipFolder(folder);
+            ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries);
 
             // Parse and save to database
             var itemCount = ParseAndSaveToDb(zipFileName);
-
-            // Zip data
-            Directory.Delete(folder, true);
 
             Logger.AddMessage($"!Finished. Items: {itemCount:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
         }

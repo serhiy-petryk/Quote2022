@@ -26,13 +26,15 @@ namespace Data.Actions.Yahoo
             Logger.AddMessage($"Started");
 
             var timeStamp = CsUtils.GetTimeStamp();
-            var folder = $@"D:\Quote\WebData\Minute\Yahoo\Data\YahooMinute_{timeStamp.Item2}\";
+            var zipFileName = $@"D:\Quote\WebData\Minute\Yahoo\Data\YahooMinute_{timeStamp.Item2}.zip";
+            var errorFileName = $@"{Path.GetDirectoryName(zipFileName)}\DownloadErrors_{timeStamp.Item2}.txt";
 
             var fromInSeconds = GetYahooDate(from);
             var toInSeconds = GetYahooDate(from.AddDays(days));
 
             var cnt = 0;
             var downloadErrors = new List<string>();
+            var virtualFileEntries = new List<VirtualFileEntry>();
             foreach (var symbol in yahooSymbols)
             {
                 cnt++;
@@ -40,28 +42,25 @@ namespace Data.Actions.Yahoo
                     Logger.AddMessage($@"Downloaded {cnt:N0} files from {yahooSymbols.Count:N0}");
 
                 var url = string.Format(UrlTemplate, symbol, fromInSeconds, toInSeconds);
-                var filename = folder + $"yMin-{symbol}.txt";
-                var error = Download.DownloadToFile(url, filename);
-                if (error != null)
-                    downloadErrors.Add($"{symbol}\t{error}");
-                Thread.Sleep(300);
+                var o = Download.DownloadToString(url);
+                if (o is Exception ex)
+                    downloadErrors.Add($"{symbol}\t{ex.Message}");
+                else
+                {
+                    var entry = new VirtualFileEntry($@"YahooMinute_{timeStamp.Item2}\yMin-{symbol}.txt", (string) o);
+                    virtualFileEntries.Add(entry);
+                }
             }
 
             if (downloadErrors.Count > 0)
-            {
-                var errorFileName = $@"{Directory.GetParent(folder.TrimEnd(Path.DirectorySeparatorChar))}\DownloadErrors_{timeStamp.Item2}.txt";
                 File.WriteAllLines(errorFileName, downloadErrors);
-            }
 
             // Zip data
-            Logger.AddMessage($@"Zip data. {Directory.GetFiles(folder, "*.txt").Length:N0} files");
-            var zipFileName = Helpers.ZipUtils.ZipFolder(folder);
-
-            // Remove json files
-            Directory.Delete(folder, true);
+            Logger.AddMessage($@"Zip data. {virtualFileEntries.Count:N0} entries");
+            ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries);
 
             if (downloadErrors.Count > 0)
-                Logger.AddMessage($"!Finished. Found {downloadErrors.Count} ERRORS. Items: {yahooSymbols.Count:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
+                Logger.AddMessage($"!Finished. Found {downloadErrors.Count} ERRORS. Error file: {errorFileName}. Items: {yahooSymbols.Count:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
             else
                 Logger.AddMessage($"!Finished. No errors. Items: {yahooSymbols.Count:N0}. Zip file size: {CsUtils.GetFileSizeInKB(zipFileName):N0}KB. Filename: {zipFileName}");
 

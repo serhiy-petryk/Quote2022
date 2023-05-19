@@ -121,7 +121,7 @@ namespace Quote2022.Actions
             foreach (var q in iQuotes)
             foreach (var kind in symbols[q.Symbol].Kinds)
             {
-                var key = new Tuple<string, TimeSpan>(kind, q.TimeFrameId);
+                var key = Tuple.Create(kind, q.TimeFrameId);
                 if (!data.ContainsKey(key))
                     data.Add(key, new List<Quote>());
                 data[key].Add(q);
@@ -131,7 +131,7 @@ namespace Quote2022.Actions
             foreach (var g1 in data.GroupBy(a => a.Key.Item1).OrderBy(a => a.Key))
             foreach (var g2 in g1.GroupBy(a => a.Key.Item2).OrderBy(a => a.Key))
             {
-                var ts = new TradeStatistics(data[new Tuple<string, TimeSpan>(g1.Key, g2.Key)], iParameters);
+                var ts = new TradeStatistics(data[Tuple.Create(g1.Key, g2.Key)], iParameters);
                 lines.Add(ts.GetValues(new object[] {g1.Key, g2.Key}));
             }
 
@@ -145,7 +145,7 @@ namespace Quote2022.Actions
             foreach (var q in iQuotes)
             foreach (var kind in symbols[q.Symbol].Kinds)
             {
-                var key = new Tuple<string, DayOfWeek>(kind, q.Timed.DayOfWeek);
+                var key = Tuple.Create(kind, q.Timed.DayOfWeek);
                 if (!data.ContainsKey(key))
                     data.Add(key, new List<Quote>());
                 data[key].Add(q);
@@ -155,7 +155,7 @@ namespace Quote2022.Actions
             foreach (var g1 in data.GroupBy(a => a.Key.Item1).OrderBy(a => a.Key))
             foreach (var g2 in g1.GroupBy(a => a.Key.Item2).OrderBy(a => a.Key))
             {
-                var ts = new TradeStatistics(data[new Tuple<string, DayOfWeek>(g1.Key, g2.Key)], iParameters);
+                var ts = new TradeStatistics(data[Tuple.Create(g1.Key, g2.Key)], iParameters);
                 lines.Add(ts.GetValues(new object[] {g1.Key, g2.Key}));
             }
 

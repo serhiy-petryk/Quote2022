@@ -199,7 +199,7 @@ namespace Quote2022.Actions.DayAlphaVantage
                 var filename = DataFolder + $"{kvp.Value[0].Trim()}_{timeStamp}.csv";
                 if (!File.Exists(filename))
                 {
-                    _urlsAndFilenames.Add(new Tuple<string, string>(kvp.Key, filename));
+                    _urlsAndFilenames.Add(Tuple.Create(kvp.Key, filename));
                 }
             }
         }

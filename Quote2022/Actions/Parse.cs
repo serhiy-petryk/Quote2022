@@ -263,8 +263,7 @@ namespace Quote2022.Actions
                     cmd.CommandText = "SELECT distinct Exchange, date from DayEoddata";
                     using (var rdr = cmd.ExecuteReader())
                         while (rdr.Read())
-                            saved.Add(new Tuple<string, string>((string)rdr["Exchange"],
-                                    ((DateTime)rdr["Date"]).ToString("yyyyMMdd", CultureInfo.InvariantCulture)), null);
+                            saved.Add(Tuple.Create((string) rdr["Exchange"], ((DateTime) rdr["Date"]).ToString("yyyyMMdd", CultureInfo.InvariantCulture)), null);
                 }
             }
 
@@ -272,7 +271,7 @@ namespace Quote2022.Actions
             foreach (var file in files)
             {
                 var ss = Path.GetFileNameWithoutExtension(file).Split('_');
-                var key = new Tuple<string, string>(ss[0].ToUpper(), ss[1]);
+                var key = Tuple.Create(ss[0].ToUpper(), ss[1]);
                 if (!saved.ContainsKey(key))
                 {
                     showStatusAction($"DayEoddata file is parsing: {Path.GetFileName(file)}");

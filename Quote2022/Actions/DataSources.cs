@@ -17,7 +17,7 @@ namespace Quote2022.Actions
             from = from ?? new DateTime(2022, 11, 1);
             to = to ?? new DateTime(2022, 12, 31);
 
-            var key = new Tuple<int, DateTime, DateTime>(numberOfSymbols, from.Value, to.Value);
+            var key = Tuple.Create(numberOfSymbols, from.Value, to.Value);
             if (!_activeSymbols.ContainsKey(key))
             {
                 var symbols = new Dictionary<string, SymbolsOfDataSource>();

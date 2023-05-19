@@ -18,7 +18,7 @@ namespace Quote2022.Helpers
             TimeSpan? lastTime = null;
             foreach (var ts in iParameters.TimeFrames.OrderBy(a => a))
             {
-                if (lastTime.HasValue) frames.Add(new Tuple<TimeSpan, TimeSpan>(lastTime.Value, ts));
+                if (lastTime.HasValue) frames.Add(Tuple.Create(lastTime.Value, ts));
                 lastTime = ts;
             }
 

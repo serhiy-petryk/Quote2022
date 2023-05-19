@@ -60,7 +60,7 @@ namespace Data.Actions.FmpCloud
                             continue;
 
                         item.TimeStamp = entry.LastWriteTime.DateTime;
-                        var key = new Tuple<string, DateTime>(item.symbol, item.date);
+                        var key = Tuple.Create(item.symbol, item.date);
                         if (!items.ContainsKey(key))
                             items.Add(key, item);
                     }

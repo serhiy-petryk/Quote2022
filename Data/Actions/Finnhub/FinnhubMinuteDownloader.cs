@@ -40,7 +40,7 @@ namespace Data.Actions.Finnhub
                     if (!File.Exists(filename))
                     {
                         var url = string.Format(@"https://finnhub.io/api/v1/stock/candle?symbol={0}&resolution=1&from={1}&to={2}&token={3}", symbol, from, to, apiKey);
-                        urlsAndFilenames.Add(new Tuple<string, string>(url, filename));
+                        urlsAndFilenames.Add(Tuple.Create(url, filename));
                     }
                 }
 

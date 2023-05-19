@@ -77,7 +77,7 @@ namespace Data.Actions.WebArchive.Eoddata
                     }
                     else
                     {
-                        var key = new Tuple<string, DateTime>(item.Symbol, item.TimeStamp);
+                        var key = Tuple.Create(item.Symbol, item.TimeStamp);
                         if (!items.ContainsKey(key))
                             items.Add(key, item);
                     }

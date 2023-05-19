@@ -124,7 +124,7 @@ namespace Quote2022.Actions
                 i1 = s.IndexOf("/rreichel3/US-Stock-Symbols/tree/", StringComparison.InvariantCulture);
                 i2 = s.IndexOf("\"", i1 + 30, StringComparison.InvariantCulture);
                 var id = s.Substring(i1 + 33, i2 - i1 - 33);
-                items.Add(new Tuple<DateTime, string>(date, id));
+                items.Add(Tuple.Create(date, id));
             }
 
             var j2 = ss[ss.Length - 1].IndexOf(">Older</a>", StringComparison.InvariantCulture);

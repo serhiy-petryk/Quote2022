@@ -100,8 +100,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                                     {
                                         if (!quotes.ContainsKey((DateTime) rdr["Date"]))
                                             quotes.Add((DateTime) rdr["Date"],
-                                                new Tuple<float, float>((float) rdr["Volume"],
-                                                    (float) rdr["TradeValue"]));
+                                                Tuple.Create((float) rdr["Volume"], (float) rdr["TradeValue"]));
                                     }
                             }
 
@@ -133,7 +132,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                                 using (var rdr = cmd.ExecuteReader())
                                     while (rdr.Read())
                                         quotes.Add((DateTime) rdr["Date"],
-                                            new Tuple<float, float>((float) rdr["Volume"], (float) rdr["TradeValue"]));
+                                            Tuple.Create((float) rdr["Volume"], (float) rdr["TradeValue"]));
                             }
 
                             foreach (var d in missingDates2022)

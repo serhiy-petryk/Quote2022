@@ -212,7 +212,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                     var filename = DataFolder + $"av{kvp2.Key.Replace("year", "Y").Replace("month", "M")}_{kvp1.Key}.csv";
                     if (!File.Exists(filename))
                     {
-                        _urlsAndFilenames.Add(new Tuple<string, string>(
+                        _urlsAndFilenames.Add(Tuple.Create(
                             @"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY_EXTENDED&symbol=" +
                             kvp1.Key + $"&interval=1min&slice={kvp2.Key}&adjusted=false&datatype=csv&apikey={{0}}",
                             filename));
@@ -243,7 +243,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                 var filename = DataFolder + $"{kvp.Value[0].Trim()}_{timeStamp}.csv";
                 if (!File.Exists(filename))
                 {
-                    _urlsAndFilenames.Add(new Tuple<string, string>(kvp.Key, filename));
+                    _urlsAndFilenames.Add(Tuple.Create(kvp.Key, filename));
                 }
             }
         }

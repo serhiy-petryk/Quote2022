@@ -96,7 +96,7 @@ namespace Quote2022.Actions.TradingView
                 var i3 = s.IndexOf("\"", i2 + 6, StringComparison.InvariantCultureIgnoreCase);
                 var url = s.Substring(i2 + 5, i3 - i2 - 5);
                 var filename = destinationFolder + Path.GetFileNameWithoutExtension(file) + ".json";
-                urlsAndFilenames.Add(new Tuple<string, string>(url, filename));
+                urlsAndFilenames.Add(Tuple.Create(url, filename));
             }
 
             var cnt = 0;

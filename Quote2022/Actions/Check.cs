@@ -73,7 +73,7 @@ namespace Quote2022.Actions
                              CheckDecimalPlaces(q.Low, lastPrice) ?? CheckDecimalPlaces(q.Close, lastPrice);
                     if (ff.HasValue)
                     {
-                        var qKey = new Tuple<string, DateTime>(lastSymbol, lastDate);
+                        var qKey = Tuple.Create(lastSymbol, lastDate);
                         var q1 = dbQuotesForWeek.ContainsKey(qKey) ? dbQuotesForWeek[qKey] : null;
                         var max = (new[] {lastPrice, q.Open, q.High, q.Low, q.Close}).Max() - 0.00001;
                         var min = (new[] {lastPrice, q.Open, q.High, q.Low, q.Close}).Min() + 0.00001;
@@ -134,7 +134,7 @@ namespace Quote2022.Actions
                     if (MinuteYahoo.IsQuoteSplitChecked(new Quote { Symbol = lastSymbol, Timed = lastDate }))
                         return;
 
-                    var qKey = new Tuple<string, DateTime>(lastSymbol, lastDate);
+                    var qKey = Tuple.Create(lastSymbol, lastDate);
                     var quote = dbQuotesForWeek.ContainsKey(qKey) ? dbQuotesForWeek[qKey] : (Quote)null;
                     if (quote == null)
                         return;
@@ -163,7 +163,7 @@ namespace Quote2022.Actions
                     if (string.IsNullOrEmpty(lastSymbol)) return;
 
                     var volume = lastQuotes.Sum(a => a.Volume);
-                    var qKey = new Tuple<string, DateTime>(lastSymbol, lastDate);
+                    var qKey = Tuple.Create(lastSymbol, lastDate);
                     var lastQuote = dbQuotesForWeek.ContainsKey(qKey) ? dbQuotesForWeek[qKey] : (Quote)null;
 
                     if (lastSymbol == "NOVA" && lastDate == new DateTime(2022, 11, 10))
@@ -226,7 +226,7 @@ namespace Quote2022.Actions
                     cmd.CommandText = $"SELECT Ratio, K from Splits WHERE symbol='{symbol}' and  date >='{fromDate:yyyy-MM-dd}' and date<'{fromDate.AddDays(7):yyyy-MM-dd}'";
                     using (var rdr = cmd.ExecuteReader())
                         while (rdr.Read())
-                            return new Tuple<string, float>((string)rdr["Ratio"], Convert.ToSingle(rdr["K"]));
+                            return Tuple.Create((string)rdr["Ratio"], Convert.ToSingle(rdr["K"]));
                 }
                 return null;
             }
@@ -253,7 +253,7 @@ namespace Quote2022.Actions
                                 Close = (float)rdr["Close"],
                                 Volume = Convert.ToInt64((float)rdr["Volume"])
                             };
-                            quotes2.Add(new Tuple<string, DateTime>(q.Symbol, q.Timed), q);
+                            quotes2.Add(Tuple.Create(q.Symbol, q.Timed), q);
                         }
                 }
                 return quotes2;
@@ -364,8 +364,8 @@ namespace Quote2022.Actions
                         volumeLog.Add($"{symbol}\t{vol1}\t{vol2}\t volumes in first and second files");
                     }
 
-                    var aa1 = fistFileQuotes[symbol].ToDictionary(a => new Tuple<string, DateTime>(a.Symbol, a.Timed), a => a);
-                    var aa2 = minuteQuotes2.ToDictionary(a => new Tuple<string, DateTime>(a.Symbol, a.Timed), a => a);
+                    var aa1 = fistFileQuotes[symbol].ToDictionary(a => Tuple.Create(a.Symbol, a.Timed), a => a);
+                    var aa2 = minuteQuotes2.ToDictionary(a => Tuple.Create(a.Symbol, a.Timed), a => a);
                     var keys = aa1.Keys.Union(aa2.Keys).OrderBy(a=>a.Item1).ThenBy(a=>a.Item2).ToArray();
                     foreach (var key in keys)
                     {

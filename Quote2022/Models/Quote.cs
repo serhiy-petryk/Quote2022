@@ -37,7 +37,7 @@ namespace Quote2022.Models
             var fees = Convert.ToDouble(intradayParameters.Fees);
             var buyAmt = Math.Round(buyEndPrice - Open - fees, 4);
             var sellAmt = Math.Round(Open - sellEndPrice - fees, 4);
-            return new Tuple<float, double, double>(Convert.ToSingle(stop), buyAmt, sellAmt);
+            return Tuple.Create(Convert.ToSingle(stop), buyAmt, sellAmt);
         }
     }
 

@@ -123,7 +123,7 @@ namespace Data.Actions.Polygon
                                   "group by a.Symbol order by 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
-                        symbolAndDates.Add(new Tuple<string, DateTime, DateTime>((string)rdr["Symbol"], (DateTime)rdr["MinDate"], (DateTime)rdr["MaxDate"]));
+                        symbolAndDates.Add(Tuple.Create((string)rdr["Symbol"], (DateTime)rdr["MinDate"], (DateTime)rdr["MaxDate"]));
             }
 
             var cnt = 0;

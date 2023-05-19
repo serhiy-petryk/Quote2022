@@ -41,7 +41,7 @@ namespace Data.Actions.Eoddata
                 {
                     var filename = $"{FILE_FOLDER}{exchange}_{fileTimeStamp}.zip";
                     if (!File.Exists(filename))
-                        missingFiles.Add(new Tuple<string, string>(exchange,fileTimeStamp));
+                        missingFiles.Add(Tuple.Create(exchange, fileTimeStamp));
                 }
             }
 

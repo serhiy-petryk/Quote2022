@@ -72,8 +72,7 @@ namespace Data.Actions.Polygon
                     continue;
 
                 // var url = $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{from:yyyy-MM-dd}/{to:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
-                var url = string.Format(UrlTemplate, urlTicker, from.ToString("yyyy-MM-dd"),
-                    to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey());
+                var url = string.Format(UrlTemplate, urlTicker, from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey());
                 if (!File.Exists(jsonFileName))
                 {
                     Download.DownloadToFile(url, jsonFileName);
@@ -143,8 +142,7 @@ namespace Data.Actions.Polygon
 
                     var jsonFileName = $"{folder}pMin_{item.Item1}_{currentDate:yyyyMMdd}.json";
                     var urlTicker = PolygonCommon.GetPolygonTicker(item.Item1);
-                    var url =
-                        $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
+                    var url = $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{currentDate:yyyy-MM-dd}/{endDate:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
                     if (!File.Exists(jsonFileName))
                     {
                         Download.DownloadToFile(url, jsonFileName);

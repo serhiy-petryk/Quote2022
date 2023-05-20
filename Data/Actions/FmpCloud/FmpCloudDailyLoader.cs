@@ -42,7 +42,7 @@ namespace Data.Actions.FmpCloud
                 {
                     var o = Download.DownloadToString(url);
                     if (o is Exception ex)
-                        throw new Exception($"FmpCloudDailyLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+                        throw new Exception($"FmpCloudDailyLoader: Error while download from {url}. Error message: {ex.Message}");
 
                     var entry = new VirtualFileEntry($"DayFmpCloud_{date:yyyyMMdd}.json", (string)o);
                     ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {entry});

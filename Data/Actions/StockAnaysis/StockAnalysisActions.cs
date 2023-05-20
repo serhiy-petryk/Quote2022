@@ -25,7 +25,7 @@ namespace Data.Actions.StockAnaysis
             // Download html data
             var o = Download.DownloadToString(Url);
             if (o is Exception ex)
-                throw new Exception($"StockAnalysisActions.Start. Error while download from {Url}. Error message: {ex.Message}");
+                throw new Exception($"StockAnalysisActions: Error while download from {Url}. Error message: {ex.Message}");
 
             // Save html data to zip
             var entry = new VirtualFileEntry($"StockAnalysisActions_{timeStamp.Item2}.html", (string) o);

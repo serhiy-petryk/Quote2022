@@ -22,7 +22,7 @@ namespace Data.Actions.StockAnaysis
             // Download html data
             var o = Download.DownloadToString(Url);
             if (o is Exception ex)
-                throw new Exception($"StockAnalysisIPOs.Start. Error while download from {Url}. Error message: {ex.Message}");
+                throw new Exception($"StockAnalysisIPOs: Error while download from {Url}. Error message: {ex.Message}");
 
             // Save html data to zip
             var entry = new VirtualFileEntry($"StockAnalysisIPOs_{timeStamp.Item2}.json", (string)o);

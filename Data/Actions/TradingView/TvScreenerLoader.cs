@@ -24,7 +24,7 @@ namespace Data.Actions.TradingView
             Logger.AddMessage($"Download data from {URL}");
             var o = Download.PostToString(URL, parameters);
             if (o is Exception ex)
-                throw new Exception($"TvScreenerLoader.Start. Error while download from {URL}. Error message: {ex.Message}");
+                throw new Exception($"TvScreenerLoader: Error while download from {URL}. Error message: {ex.Message}");
 
             var entry = new VirtualFileEntry( $"{Path.GetFileNameWithoutExtension(zipFileName)}.json", (string)o);
             ZipUtils.ZipVirtualFileEntries(zipFileName, new[] { entry });

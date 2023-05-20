@@ -46,7 +46,7 @@ namespace Data.Actions.Yahoo
                 var url = string.Format(UrlTemplate, from, to, symbol);
                 var o = Download.DownloadToString(url);
                 if (o is Exception ex)
-                    throw new Exception($"YahooIndicesLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+                    throw new Exception($"YahooIndicesLoader: Error while download from {url}. Error message: {ex.Message}");
 
                 var lines = ((string)o).Split('\n');
                 if (lines.Length == 0)

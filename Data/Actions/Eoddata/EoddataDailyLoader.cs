@@ -55,7 +55,7 @@ namespace Data.Actions.Eoddata
                 // Get k parameter of eoddata url
                 var o = Download.DownloadToString(URL_HOME, false, cookieContainer);
                 if (o is Exception ex)
-                    throw new Exception($"EoddataDailyLoader.Start. Error while download from {URL_HOME}. Error message: {ex.Message}");
+                    throw new Exception($"EoddataDailyLoader: Error while download from {URL_HOME}. Error message: {ex.Message}");
 
                 var s = (string)o;
                 var i1 = s.IndexOf("/data/filedownload.aspx?e=", StringComparison.InvariantCulture);
@@ -71,7 +71,7 @@ namespace Data.Actions.Eoddata
                     var url = string.Format(URL_TEMPLATE, fileId.Item1, fileId.Item2, kParameter.Substring(2));
                     o = Download.DownloadToString(url, false, cookieContainer);
                     if (o is Exception ex2)
-                        throw new Exception($"EoddataDailyLoader.Start. Error while download from {url}. Error message: {ex2.Message}");
+                        throw new Exception($"EoddataDailyLoader: Error while download from {url}. Error message: {ex2.Message}");
 
                     var zipFileName = $"{FILE_FOLDER}{fileId.Item1}_{fileId.Item2}.zip";
                     var entry = new VirtualFileEntry($"{Path.GetFileNameWithoutExtension(zipFileName)}.txt", (string)o);

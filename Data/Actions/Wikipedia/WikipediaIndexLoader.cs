@@ -35,7 +35,7 @@ namespace Data.Actions.Wikipedia
             {
                 var o = Download.DownloadToString(oo.Item1);
                 if (o is Exception ex)
-                    throw new Exception($"WikipediaIndexLoader. Error while download from {oo.Item1}. Error message: {ex.Message}");
+                    throw new Exception($"WikipediaIndexLoader: Error while download from {oo.Item1}. Error message: {ex.Message}");
 
                 var entry = new VirtualFileEntry(string.Format(oo.Item2, timeStamp.Item2), (string) o);
                 virtualFileEntries.Add(entry);

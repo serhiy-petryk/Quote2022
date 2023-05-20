@@ -28,7 +28,7 @@ namespace Data.Actions.FmpCloud
                     fromDate.ToString("yyyy-MM-dd"), FmpCloudCommon.GetApiKey());
                 var o = Download.DownloadToString(url);
                 if (o is Exception ex)
-                    throw new Exception($"FmpCloudSplitsLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+                    throw new Exception($"FmpCloudSplitsLoader: Error while download from {url}. Error message: {ex.Message}");
 
                 var entry = new VirtualFileEntry($@"{Path.GetFileNameWithoutExtension(zipFileName)}\FmpCloudSplits_{fromDate:yyyyMMdd}.json", (string)o);
                 virtualFileEntries.Add(entry);

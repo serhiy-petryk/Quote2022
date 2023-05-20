@@ -53,7 +53,7 @@ namespace Data.Actions.Polygon
 
                         var o = Download.DownloadToString(url);
                         if (o is Exception ex)
-                            throw new Exception($"PolygonSymbolsLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+                            throw new Exception($"PolygonSymbolsLoader: Error while download from {url}. Error message: {ex.Message}");
 
                         var entry = new VirtualFileEntry($@"SymbolsPolygon_{cnt:D2}_{date:yyyyMMdd}.json", (string) o);
                         virtualFileEntries.Add(entry);

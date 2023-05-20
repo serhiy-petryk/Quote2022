@@ -34,7 +34,7 @@ namespace Data.Actions.Eoddata
                 var url = string.Format(UrlTemplate, exchange);
                 var o = Download.DownloadToString(url, false, cookieContainer);
                 if (o is Exception ex)
-                    throw new Exception($"EoddataSymbolsLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+                    throw new Exception($"EoddataSymbolsLoader: Error while download from {url}. Error message: {ex.Message}");
 
                 var entry = new VirtualFileEntry($@"{Path.GetFileNameWithoutExtension(zipFileName)}\{exchange}_{timeStamp.Item2}.txt", (string)o);
                 virtualFileEntries.Add(entry);

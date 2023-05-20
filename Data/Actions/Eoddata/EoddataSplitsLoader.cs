@@ -21,8 +21,8 @@ namespace Data.Actions.Eoddata
 
             // Download html data
             var o = Download.DownloadToString(URL, true);
-            if (o is Exception ex2)
-                throw new Exception($"EoddataSplitsLoader.Start. Error while download from {URL}. Error message: {ex2.Message}");
+            if (o is Exception ex)
+                throw new Exception($"EoddataSplitsLoader: Error while download from {URL}. Error message: {ex.Message}");
             var htmlContent = (string)o;
 
             // Convert data to text format

@@ -48,7 +48,7 @@ namespace Data.Actions.Polygon
                 {
                     var o = Download.DownloadToString(url);
                     if (o is Exception ex)
-                        throw new Exception($"PolygonDailyLoader.Start. Error while download from {url}. Error message: {ex.Message}");
+                        throw new Exception($"PolygonDailyLoader: Error while download from {url}. Error message: {ex.Message}");
 
                     var entry = new VirtualFileEntry($"DayPolygon_{date:yyyyMMdd}.json", (string)o);
                     ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {entry});

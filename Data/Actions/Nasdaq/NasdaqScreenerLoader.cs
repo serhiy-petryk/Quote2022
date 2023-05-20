@@ -34,7 +34,7 @@ namespace Data.Actions.Nasdaq
                 Logger.AddMessage($"Download STOCK data for {exchange} from {stockUrl}");
                 var o = Download.DownloadToString(stockUrl, true);
                 if (o is Exception ex)
-                    throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {StockUrlTemplate}. Error message: {ex.Message}");
+                    throw new Exception($"NasdaqScreenerLoader: Error while download from {StockUrlTemplate}. Error message: {ex.Message}");
 
                 var entry = new VirtualFileEntry($"StockScreener_{exchange}_{timeStamp.Item2}.json", (string)o);
                 virtualFileEntries.Add(entry.Name, entry);
@@ -43,7 +43,7 @@ namespace Data.Actions.Nasdaq
             Logger.AddMessage($"Download ETF data from {EtfUrl}");
             var o2 = Download.DownloadToString(EtfUrl, true);
             if (o2 is Exception ex2)
-                throw new Exception($"NasdaqScreenerLoader.Start. Error while download from {EtfUrl}. Error message: {ex2.Message}");
+                throw new Exception($"NasdaqScreenerLoader: Error while download from {EtfUrl}. Error message: {ex2.Message}");
 
             var entry2 = new VirtualFileEntry($"EtfScreener_{timeStamp.Item2}.json", (string)o2);
             virtualFileEntries.Add(entry2.Name, entry2);

@@ -27,7 +27,7 @@ namespace Data.Actions.Investing
             Logger.AddMessage($"Download data from {URL}");
             var o = Download.PostToString(URL, postData, true);
             if (o is Exception ex)
-                throw new Exception($"InvestingSplitsLoader.Start. Error while download from {URL}. Error message: {ex.Message}");
+                throw new Exception($"InvestingSplitsLoader: Error while download from {URL}. Error message: {ex.Message}");
 
             var entry = new VirtualFileEntry($"{Path.GetFileNameWithoutExtension(zipFileName)}.json", (string)o);
             ZipUtils.ZipVirtualFileEntries(zipFileName, new []{entry});

@@ -17,7 +17,7 @@ namespace Data.Actions.FmpCloud
                     itemCount += items.Length;
 
                     // Save data to buffer table of data server
-                    Helpers.DbUtils.SaveToDbTable(items, "dbQuote2023..SymbolsFmpCloud", "symbol", "name", "price",
+                    DbUtils.SaveToDbTable(items, "dbQuote2023..SymbolsFmpCloud", "symbol", "name", "price",
                         "exchange", "exchangeShortName", "type");
                 }
 

@@ -55,7 +55,7 @@ namespace Data.Actions.Polygon
                 }
 
                 itemCount += ParseAndSaveToDb(zipFileName);
-                filesSize += Helpers.CsUtils.GetFileSizeInKB(zipFileName);
+                filesSize += CsUtils.GetFileSizeInKB(zipFileName);
             }
 
             Logger.AddMessage($"Refresh summary data (~10 minutes)");
@@ -96,7 +96,7 @@ namespace Data.Actions.Polygon
                     itemCount += oo.results.Length;
 
                     // Save data to buffer table of data server
-                    Helpers.DbUtils.SaveToDbTable(oo.results.Where(a => !PolygonCommon.IsTestTicker(a.Symbol)),
+                    DbUtils.SaveToDbTable(oo.results.Where(a => !PolygonCommon.IsTestTicker(a.Symbol)),
                         "dbQ2023..DayPolygon", "Symbol", "Date", "Open", "High", "Low", "Close", "Volume",
                         "WeightedVolume", "TradeCount");
                 }

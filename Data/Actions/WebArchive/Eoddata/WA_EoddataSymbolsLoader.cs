@@ -88,7 +88,7 @@ namespace Data.Actions.WebArchive.Eoddata
 
             // var aa = items.Where(a=>a.Symbol == "WLFC").ToList();
             // Save data to buffer table of data server
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Values, "dbQ2023..HSymbolsEoddataDetails", "Symbol", "TimeStamp", "Source",
+            DbUtils.ClearAndSaveToDbTable(items.Values, "dbQ2023..HSymbolsEoddataDetails", "Symbol", "TimeStamp", "Source",
                 "Exchange", "Name", "Date", "Last", "Open", "High", "Low", "Volume");
         }
 

@@ -21,7 +21,7 @@ namespace Data.Actions.Finnhub
 
             // Prepare cookies
             var urlForCookie = "https://www.eoddata.com/";
-            var cookieContainer = Helpers.CookiesGoogle.GetCookies(urlForCookie);
+            var cookieContainer = CookiesGoogle.GetCookies(urlForCookie);
             if (cookieContainer.Count == 0)
                 throw new Exception("Check login to www.eoddata.com in Chrome browser");
 
@@ -31,7 +31,7 @@ namespace Data.Actions.Finnhub
                 Logger.AddMessage($"Download Symbols data for {exchange}");
                 var url = string.Format(UrlTemplate, exchange);
                 var filename = $"{folder}{exchange}_{timeStamp.Item2}.txt";
-                Helpers.Download.DownloadPage(url, filename, false, cookieContainer);
+                Download.DownloadPage(url, filename, false, cookieContainer);
             }
 
             // Zip data
@@ -42,7 +42,7 @@ namespace Data.Actions.Finnhub
             var itemCount = ParseAndSaveToDb(zipFileName);
 
             Logger.AddMessage($"Run sql procedure: pUpdateSymbolsXref");
-            Helpers.DbUtils.RunProcedure("pUpdateSymbolsXref");
+            DbUtils.RunProcedure("pUpdateSymbolsXref");
 
             // Zip data
             Directory.Delete(folder, true);
@@ -64,9 +64,9 @@ namespace Data.Actions.Finnhub
                     itemCount += items.Length;
 
                     // Save data to buffer table of data server
-                    Helpers.DbUtils.ClearAndSaveToDbTable(items, "dbQuote2023..Bfr_SymbolsFinnhub", "symbol",
+                    DbUtils.ClearAndSaveToDbTable(items, "dbQuote2023..Bfr_SymbolsFinnhub", "symbol",
                         "Exchange", "Type", "Name", "Figi", "ShareClassFigi", "TimeStamp");
-                    // Helpers.DbUtils.RunProcedure("pUpdateSymbolsEoddata");
+                    // DbUtils.RunProcedure("pUpdateSymbolsEoddata");
                 }
 
             return itemCount;

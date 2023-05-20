@@ -192,7 +192,7 @@ namespace Data.Actions.AlphaVantage
             public string Position;
             public DateTime Created;
 
-            public override string ToString() => $"{File}\t{Symbol}\t{Date:yyyy-MM-dd}\t{Helpers.CsUtils.GetString(MinTime)}\t{Helpers.CsUtils.GetString(MaxTime)}\t{Count}\t{Open}\t{High}\t{Low}\t{Close}\t{Volume}";
+            public override string ToString() => $"{File}\t{Symbol}\t{Date:yyyy-MM-dd}\t{CsUtils.GetString(MinTime)}\t{CsUtils.GetString(MaxTime)}\t{Count}\t{Open}\t{High}\t{Low}\t{Close}\t{Volume}";
         }
         #endregion
     }

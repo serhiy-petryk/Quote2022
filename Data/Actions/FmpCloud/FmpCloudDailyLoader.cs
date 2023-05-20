@@ -79,7 +79,7 @@ namespace Data.Actions.FmpCloud
                     itemCount += items.Length;
 
                     // Save data to buffer table of data server
-                    Helpers.DbUtils.SaveToDbTable(items.Where(a => CheckSymbol(a.symbol)), "dbQuote2023..DayFmpCloud", "symbol", "date", "open",
+                    DbUtils.SaveToDbTable(items.Where(a => CheckSymbol(a.symbol)), "dbQuote2023..DayFmpCloud", "symbol", "date", "open",
                         "high", "low", "close", "volume", "adjClose");
                 }
 

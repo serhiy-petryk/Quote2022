@@ -8,7 +8,7 @@ namespace Data.Models
     {
         public static void RefreshSplitData()
         {
-            Helpers.DbUtils.RunProcedure("pRefreshSplits");
+            DbUtils.RunProcedure("pRefreshSplits");
             Logger.AddMessage($"!Run RefreshSplitData");
         }
 

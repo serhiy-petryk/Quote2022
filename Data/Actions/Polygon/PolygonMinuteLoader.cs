@@ -196,7 +196,7 @@ namespace Data.Actions.Polygon
                     itemCount += oo.results.Length;
 
                     // Save data to buffer table of data server
-                    Helpers.DbUtils.SaveToDbTable(oo.results, "dbQ2023..DayPolygon", "Symbol", "Date", "Open",
+                    DbUtils.SaveToDbTable(oo.results, "dbQ2023..DayPolygon", "Symbol", "Date", "Open",
                         "High", "Low", "Close", "Volume", "WeightedVolume", "TradeCount");
                 }
 

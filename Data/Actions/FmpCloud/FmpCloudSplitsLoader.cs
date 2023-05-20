@@ -69,7 +69,7 @@ namespace Data.Actions.FmpCloud
 
             var K = items.Values.Select(a => a.K).ToArray();
             // Save data to buffer table of data server
-            Helpers.DbUtils.ClearAndSaveToDbTable(items.Values, "dbQ2023..SplitFmpCloud", "symbol", "date", "Ratio",
+            DbUtils.ClearAndSaveToDbTable(items.Values, "dbQ2023..SplitFmpCloud", "symbol", "date", "Ratio",
                 "K", "TimeStamp");
             return items.Count;
         }

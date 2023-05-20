@@ -50,6 +50,8 @@ namespace Data.Actions.Yahoo
                     var entry = new VirtualFileEntry($@"YahooMinute_{timeStamp.Item2}\yMin-{symbol}.txt", (string) o);
                     virtualFileEntries.Add(entry);
                 }
+
+                Thread.Sleep(300);
             }
 
             if (downloadErrors.Count > 0)

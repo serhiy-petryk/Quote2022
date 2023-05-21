@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Windows.Forms;
 using Data.Helpers;
-using Newtonsoft.Json;
 
 namespace Data.Actions.Polygon
 {
@@ -61,49 +59,39 @@ namespace Data.Actions.Polygon
             }
 
             var cnt = 0;
-            var missingFiles = new List<string>();
+            var zipFileName = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_{to.AddDays(1):yyyyMMdd}.zip";
+            var zipEntries = new Dictionary<string, object>();
+            if (File.Exists(zipFileName))
+            {
+                using (var zipArchive = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                    zipEntries = zipArchive.Entries.ToDictionary(a => a.FullName.ToLower(), a => (object) null);
+            }
+
+            var virtualFileEntries = new List<VirtualFileEntry>();
             foreach (var mySymbol in mySymbols)
             {
                 Logger.AddMessage($"Downloaded {cnt++} tickers from {mySymbols.Count}");
 
-                var jsonFileName = $"{folder}pMin_{mySymbol}_{from:yyyyMMdd}.json";
+                var entryName =  $@"{Path.GetFileNameWithoutExtension(zipFileName)}\pMin_{mySymbol}_{from:yyyyMMdd}.json";
                 var urlTicker = PolygonCommon.GetPolygonTicker(mySymbol);
-                if (PolygonCommon.IsTestTicker(urlTicker))
+                if (PolygonCommon.IsTestTicker(urlTicker) || zipEntries.ContainsKey(entryName.ToLower()))
                     continue;
 
                 // var url = $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{from:yyyy-MM-dd}/{to:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
                 var url = string.Format(UrlTemplate, urlTicker, from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey());
-                if (!File.Exists(jsonFileName))
-                {
-                    Download.DownloadToFile(url, jsonFileName);
-                    if (File.Exists(jsonFileName))
-                    {
-                    }
-                    else
-                    {
-                        Debug.Print($"Missing file: \t{jsonFileName}");
-                        missingFiles.Add(jsonFileName);
-                        // ! error
-                    }
-                }
+                var o = Download.DownloadToString(url);
+                if (o is Exception ex)
+                    throw new Exception($"PolygonMinuteLoader: Error while download from {url}. Error message: {ex.Message}");
+
+                virtualFileEntries.Add(new VirtualFileEntry(entryName, (string)o));
             }
 
-            if (missingFiles.Count == 0)
-            {
-                Logger.AddMessage($"Zip data of '{Path.GetDirectoryName(folder)}' folder ...");
-                var zipFileName = ZipUtils.ZipFolder(folder);
-                if (File.Exists(zipFileName))
-                    Directory.Delete(folder, true);
+            ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries);
 
-                Logger.AddMessage($"!Finished. No errors. {mySymbols.Count} symbols. Zip file name: {zipFileName}");
-            }
-            else
-            {
-                Logger.AddMessage($"!Finished. {missingFiles.Count} files are missing. {mySymbols.Count} symbols.");
-            }
+            Logger.AddMessage($"!Finished. No errors. {mySymbols.Count} symbols. Zip file name: {zipFileName}");
         }
 
-        public static void StartWithDateRange()
+        /*public static void StartWithDateRange()
         {
             Logger.AddMessage($"Started");
 
@@ -164,80 +152,6 @@ namespace Data.Actions.Polygon
             }
 
             Logger.AddMessage($"!Finished. Downloaded data for {cnt} tickers");
-        }
-
-        public static int ParseAndSaveToDbAllFiles()
-        {
-            var folder = @"E:\Quote\WebData\Daily\Polygon\Data";
-            var files = Directory.GetFiles(folder, "*.zip");
-            var itemCnt = 0;
-            var fileCnt = 0;
-            foreach (var file in files)
-            {
-                Logger.AddMessage($"Parsed {fileCnt++} files from {files.Length}");
-                itemCnt += ParseAndSaveToDb(file);
-            }
-
-            Logger.AddMessage($"Finished! Parsed {fileCnt++} files from {files.Length}");
-            return itemCnt;
-        }
-
-        public static int ParseAndSaveToDb(string zipFileName)
-        {
-            var itemCount = 0;
-            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries.Where(a => a.Length > 0))
-                {
-                    var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
-                    if (oo.status != "OK" || oo.count != oo.queryCount || oo.count != oo.resultsCount ||
-                        oo.adjusted)
-                        throw new Exception($"Bad file: {zipFileName}");
-                    var a1 = oo.results[0].Date;
-                    itemCount += oo.results.Length;
-
-                    // Save data to buffer table of data server
-                    DbUtils.SaveToDbTable(oo.results, "dbQ2023..DayPolygon", "Symbol", "Date", "Open",
-                        "High", "Low", "Close", "Volume", "WeightedVolume", "TradeCount");
-                }
-
-            return itemCount;
-        }
-
-        #region ===========  Json SubClasses  ===========
-
-        private class cRoot
-        {
-            public int queryCount;
-            public int resultsCount;
-            public bool adjusted;
-            public cItem[] results;
-            public string status;
-            public string request_id;
-            public int count;
-        }
-
-        private class cItem
-        {
-            public string T;
-            public long v;
-            public float vw;
-            public float o;
-            public float h;
-            public float l;
-            public float c;
-            public long t;
-            public int n;
-
-            public string Symbol => PolygonCommon.GetMyTicker(T);
-            public DateTime Date => CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
-            public float Open => o;
-            public float High => h;
-            public float Low => l;
-            public float Close => c;
-            public long Volume => v;
-            public float WeightedVolume => vw;
-            public int TradeCount => n;
-        }
-        #endregion
+        }*/
     }
 }

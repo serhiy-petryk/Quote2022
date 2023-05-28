@@ -13,15 +13,29 @@ namespace Data.Actions.Yahoo
 
         public static void Start()
         {
-            /*var previousFriday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Friday);
-            var previousMonday = previousFriday.AddDays(-4);
-            Start(previousMonday, 5, GetDefaultYahooSymbolList());*/
-            var previousThursday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Thursday);
-            var previousMonday = previousThursday.AddDays(-3);
-            Start(previousMonday, 5, GetDefaultYahooSymbolList());
+            var from = DateTime.MaxValue;
+            var to = DateTime.MinValue;
+            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandTimeout = 150;
+                cmd.CommandText = "SELECT min(date) MinDate, max(date) MaxDate FROM TradingDays where Date >= DATEADD(day, -7, GetDate())";
+                using (var rdr = cmd.ExecuteReader())
+                    while (rdr.Read())
+                    {
+                        from = (DateTime)rdr["MinDate"];
+                        to = (DateTime)rdr["MaxDate"];
+                    }
+            }
+
+            if (from < DateTime.MaxValue)
+                Start(from, to.AddDays(1), GetDefaultYahooSymbolList());
+            else
+                Logger.AddMessage($"!Finished. No data");
         }
 
-        public static void Start(DateTime from, int days, ICollection<string> yahooSymbols)
+        public static void Start(DateTime from, DateTime to, ICollection<string> yahooSymbols)
         {
             Logger.AddMessage($"Started");
 
@@ -30,7 +44,7 @@ namespace Data.Actions.Yahoo
             var errorFileName = $@"{Path.GetDirectoryName(zipFileName)}\DownloadErrors_{timeStamp.Item2}.txt";
 
             var fromInSeconds = GetYahooDate(from);
-            var toInSeconds = GetYahooDate(from.AddDays(days));
+            var toInSeconds = GetYahooDate(to);
 
             var cnt = 0;
             var downloadErrors = new List<string>();

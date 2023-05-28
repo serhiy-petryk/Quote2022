@@ -21,12 +21,13 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"Define symbols to download ...");
             var symbols = new List<string>();
             var from = DateTime.MaxValue;
+            var to = DateTime.MinValue;
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate FROM dbQ2023..DayPolygon "+
+                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon "+
                                   "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) "+
                                   "GROUP BY Symbol ORDER BY 1";
                 using (var rdr = cmd.ExecuteReader())
@@ -35,12 +36,10 @@ namespace Data.Actions.Polygon
                         symbols.Add((string) rdr["Symbol"]);
                         var minDate = (DateTime) rdr["MinDate"];
                         if (minDate < from) from = minDate;
+                        var maxDate = (DateTime)rdr["MaxDate"];
+                        if (maxDate > to) to = maxDate;
                     }
             }
-
-            // var previousFriday = CsUtils.GetPreviousWeekday(DateTime.Now, DayOfWeek.Friday);
-            //var from = previousFriday.AddDays(-11);
-            var to = DateTime.Now.AddHours(-9).Date.AddDays(-1);
 
             Start(symbols, from, to);
         }
@@ -51,7 +50,7 @@ namespace Data.Actions.Polygon
 
             var folder = string.Format(FolderTemplate, to.AddDays(1).ToString("yyyyMMdd"));
             if (MessageBox.Show(
-                    $"You are going to download data for {mySymbols.Count} symbols in {folder} folder! Continue?", "",
+                    $"You are going to download data from {from:yyyy-MM-dd} to {to:yyyy-MM-dd} for {mySymbols.Count} symbols in {folder} folder! Continue?", "",
                     MessageBoxButtons.OKCancel) != DialogResult.OK)
             {
                 Logger.AddMessage($"!Canceled.");
@@ -83,10 +82,8 @@ namespace Data.Actions.Polygon
                 if (o is Exception ex)
                     throw new Exception($"PolygonMinuteLoader: Error while download from {url}. Error message: {ex.Message}");
 
-                virtualFileEntries.Add(new VirtualFileEntry(entryName, (string)o));
+                ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {new VirtualFileEntry(entryName, (string) o)});
             }
-
-            ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries);
 
             Logger.AddMessage($"!Finished. No errors. {mySymbols.Count} symbols. Zip file name: {zipFileName}");
         }

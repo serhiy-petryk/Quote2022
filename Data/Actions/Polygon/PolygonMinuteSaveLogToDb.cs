@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using Data.Helpers;
 using Newtonsoft.Json;
 
@@ -9,16 +11,16 @@ namespace Data.Actions.Polygon
 {
     public static class PolygonMinuteSaveLogToDb
     {
-        public static void Start(string zipFileNameOrFolderName)
+        public static void Start(string zipFileName)
         {
-            var folderId = FolderReader.GetFolderId(zipFileNameOrFolderName);
+            var folderId = Path.GetFileNameWithoutExtension(zipFileName);
 
             Logger.AddMessage($"Started. Delete old log in database.");
             DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon WHERE folder='{folderId}'");
             DbUtils.ExecuteSql($"DELETE dbQ2023..FileLogMinutePolygon_BlankFiles WHERE folder='{folderId}'");
 
             var errorLog = new List<string>();
-            ProcessEntry(zipFileNameOrFolderName, errorLog);
+            ProcessZipFile(zipFileName, errorLog);
 
             // Save errors to file
             var errorFileName = folderId + @".SaveLogToDbError.txt";
@@ -33,37 +35,37 @@ namespace Data.Actions.Polygon
                 Logger.AddMessage($"!Finished. No errors.");
         }
 
-        private static void ProcessEntry(string zipFileNameOrFolderName, List<string> errorLog)
+        private static void ProcessZipFile(string zipFileName, List<string> errorLog)
         {
+            var folderId = Path.GetFileNameWithoutExtension(zipFileName);
             var log = new List<LogEntry>();
             var blankFiles = new List<BlankFile>();
 
             var cnt = 0;
-            using (var reader = new FolderReader(zipFileNameOrFolderName, ".json"))
-                foreach (var entry in reader.Entries)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries.Where(a => a.Name.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase)).ToArray())
                 {
                     cnt++;
                     if (cnt % 10 == 0)
-                        Logger.AddMessage(
-                            $"Processed {cnt} from {reader.Entries.Length} entries in {Path.GetFileName(zipFileNameOrFolderName)}");
+                        Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} entries in {Path.GetFileName(zipFileName)}");
 
-                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.AllText);
+                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
                     if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
                         throw new Exception("Check parser");
 
                     if (!string.IsNullOrEmpty(oo.next_url))
                     {
-                        Debug.Print($"NEXT URL:\t{entry.FileName}\t{oo.next_url}");
-                        errorLog.Add($"{entry.FileName}\tPartial downloading\tNext url: {oo.next_url}");
+                        Debug.Print($"NEXT URL:\t{entry.Name}\t{oo.next_url}");
+                        errorLog.Add($"{entry.Name}\tPartial downloading\tNext url: {oo.next_url}");
                     }
 
                     if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
                     {
                         blankFiles.Add(new BlankFile
                         {
-                            Folder = reader.FolderId,
-                            FileName = entry.FileName,
-                            FileCreated = entry.Created,
+                            Folder = folderId,
+                            FileName = entry.Name,
+                            FileCreated = entry.LastWriteTime.DateTime,
                             Symbol = oo.Symbol
                         });
                         continue;
@@ -76,14 +78,11 @@ namespace Data.Actions.Polygon
                         var item = oo.results[k];
                         if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
                             item.Close < item.Low || item.Low < 0)
-                            errorLog.Add(
-                                $"{entry.FileName}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
                         if (item.Volume < 0)
-                            errorLog.Add(
-                                $"{entry.FileName}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
                         if (item.Volume == 0 && item.High != item.Low)
-                            errorLog.Add(
-                                $"{entry.FileName}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
 
                         if (item.DateTime.Date != lastDate)
                         {
@@ -93,13 +92,13 @@ namespace Data.Actions.Polygon
                             var position = (logEntry == null ? "First" : "Middle");
                             logEntry = new LogEntry
                             {
-                                Folder = entry.FolderId,
-                                FileName = entry.FileName,
+                                Folder = folderId,
+                                FileName = entry.Name,
                                 Symbol = oo.Symbol,
                                 Date = item.DateTime.Date,
                                 Position = position,
                                 Status = oo.status,
-                                Created = entry.Created
+                                Created = entry.LastWriteTime.DateTime
                             };
                             log.Add(logEntry);
                             logEntry.MinTime = item.DateTime.TimeOfDay;
@@ -135,6 +134,7 @@ namespace Data.Actions.Polygon
 
                     if (logEntry != null)
                         logEntry.Position = oo.next_url == null ? "Last" : "PARTIAL";
+
                 }
 
             if (log.Count > 0 || blankFiles.Count > 0)

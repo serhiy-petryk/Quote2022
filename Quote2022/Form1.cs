@@ -1010,16 +1010,6 @@ namespace Quote2022
         {
             btnMinutePolygonSaveLogToDb.Enabled = false;
 
-            /*var dialog = new CommonOpenFileDialog
-            {
-                InitialDirectory = @"E:\Quote\WebData\Minute\Polygon\DataBuffer",
-                IsFolderPicker = true
-            };
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(dialog.FileName + "\\"));
-            }*/
-
             if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && File.Exists(zipFileName))
                 await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(zipFileName));
 
@@ -1029,16 +1019,6 @@ namespace Quote2022
         private async void btnMinutePolygonSplitFilesByDates_Click(object sender, EventArgs e)
         {
             btnMinutePolygonSplitFilesByDates.Enabled = false;
-
-            /*var dialog = new CommonOpenFileDialog
-            {
-                InitialDirectory = @"E:\Quote\WebData\Minute\Polygon\DataBuffer",
-                IsFolderPicker = true
-            };
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSplitData.Start(dialog.FileName));
-            }*/
 
             if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && !string.IsNullOrEmpty(zipFileName))
                 await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSplitData.Start(zipFileName));

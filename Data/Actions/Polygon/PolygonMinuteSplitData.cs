@@ -14,12 +14,11 @@ namespace Data.Actions.Polygon
     {
         private const string DestinationDataFolder = @"E:\Quote\WebData\Minute\Polygon\Data\";
 
-        public static void Start(string zipFileNameOrFolderName)
+        public static void Start(string zipFileName)
         {
             var skipIfExists = true;
 
-            var folderId = FolderReader.GetFolderId(zipFileNameOrFolderName);
-
+            var folderId = Path.GetFileNameWithoutExtension(zipFileName);
             var log = new Log($"{folderId}.SplitLog.txt");
             var errorLog = new Log($"{folderId}.SplitErrors.txt");
             errorLog.Add($"File\tMessage\tContent");
@@ -28,24 +27,22 @@ namespace Data.Actions.Polygon
             var items = new Dictionary<DateTime, List<FileItem>>();
             var cnt = 0;
 
-            using (var reader = new FolderReader(zipFileNameOrFolderName, ".json"))
-            {
-                var entries = reader.Entries.OrderBy(a => a.FileName.Split('_')[2]).ToArray();
-                foreach (var entry in entries)
+            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                foreach (var entry in zip.Entries.Where(a => a.Length > 0).OrderBy(a => a.Name.Split('_')[2]).ToArray())
                 {
                     cnt++;
                     if (cnt % 10 == 0)
-                        Logger.AddMessage($"Processed {cnt} from {entries.Length} files");
+                        Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} files");
 
-                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.AllText);
+                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
 
                     if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
                         throw new Exception("Check parser");
 
                     if (!string.IsNullOrEmpty(oo.next_url))
                     {
-                        Debug.Print($"NEXT URL:\t{entry.FileName}\t{oo.next_url}");
-                        errorLog.Add($"{entry.FileName}\tPartial downloading\tNext url: {oo.next_url}");
+                        Debug.Print($"NEXT URL:\t{entry.Name}\t{oo.next_url}");
+                        errorLog.Add($"{entry.Name}\tPartial downloading\tNext url: {oo.next_url}");
                         continue;
                     }
 
@@ -59,23 +56,23 @@ namespace Data.Actions.Polygon
                         var item = oo.results[k];
                         if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
                             item.Close < item.Low || item.Low < 0)
-                            errorLog.Add($"{entry.FileName}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
                         if (item.Volume < 0)
-                            errorLog.Add($"{entry.FileName}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
                         if (item.Volume == 0 && item.High != item.Low)
-                            errorLog.Add($"{entry.FileName}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
 
                         if (item.DateTime.Date != lastDate)
                         {
-                            FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.Created);
+                            FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.LastWriteTime.DateTime);
 
                             linesToSave = new List<string>
                             {
-                                $"# DateTime,Open,High,Low,Close,Volume,WeightedVolume,TradeCount. File {entry.FileName}. Created at {entry.Created:yyyy-MM-dd HH:mm:ss}"
+                                $"# DateTime,Open,High,Low,Close,Volume,WeightedVolume,TradeCount. File {entry.Name}. Created at {entry.LastWriteTime.DateTime:yyyy-MM-dd HH:mm:ss}"
                             };
 
                             lastDate = item.DateTime.Date;
-                            if (lastDate > entry.Created.AddHours(-9).AddDays(-1))
+                            if (lastDate > entry.LastWriteTime.DateTime.AddHours(-9).AddDays(-1))
                                 break; // Fresh quotes => all day data is not ready
                         }
 
@@ -85,14 +82,12 @@ namespace Data.Actions.Polygon
                     }
 
                     if (linesToSave.Count > 0 && string.IsNullOrEmpty(oo.next_url))
-                        FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave,entry.Created);
+                        FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.LastWriteTime.DateTime);
 
                     if (cnt % 200 == 0)
-                    {
                         ProcessFileItems(items, log, statusCounts, skipIfExists);
-                    }
+
                 }
-            }
 
             ProcessFileItems(items, log, statusCounts, skipIfExists);
 
@@ -145,8 +140,9 @@ namespace Data.Actions.Polygon
                             statusCounts[0]++;
                         }
 
-                        var readmeEntry = zipArchive.CreateEntry(entryName);
-                        using (var writer = new StreamWriter(readmeEntry.Open()))
+                        var zipEntry = zipArchive.CreateEntry(entryName);
+                        zipEntry.LastWriteTime = fileItem.Created;
+                        using (var writer = new StreamWriter(zipEntry.Open()))
                             foreach (var line in fileItem.ContentLines)
                                 writer.WriteLine(line);
                     }

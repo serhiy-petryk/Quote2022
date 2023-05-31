@@ -27,8 +27,8 @@ namespace Data.Actions.Polygon
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon " +
-                                  "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) " +
+                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon "+
+                                  "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) "+
                                   "GROUP BY Symbol ORDER BY 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())

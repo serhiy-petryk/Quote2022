@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -16,6 +18,9 @@ namespace Data.Actions.Polygon
 
         public static void Start(string zipFileName)
         {
+            if (!PolygonSymbolsLoader.DbCheck())
+                return;
+
             var skipIfExists = true;
 
             var folderId = Path.GetFileNameWithoutExtension(zipFileName);
@@ -27,67 +32,77 @@ namespace Data.Actions.Polygon
             var items = new Dictionary<DateTime, List<FileItem>>();
             var cnt = 0;
 
-            using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                foreach (var entry in zip.Entries.Where(a => a.Length > 0).OrderBy(a => a.Name.Split('_')[2]).ToArray())
-                {
-                    cnt++;
-                    if (cnt % 10 == 0)
-                        Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} files");
+            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                // Prepare sql command to check: was the symbol traded?
+                conn.Open();
+                cmd.CommandTimeout = 300;
+                cmd.CommandText = "select count(*) from dbQ2023..SymbolsPolygon where symbol=@symbol and @date between date and isnull([to], GetDate())";
+                cmd.Parameters.Add(new SqlParameter("symbol", ""));
+                cmd.Parameters.Add(new SqlParameter("date", DateTime.MinValue));
 
-                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
-
-                    if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
-                        throw new Exception("Check parser");
-
-                    if (!string.IsNullOrEmpty(oo.next_url))
+                using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
+                    foreach (var entry in zip.Entries.Where(a => a.Length > 0).OrderBy(a => a.Name.Split('_')[2]).ToArray())
                     {
-                        Debug.Print($"NEXT URL:\t{entry.Name}\t{oo.next_url}");
-                        errorLog.Add($"{entry.Name}\tPartial downloading\tNext url: {oo.next_url}");
-                        continue;
-                    }
+                        cnt++;
+                        if (cnt % 10 == 0)
+                            Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} files");
 
-                    if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
-                        continue;
+                        var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
 
-                    var lastDate = DateTime.MinValue;
-                    var linesToSave = new List<string>();
-                    for (var k = 0; k < oo.results.Length; k++)
-                    {
-                        var item = oo.results[k];
-                        if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
-                            item.Close < item.Low || item.Low < 0)
-                            errorLog.Add($"{entry.Name}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-                        if (item.Volume < 0)
-                            errorLog.Add($"{entry.Name}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
-                        if (item.Volume == 0 && item.High != item.Low)
-                            errorLog.Add($"{entry.Name}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                        if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
+                            throw new Exception("Check parser");
 
-                        if (item.DateTime.Date != lastDate)
+                        if (!string.IsNullOrEmpty(oo.next_url))
                         {
-                            FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.LastWriteTime.DateTime);
-
-                            linesToSave = new List<string>
-                            {
-                                $"# DateTime,Open,High,Low,Close,Volume,WeightedVolume,TradeCount. File {entry.Name}. Created at {entry.LastWriteTime.DateTime:yyyy-MM-dd HH:mm:ss}"
-                            };
-
-                            lastDate = item.DateTime.Date;
-                            if (lastDate > entry.LastWriteTime.DateTime.AddHours(-9).AddDays(-1))
-                                break; // Fresh quotes => all day data is not ready
+                            Debug.Print($"NEXT URL:\t{entry.Name}\t{oo.next_url}");
+                            errorLog.Add($"{entry.Name}\tPartial downloading\tNext url: {oo.next_url}");
+                            continue;
                         }
 
-                        var line =
-                            $"{item.DateTime:yyyy-MM-dd HH:mm},{FloatToString(item.Open)},{FloatToString(item.High)},{FloatToString(item.Low)},{FloatToString(item.Close)},{item.Volume},{FloatToString(item.WeightedVolume)},{item.TradeCount}";
-                        linesToSave.Add(line);
+                        if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
+                            continue;
+
+                        var lastDate = DateTime.MinValue;
+                        var linesToSave = new List<string>();
+                        for (var k = 0; k < oo.results.Length; k++)
+                        {
+                            var item = oo.results[k];
+                            if (item.Open > item.High || item.Open < item.Low || item.Close > item.High || item.Close < item.Low || item.Low < 0)
+                                errorLog.Add($"{entry.Name}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            if (item.Volume < 0)
+                                errorLog.Add($"{entry.Name}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            if (item.Volume == 0 && item.High != item.Low)
+                                errorLog.Add($"{entry.Name}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+
+                            if (item.DateTime.Date != lastDate)
+                            {
+                                if (WasTraded(cmd, oo.Symbol, lastDate))
+                                    FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.LastWriteTime.DateTime);
+
+                                linesToSave = new List<string>
+                                {
+                                    $"# DateTime,Open,High,Low,Close,Volume,WeightedVolume,TradeCount. File {entry.Name}. Created at {entry.LastWriteTime.DateTime:yyyy-MM-dd HH:mm:ss}"
+                                };
+
+                                lastDate = item.DateTime.Date;
+                                if (lastDate > entry.LastWriteTime.DateTime.AddHours(-9).AddDays(-1))
+                                    break; // Fresh quotes => all day data is not ready
+                            }
+
+                            var line = $"{item.DateTime:yyyy-MM-dd HH:mm},{FloatToString(item.Open)},{FloatToString(item.High)},{FloatToString(item.Low)},{FloatToString(item.Close)},{item.Volume},{FloatToString(item.WeightedVolume)},{item.TradeCount}";
+                            linesToSave.Add(line);
+                        }
+
+                        if (linesToSave.Count > 0 && string.IsNullOrEmpty(oo.next_url) && WasTraded(cmd, oo.Symbol, lastDate))
+                            FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.LastWriteTime.DateTime);
+
+                        if (cnt % 200 == 0)
+                            ProcessFileItems(items, log, statusCounts, skipIfExists);
+
                     }
-
-                    if (linesToSave.Count > 0 && string.IsNullOrEmpty(oo.next_url))
-                        FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.LastWriteTime.DateTime);
-
-                    if (cnt % 200 == 0)
-                        ProcessFileItems(items, log, statusCounts, skipIfExists);
-
-                }
+            }
 
             ProcessFileItems(items, log, statusCounts, skipIfExists);
 
@@ -101,6 +116,14 @@ namespace Data.Actions.Polygon
         }
 
         private static string FloatToString(float f) => f.ToString(CultureInfo.InvariantCulture);
+
+        public static bool WasTraded(SqlCommand cmd, string symbol, DateTime date)
+        {
+            cmd.Parameters["symbol"].Value = symbol;
+            cmd.Parameters["date"].Value = date;
+            var cnt = (int)cmd.ExecuteScalar();
+            return cnt != 0;
+        }
 
         private static void ProcessFileItems(Dictionary<DateTime, List<FileItem>> items, Log log,  int[] statusCounts, bool skipIfExists)
         {

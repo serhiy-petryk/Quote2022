@@ -848,56 +848,6 @@ namespace Quote2022
         {
             btnTemp.Enabled = false;
 
-            // var fn = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_20230327.zip";
-            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveToDb(fn));
-
-            /*var url = @"https://api.openfigi.com/v3/filter";
-            var filename = @"E:\Quote\Temp\Figi\filter.Preferred.json";
-            Data.Helpers.Download.DownloadPage_POST(url, filename, "{\"exchCode\": \"US\", \"marketSecDes\":\"Equity\", \"securityType2\":\"Preferred Stock\"}");*/
-
-            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonDailyLoader.ParseAndSaveToDbAllFiles());
-
-            /*var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_20230327";
-            var files = Directory.GetFiles(folder, "*.json");
-            foreach (var file in files)
-            {
-                var ss = Path.GetFileNameWithoutExtension(file).Split('_');
-                var symbol = ss[1].Replace("+", "");
-                var newSymbol = Data.Actions.Polygon.PolygonCommon.GetMyTicker(symbol);
-                if (symbol != newSymbol)
-                {
-                    var newFn = file.Replace("_" + ss[1] + "_", "_" + newSymbol + "_");
-                    if (File.Exists(newFn))
-                    {
-
-                    }
-                    File.Move(file, newFn);
-                    // ss[1] = newSymbol;
-                    Debug.Print($"Symbol:\t{symbol}\t{newSymbol}\t{newFn}");
-                }
-            }*/
-
-            // Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange();
-
-            /*var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\Minute5Years_20230401";
-            var files = Directory.GetFiles(folder, "*.json");
-            foreach (var file in files)
-            {
-                var d1 = File.GetCreationTime(file);
-                var d2 = File.GetLastWriteTime(file);
-                if (d1.Date != d2.Date && d2<d1)
-                {
-                    File.SetCreationTime(file, d2);
-                }
-            }*/
-
-            //await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange());
-
-            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.StartFolder(@"E:\Quote\WebData\Minute\Polygon\DataBuffer\Minute5Years_20230401"));
-            // await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteLoader.StartWithDateRange());
-
-            // Data.Actions.Polygon.PolygonTemp.UnzipMissingFiles();
-
             btnTemp.Enabled = true;
         }
 

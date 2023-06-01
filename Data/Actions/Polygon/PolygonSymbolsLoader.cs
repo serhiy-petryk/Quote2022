@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Windows.Forms;
 using Data.Helpers;
 using Newtonsoft.Json;
 
@@ -15,6 +17,44 @@ namespace Data.Actions.Polygon
         private const string StartUrlTemplate = "https://api.polygon.io/v3/reference/tickers?active=true&limit=1000";
         private const string UrlTemplate = "https://api.polygon.io/v3/reference/tickers?date={0}&active=true&limit=1000";
         private const string ZipFileNameTemplate = @"E:\Quote\WebData\Symbols\Polygon\Data\SymbolsPolygon_{0}.zip";
+
+        public static bool DbCheck()
+        {
+            Logger.AddMessage($"Check symbols/dates in SymbolsPolygon table of database.");
+
+            using (var conn = new SqlConnection(Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandTimeout = 300;
+                cmd.CommandText = "select top 1 c.Mindate, a.* from dbQ2023..DayPolygon a " +
+                                  "left join dbQ2023..SymbolsPolygon b on a.Symbol = b.Symbol and a.Date between b.Date and isnull(b.[To], GetDate()) " +
+                                  "inner join(select symbol, min(date) MinDate from dbQ2023..SymbolsPolygon group by symbol) c on a.Symbol = c.Symbol " +
+                                  "where b.Symbol is null";
+                var i = cmd.ExecuteScalar();
+
+                if (!Equals(i, null))
+                {
+                    Debug.Print($"Please, check missing dates in SymbolsPolygon table of database:{Environment.NewLine}{cmd.CommandText}");
+                    MessageBox.Show(@"Please, check missing dates in SymbolsPolygon table of database. See output window");
+                    return false;
+                }
+
+                cmd.CommandText = "select top 1 * from dbQ2023..SymbolsPolygon a " +
+                                  "inner join dbQ2023..SymbolsPolygon b on a.Symbol = b.Symbol and b.Date between a.Date and isnull(a.[To], GetDate()) " +
+                                  "where a.Date<>b.Date";
+                i = cmd.ExecuteScalar();
+
+                if (!Equals(i, null))
+                {
+                    Debug.Print($"Please, check date duplicates in SymbolsPolygon table of database:{Environment.NewLine}{cmd.CommandText}");
+                    MessageBox.Show(@"Please, check date duplicates in SymbolsPolygon table of database. See output window");
+                    return false;
+                }
+
+                return true;
+            }
+        }
 
         public static void Start()
         {

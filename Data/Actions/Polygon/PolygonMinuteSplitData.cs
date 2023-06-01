@@ -78,7 +78,7 @@ namespace Data.Actions.Polygon
 
                             if (item.DateTime.Date != lastDate)
                             {
-                                if (WasTraded(cmd, oo.Symbol, lastDate))
+                                if (linesToSave.Count > 0 && WasTraded(cmd, oo.Symbol, lastDate))
                                     FileItem.CreateItem(items, oo.Symbol, lastDate, linesToSave, entry.LastWriteTime.DateTime);
 
                                 linesToSave = new List<string>

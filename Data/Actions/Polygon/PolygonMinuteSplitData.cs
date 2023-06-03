@@ -143,7 +143,7 @@ namespace Data.Actions.Polygon
                         var oldEntries = zipArchive.Entries.Where(a =>
                                 string.Equals(a.FullName, entryName, StringComparison.InvariantCultureIgnoreCase))
                             .ToArray();
-                        if (oldEntries.Length != 0 && skipIfExists)
+                        if (oldEntries.Length != 0 && skipIfExists && kvp.Key != new DateTime(2023, 5, 26))
                         {
                             log.Add($"{fileItem.FileId}\tSkipped");
                             statusCounts[2]++;

@@ -23,7 +23,7 @@ namespace Data.Actions.Polygon
             ProcessZipFile(zipFileName, errorLog);
 
             // Save errors to file
-            var errorFileName = folderId + @".SaveLogToDbError.txt";
+            var errorFileName = Path.GetDirectoryName(zipFileName) + @".SaveLogToDbError.txt";
             if (File.Exists(errorFileName))
                 File.Delete(errorFileName);
             File.AppendAllText(errorFileName, $"File\tMessage\tContent{Environment.NewLine}");

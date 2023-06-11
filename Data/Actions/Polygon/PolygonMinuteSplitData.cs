@@ -24,8 +24,8 @@ namespace Data.Actions.Polygon
             var skipIfExists = true;
 
             var folderId = Path.GetFileNameWithoutExtension(zipFileName);
-            var log = new Log($"{folderId}.SplitLog.txt");
-            var errorLog = new Log($"{folderId}.SplitErrors.txt");
+            var log = new Log($"{Path.GetDirectoryName(zipFileName)}.SplitLog.txt");
+            var errorLog = new Log($"{Path.GetDirectoryName(zipFileName)}.SplitErrors.txt");
             errorLog.Add($"File\tMessage\tContent");
 
             var statusCounts = new int[3];

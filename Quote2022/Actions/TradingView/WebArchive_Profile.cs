@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 
 namespace Quote2022.Actions.TradingView

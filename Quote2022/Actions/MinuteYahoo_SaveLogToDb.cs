@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using Quote2022.Helpers;
 

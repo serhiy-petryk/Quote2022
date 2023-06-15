@@ -1,180 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A6E41F0-261C-4B5A-9AF1-3EC5D4F10DCD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Quote2022</RootNamespace>
-    <AssemblyName>Quote2022</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="EPPlus, Version=4.5.3.3, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\EPPlus.4.5.3.3\lib\net40\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="FastMember, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FastMember.1.5.0\lib\net461\FastMember.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.ExtendedLinguisticServices, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack.1.1.2\lib\Microsoft.WindowsAPICodePack.ExtendedLinguisticServices.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Sensors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack.1.1.2\lib\Microsoft.WindowsAPICodePack.Sensors.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack.1.1.2\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack.1.1.2\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Windows.Forms" />
+    <PackageReference Include="EPPlus" Version="6.2.5" />
+    <PackageReference Include="FastMember" Version="1.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="WindowsAPICodePack" Version="7.0.4" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Actions\Barchart\IndexBarchart_Parse.cs" />
-    <Compile Include="Actions\Check.cs" />
-    <Compile Include="Actions\DataSources.cs" />
-    <Compile Include="Actions\DayAlphaVantage\DAV_Download.cs" />
-    <Compile Include="Actions\DayAlphaVantage\DAV_Parse.cs" />
-    <Compile Include="Actions\Eoddata\WebArchive_Symbols.cs" />
-    <Compile Include="Actions\Github.cs" />
-    <Compile Include="Actions\MinuteAlphaVantage\MAV_SplitData.cs" />
-    <Compile Include="Actions\MinuteAlphaVantage\MAV_Tests.cs" />
-    <Compile Include="Actions\MinuteYahoo_SaveLogToDb.cs" />
-    <Compile Include="Actions\MinuteAlphaVantage\MAV_SaveLogToDb.cs" />
-    <Compile Include="Actions\MinuteAlphaVantage\MAV_Download.cs" />
-    <Compile Include="Actions\MinuteYahooQuotes_SaveToDb.cs" />
-    <Compile Include="Actions\IntradayResults.cs" />
-    <Compile Include="Actions\Nasdaq\ScreenerNasdaq_Parse.cs" />
-    <Compile Include="Actions\Nasdaq\WebArchive_NasdaqListed.cs" />
-    <Compile Include="Actions\Parse.Symbols.cs" />
-    <Compile Include="Actions\Quantumonline\SymbolsQuantumonline_Download.cs" />
-    <Compile Include="Actions\Nasdaq\ScreenerNasdaq_Download.cs" />
-    <Compile Include="Actions\Russell\IndexRussell.cs" />
-    <Compile Include="Actions\ScreenerStockanalysis\Download.cs" />
-    <Compile Include="Actions\StockAnalysis\IPO.cs" />
-    <Compile Include="Actions\StockAnalysis\WebArchiveActions.cs" />
-    <Compile Include="Actions\SymbolsYahoo\ProfileYahoo_Parse.cs" />
-    <Compile Include="Actions\SymbolsYahoo\ScreenerYahoo_Download.cs" />
-    <Compile Include="Actions\TradingView\Recommend_Parse.cs" />
-    <Compile Include="Actions\TradingView\WebArchive_Profile.cs" />
-    <Compile Include="Actions\TradingView\WebArchive_Screener.cs" />
-    <Compile Include="Actions\Wikipedia\Indices.cs" />
-    <Compile Include="Helpers\CsUtils.cs" />
-    <Compile Include="Actions\Download.cs" />
-    <Compile Include="Form1.cs">
+    <ProjectReference Include="..\Data\Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Update="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\Algorithm1.cs" />
-    <Compile Include="Actions\Parse.Splits.cs" />
-    <Compile Include="Actions\SaveToDb.Splits.cs" />
-    <Compile Include="Helpers\ExcelHelper.cs" />
-    <Compile Include="Helpers\QuoteLoader.cs" />
-    <Compile Include="Helpers\WebArchive.cs" />
-    <Compile Include="Helpers\ZipReader.cs" />
-    <Compile Include="Models\Indices.cs" />
-    <Compile Include="Models\ScreenerStockAnalysis.cs" />
-    <Compile Include="Models\DayAlphaVantage.cs" />
-    <Compile Include="Models\DayEoddataExtended.cs" />
-    <Compile Include="Models\DayEoddata.cs" />
-    <Compile Include="Models\DayYahoo.cs" />
-    <Compile Include="Models\IntradayParameters.cs" />
-    <Compile Include="Models\ProfileYahoo.cs" />
-    <Compile Include="Models\Quote.cs" />
-    <Compile Include="Models\SymbolsOfDataSource.cs" />
-    <Compile Include="Models\SymbolsYahooLookup.cs" />
-    <Compile Include="Models\TradeStatistics.cs" />
-    <Compile Include="Models\QuoteGroup.cs" />
-    <Compile Include="Models\ScreenerNasdaq.cs" />
-    <Compile Include="Models\SplitModel.cs" />
-    <Compile Include="Models\SymbolsNasdaq.cs" />
-    <Compile Include="Models\SymbolsEoddata.cs" />
-    <Compile Include="Models\SymbolsNanex.cs" />
-    <Compile Include="Models\MinuteYahoo.cs" />
-    <Compile Include="Actions\Parse.cs" />
-    <Compile Include="Models\ProfilesQuantumonline.cs" />
-    <Compile Include="Models\SymbolsQuantumonline.cs" />
-    <Compile Include="Models\SymbolsStockanalysis.cs" />
-    <Compile Include="Models\TimeSalesNasdaq.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Actions\SaveToDb.cs" />
-    <Compile Include="Settings.cs" />
-    <EmbeddedResource Include="Form1.resx">
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Form1.resx">
+      <SubType>Designer</SubType>
       <DependentUpon>Form1.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="license.txt" />
-    <Content Include="Windows Logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Data\Data.csproj">
-      <Project>{c8c5f0d5-d996-4ace-83d7-eb2da50f7081}</Project>
-      <Name>Data</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

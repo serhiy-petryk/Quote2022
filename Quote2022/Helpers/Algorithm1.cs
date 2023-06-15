@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 using Quote2022.Models;
 
 namespace Quote2022.Helpers

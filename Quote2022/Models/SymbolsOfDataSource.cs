@@ -9,10 +9,10 @@ namespace Quote2022.Models
         // public string ExchangeAndSymbol => Symbol + @"/" + Exchange;
         public string Exchange;
         public string Symbol;
-        public string Asset;
-        public string Sector;
-        public string Industry;
-        public List<string> Kinds = new List<string>();
+        // public string Asset;
+        // public string Sector;
+        // public string Industry;
+        // public List<string> Kinds = new List<string>();
         public double TradeValue;
         public int TradeValueId = int.MinValue;
         public string TvType;
@@ -29,9 +29,9 @@ namespace Quote2022.Models
         {
             Exchange = (string)rdr["Exchange"];
             Symbol = (string)rdr["Symbol"];
-            Asset = GetDbString(rdr["Asset"]);
-            Sector = GetDbString(rdr["Sector"]) ?? Asset;
-            Industry = GetDbString(rdr["Industry"]) ?? Asset;
+            //Asset = GetDbString(rdr["Asset"]);
+            //Sector = GetDbString(rdr["Sector"]) ?? Asset;
+            //Industry = GetDbString(rdr["Industry"]) ?? Asset;
             TradeValue = (double)rdr["TradeValue"];
             TvType = GetDbString(rdr["TvType"]);
             TvSubtype = GetDbString(rdr["TvSubtype"]);

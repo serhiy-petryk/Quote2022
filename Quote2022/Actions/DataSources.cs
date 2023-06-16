@@ -26,8 +26,10 @@ namespace Quote2022.Actions
                 {
                     conn.Open();
                     cmd.CommandText =
-                        $"select a.Exchange, a.Symbol, ISNULL(ISNULL(b.[Index], a.Asset),'STOCKS') Kind, c.TradeValue, " +
-                        "a.Asset, a.Sector, a.Industry, a.TvType, a.TvSubtype, a.TvSector, a.TvIndustry, a.TvRecommend " +
+                        // $"select a.Exchange, a.Symbol, ISNULL(ISNULL(b.[Index], a.Asset),'STOCKS') Kind, c.TradeValue, " +
+                        // "a.Asset, a.Sector, a.Industry, a.TvType, a.TvSubtype, a.TvSector, a.TvIndustry, a.TvRecommend " +
+                        $"select a.Exchange, a.Symbol, c.TradeValue, " +
+                        "a.TvType, a.TvSubtype, a.TvSector, a.TvIndustry, a.TvRecommend " +
                         "FROM SymbolsEoddata a " +
                         "left join [Indexes] b on a.Symbol = b.Symbol " +
                         $"inner join (select TOP {numberOfSymbols} exchange, symbol, SUM([Close] * Volume) TradeValue, " +
@@ -44,7 +46,7 @@ namespace Quote2022.Actions
                             var o = new SymbolsOfDataSource(rdr);
                             if (!symbols.ContainsKey(o.Symbol))
                                 symbols.Add(o.Symbol, o);
-                            symbols[o.Symbol].Kinds.Add((string) rdr["Kind"]);
+                            // symbols[o.Symbol].Kinds.Add((string) rdr["Kind"]);
                         }
                 }
 

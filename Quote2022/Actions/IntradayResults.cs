@@ -12,13 +12,13 @@ namespace Quote2022.Actions
             new Dictionary<string, Func<IEnumerable<IntradayQuote>, IntradayParameters, List<object[]>>>
             {
                 {"By Time", ByTime}, {"By Date", ByDate}, {"By Day of Week", ByDayOfWeek}, {"By Week", ByWeek},
-                {"By Kind", ByKind}, {"By Sector", BySector}, {"By Industry", ByIndustry}, {"By Symbol", BySymbol},
+                /* {"By Kind", ByKind}, {"By Sector", BySector}, {"By Industry", ByIndustry},*/ {"By Symbol", BySymbol},
                 {"By Trade Value", ByTradeValue}, {"By TradingView Type", ByTradingViewType},
                 {"By TradingView Subtype", ByTradingViewSubtype}, {"By TradingViewSector", ByTradingViewSector},
                 {"By TradingView SectorAndIndustry", ByTradingViewSectorAndIndustry},
-                {"By TradingView Recommend", ByTradingViewRecommend}, {"By Kind and Time", ByKindAndTime},
+                {"By TradingView Recommend", ByTradingViewRecommend}, /* {"By Kind and Time", ByKindAndTime},
                 {"By Kind and DayOfWeek", ByKindAndDayOfWeek}, {"By Sector and Industry", BySectorAndIndustry},
-                {"By Exchange and Asset", ByExchangeAndAsset}, {"By TradingViewSector and Time", ByTradingViewSectorAndTime}
+                {"By Exchange and Asset", ByExchangeAndAsset},*/ {"By TradingViewSector and Time", ByTradingViewSectorAndTime}
             };
 
         public static List<object[]> ByTime(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>
@@ -44,7 +44,7 @@ namespace Quote2022.Actions
             return lines;
         }
 
-        public static List<object[]> ByKind(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters)
+        /*public static List<object[]> ByKind(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters)
         {
             var symbols = DataSources.GetActiveSymbols();
             var data = new Dictionary<string, List<Quote>>();
@@ -64,13 +64,13 @@ namespace Quote2022.Actions
             }
 
             return lines;
-        }
+        }*/
 
-        public static List<object[]> BySector(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>
+        /*public static List<object[]> BySector(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>
             BySymbolProperty(iQuotes, iParameters, new[] { "Sector" }, (symbol) => symbol.Sector);
 
         public static List<object[]> ByIndustry(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>
-            BySymbolProperty(iQuotes, iParameters, new[] { "Industry" }, (symbol) => symbol.Industry);
+            BySymbolProperty(iQuotes, iParameters, new[] { "Industry" }, (symbol) => symbol.Industry);*/
 
         public static List<object[]> BySymbol(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>
             ByQuoteProperty(iQuotes, iParameters, new[] { "Symbol" }, (quote) => quote.Symbol);
@@ -114,7 +114,7 @@ namespace Quote2022.Actions
             return lines;
         }
 
-        public static List<object[]> ByKindAndTime(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters)
+        /*public static List<object[]> ByKindAndTime(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters)
         {
             var symbols = DataSources.GetActiveSymbols();
             var data = new Dictionary<Tuple<string, TimeSpan>, List<Quote>>();
@@ -136,9 +136,9 @@ namespace Quote2022.Actions
             }
 
             return lines;
-        }
+        }*/
 
-        public static List<object[]> ByKindAndDayOfWeek(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters)
+        /*public static List<object[]> ByKindAndDayOfWeek(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters)
         {
             var symbols = DataSources.GetActiveSymbols();
             var data = new Dictionary<Tuple<string, DayOfWeek>, List<Quote>>();
@@ -160,16 +160,15 @@ namespace Quote2022.Actions
             }
 
             return lines;
-        }
+        }*/
 
-        public static List<object[]> BySectorAndIndustry(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>
+        /* public static List<object[]> BySectorAndIndustry(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>
             ByTwoProperties(iQuotes,iParameters, new[] { "Sector", "Industry" }, (quote, symbol) => symbol.Sector,
                 (quote, symbol) => symbol.Industry);
 
-        public static List<object[]>
-            ByExchangeAndAsset(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) => ByTwoProperties(
+        public static List<object[]> ByExchangeAndAsset(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) => ByTwoProperties(
             iQuotes, iParameters, new[] {"Exchange", "Asset"}, (quote, symbol) => symbol.Exchange,
-            (quote, symbol) => symbol.Asset);
+            (quote, symbol) => symbol.Asset);*/
 
         public static List<object[]>
             ByTradingViewSectorAndTime(IEnumerable<IntradayQuote> iQuotes, IntradayParameters iParameters) =>

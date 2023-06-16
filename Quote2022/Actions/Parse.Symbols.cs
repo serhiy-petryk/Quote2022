@@ -203,7 +203,8 @@ namespace Quote2022.Actions
             foreach (var file in files)
             {
                 var exchange = Path.GetFileNameWithoutExtension(file).Split('_')[0];
-                var s = File.ReadAllText(file, Settings.Encoding);
+                // var s = File.ReadAllText(file, Settings.Encoding);
+                var s = File.ReadAllText(file);
                 var created = File.GetLastWriteTime(file);
                 var i1 = s.IndexOf("<table", StringComparison.Ordinal);
                 var i2 = s.IndexOf(@"</table>", StringComparison.Ordinal);

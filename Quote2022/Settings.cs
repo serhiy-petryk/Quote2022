@@ -6,11 +6,11 @@ namespace Quote2022
 {
     public static class Settings
     {
-        public readonly static Encoding Encoding = Encoding.GetEncoding(1252);//Western European (Windows)
+        // public readonly static Encoding Encoding = Encoding.GetEncoding(1252);//Western European (Windows)
         public readonly static DateTimeFormatInfo fiDateInvariant = CultureInfo.InvariantCulture.DateTimeFormat;
         public readonly static NumberFormatInfo fiNumberInvariant = CultureInfo.InvariantCulture.NumberFormat;
 
-        internal const string DbConnectionString = "Data Source=localhost;Initial Catalog=dbQuote2022;Integrated Security=True;Connect Timeout=150;";
+        internal const string DbConnectionString = "Data Source=localhost;Initial Catalog=dbQuote2022;Integrated Security=True;Connect Timeout=150;Encrypt=false;";
 
         private const string BaseFolder = @"E:\Quote\";
         private const string BaseFolderD = @"D:\Quote\";

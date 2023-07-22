@@ -848,6 +848,8 @@ namespace Quote2022
         {
             btnTemp.Enabled = false;
 
+            Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveAllZip();
+
             btnTemp.Enabled = true;
         }
 

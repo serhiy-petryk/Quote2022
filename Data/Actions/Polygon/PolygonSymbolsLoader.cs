@@ -114,32 +114,12 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"!Finished. Processed {fileCount} files with {itemCount:N0} items");
         }
 
-        public static void ParseAllZip()
+        public static void ParseAndSaveAllZip()
         {
             var folder = Path.GetDirectoryName(ZipFileNameTemplate);
             var files = Directory.GetFiles(folder, "*.zip").OrderBy(a => a).ToArray();
             foreach (var zipFileName in files)
-            {
-                var items = new List<cItem>();
-                using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
-                    foreach (var entry in zip.Entries.Where(a => a.Length > 0))
-                    {
-                        var oo = JsonConvert.DeserializeObject<cRoot>(entry.GetContentOfZipEntry());
-
-                        var ss = Path.GetFileNameWithoutExtension(entry.Name).Split('_');
-                        var date = DateTime.ParseExact(ss[ss.Length - 1], "yyyyMMdd", CultureInfo.InstalledUICulture);
-                        foreach (var item in oo.results)
-                        {
-                            item.Date = date;
-                            item.TimeStamp = entry.LastWriteTime.DateTime;
-                        }
-
-                        items.AddRange(oo.results.Where(a => a.IsValidTicker && a.market == "stocks"));
-                    }
-
-                DbUtils.SaveToDbTable(items, "dbQ2023..SymbolsPolygonDetails", "Symbol", "Date", "primary_exchange",
-                    "name", "type", "cik", "composite_figi", "share_class_figi", "last_updated_utc", "TimeStamp");
-            }
+                ParseAndSaveToDb(zipFileName);
         }
 
         public static int ParseAndSaveToDb(string zipFileName)
@@ -200,7 +180,7 @@ namespace Data.Actions.Polygon
             public bool IsValidTicker => !(ticker.StartsWith("X:", StringComparison.InvariantCultureIgnoreCase) ||
                                            ticker.StartsWith("C:", StringComparison.InvariantCultureIgnoreCase) ||
                                            ticker.StartsWith("I:", StringComparison.InvariantCultureIgnoreCase) ||
-                                           PolygonCommon.IsTestTicker(Symbol));
+                                           PolygonCommon.IsTestTicker(Symbol) || string.IsNullOrEmpty(primary_exchange));
             public string Symbol => PolygonCommon.GetMyTicker(ticker);
             public DateTime Date;
             public string Name => string.IsNullOrEmpty(name) ? null : name;

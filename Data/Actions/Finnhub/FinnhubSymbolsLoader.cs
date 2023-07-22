@@ -8,9 +8,9 @@ namespace Data.Actions.Finnhub
 {
     public class FinnhubSymbolsLoader
     {
-       /* private static readonly string[] Exchanges = new string[] {"AMEX", "NASDAQ", "NYSE", "OTCBB"};
-        private const string UrlTemplate = @"https://www.eoddata.com/Data/symbollist.aspx?e={0}";
-        private const  string FolderTemplate = @"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{0}\";*/
+        /* private static readonly string[] Exchanges = new string[] {"AMEX", "NASDAQ", "NYSE", "OTCBB"};
+         private const string UrlTemplate = @"https://www.eoddata.com/Data/symbollist.aspx?e={0}";
+         private const  string FolderTemplate = @"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{0}\";*/
 
         /*public static void Start()
         {
@@ -42,7 +42,7 @@ namespace Data.Actions.Finnhub
             var itemCount = ParseAndSaveToDb(zipFileName);
 
             Logger.AddMessage($"Run sql procedure: pUpdateSymbolsXref");
-            DbUtils.RunProcedure("pUpdateSymbolsXref");
+            DbUtils.RunProcedure("dbQ2023Others..pUpdateSymbolsXref");
 
             // Zip data
             Directory.Delete(folder, true);
@@ -66,7 +66,7 @@ namespace Data.Actions.Finnhub
                     // Save data to buffer table of data server
                     DbUtils.ClearAndSaveToDbTable(items, "dbQuote2023..Bfr_SymbolsFinnhub", "symbol",
                         "Exchange", "Type", "Name", "Figi", "ShareClassFigi", "TimeStamp");
-                    // DbUtils.RunProcedure("pUpdateSymbolsEoddata");
+                    // DbUtils.RunProcedure("dbQ2023Others..pUpdateSymbolsEoddata");
                 }
 
             return itemCount;

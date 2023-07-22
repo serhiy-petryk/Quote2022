@@ -102,7 +102,7 @@ namespace Quote2022.Actions
         public static void SymbolsEoddata_ParseAndSaveToDb(string zipFile, Action<string> showStatusAction)
         {
             showStatusAction($"SymbolsEoddata file is parsing: {Path.GetFileName(zipFile)}");
-            SaveToDb.RunProcedure("pUpdateSymbolsEoddata_Before");
+            SaveToDb.RunProcedure("dbQ2023Others..pUpdateSymbolsEoddata_Before");
 
             using (var zip = new ZipReader(zipFile))
                 foreach (var file in zip.Where(a => a.FullName.EndsWith(".txt", true, CultureInfo.InvariantCulture)))
@@ -129,14 +129,14 @@ namespace Quote2022.Actions
                     }
 
                     // Save data to buffer table of data server
-                    SaveToDb.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name", "Created");
-                    SaveToDb.RunProcedure("pUpdateSymbolsEoddata", new Dictionary<string, object> { { "@Exchange", exchange }, { "@Date", date } });
+                    SaveToDb.ClearAndSaveToDbTable(items, "dbQ2023Others..Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name", "Created");
+                    SaveToDb.RunProcedure("dbQ2023Others..pUpdateSymbolsEoddata", new Dictionary<string, object> { { "@Exchange", exchange }, { "@Date", date } });
                     items.Clear();
 
                     showStatusAction($"SymbolsEoddata file finished: {Path.GetFileName(file.FileNameWithoutExtension)}");
                 }
 
-            SaveToDb.RunProcedure("pUpdateSymbolsXref");
+            SaveToDb.RunProcedure("dbQ2023Others..pUpdateSymbolsXref");
 
             showStatusAction($"SymbolsEoddata file FINISHED! File name: {Path.GetFileName(zipFile)}");
         }

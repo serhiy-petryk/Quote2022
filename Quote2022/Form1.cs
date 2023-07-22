@@ -260,7 +260,7 @@ namespace Quote2022
         private void btnUpdateTradingDays_Click(object sender, EventArgs e)
         {
             ShowStatus($"UpdateTradingDays is starting");
-            SaveToDb.RunProcedure("pRefreshTradingDays");
+            SaveToDb.RunProcedure("dbQ2023Others..pRefreshTradingDays");
             ShowStatus($"UpdateTradingDays FINISHED!");
         }
 

@@ -22,8 +22,8 @@ namespace Quote2022.Actions.TradingView
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                // cmd.CommandText = "select * from SymbolsEoddata where (TvType is null or ((isnull(TvType,'') not in ('warrant','right','dr', 'structured') and TvSubtype is null))) and TradingViewSymbol is not null";
-                cmd.CommandText = "select * from SymbolsEoddata where "+
+                // cmd.CommandText = "select * from dbQ2023Others..SymbolsEoddata where (TvType is null or ((isnull(TvType,'') not in ('warrant','right','dr', 'structured') and TvSubtype is null))) and TradingViewSymbol is not null";
+                cmd.CommandText = "select * from dbQ2023Others..SymbolsEoddata where " +
                                   "(TvType is null or (isnull(TvType,'') not in ('warrant','right') and TvSector is null)) and TradingViewSymbol is not null";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())

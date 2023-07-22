@@ -190,7 +190,7 @@ namespace Quote2022.Actions
                         var ss = Path.GetFileNameWithoutExtension(file).Split('_');
                         var exchange = ss[0];
                         var date = DateTime.ParseExact(ss[1], "yyyyMMdd", CultureInfo.InvariantCulture);
-                        cmd.CommandText = $"SELECT * from DayEoddata WHERE Exchange='{exchange}' and date='{date:yyyy-MM-dd}' order by Symbol";
+                        cmd.CommandText = $"SELECT * from dbQ2023Others..DayEoddata WHERE Exchange='{exchange}' and date='{date:yyyy-MM-dd}' order by Symbol";
                         var dbLines = new List<string>();
                         using (var rdr = cmd.ExecuteReader())
                             while (rdr.Read())
@@ -260,7 +260,7 @@ namespace Quote2022.Actions
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandTimeout = 150;
-                    cmd.CommandText = "SELECT distinct Exchange, date from DayEoddata";
+                    cmd.CommandText = "SELECT distinct Exchange, date from dbQ2023Others..DayEoddata";
                     using (var rdr = cmd.ExecuteReader())
                         while (rdr.Read())
                             saved.Add(Tuple.Create((string) rdr["Exchange"], ((DateTime) rdr["Date"]).ToString("yyyyMMdd", CultureInfo.InvariantCulture)), null);

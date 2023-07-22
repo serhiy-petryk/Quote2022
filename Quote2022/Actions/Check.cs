@@ -238,7 +238,7 @@ namespace Quote2022.Actions
                 {
                     conn.Open();
                     cmd.CommandText = $"SELECT isnull(b.YahooSymbol, a.Symbol) Symbol, a.Date, a.[Open], a.High, a.Low, a.[Close], a.Volume " +
-                                      $"from DayEoddata a left join SymbolsEoddata b on a.Symbol = b.Symbol and a.Exchange = b.Exchange " +
+                                      $"from dbQ2023Others..DayEoddata a left join dbQ2023Others..SymbolsEoddata b on a.Symbol = b.Symbol and a.Exchange = b.Exchange " +
                                       $"WHERE date >= '{fromDate:yyyy-MM-dd}' and date<'{fromDate.AddDays(7):yyyy-MM-dd}'";
                     using (var rdr = cmd.ExecuteReader())
                         while (rdr.Read())

@@ -19,7 +19,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = "SELECT date from TradingDays WHERE date>'2021-01-01' and date<'2023-02-01'";
+                cmd.CommandText = "SELECT date from dbQ2023Others..TradingDays WHERE date>'2021-01-01' and date<'2023-02-01'";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         tradingDays.Add((DateTime)rdr["Date"]);
@@ -93,7 +93,7 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                                 conn.Open();
                                 cmd.CommandText =
                                     $"select a.Date, a.Volume, a.Volume*a.[Close]/1000000 TradeValue from DayYahoo a " +
-                                    $"inner join SymbolsEoddata b on a.Symbol=b.YahooSymbol " +
+                                    $"inner join dbQ2023Others..SymbolsEoddata b on a.Symbol=b.YahooSymbol " +
                                     $"where a.Date>'2021-02-01' AND b.AlphaVantageSymbol='{kvp.Key}'";
                                 using (var rdr = cmd.ExecuteReader())
                                     while (rdr.Read())
@@ -126,8 +126,8 @@ namespace Quote2022.Actions.MinuteAlphaVantage
                             {
                                 conn.Open();
                                 cmd.CommandText =
-                                    $"select a.Date, a.Volume, a.Volume*a.[Close]/1000000 TradeValue from DayEoddata a " +
-                                    $"inner join SymbolsEoddata b on a.Symbol=b.Symbol and a.Exchange=b.Exchange " +
+                                    $"select a.Date, a.Volume, a.Volume*a.[Close]/1000000 TradeValue from dbQ2023Others..DayEoddata a " +
+                                    $"inner join dbQ2023Others..SymbolsEoddata b on a.Symbol=b.Symbol and a.Exchange=b.Exchange " +
                                     $"where b.AlphaVantageSymbol='{kvp.Key}'";
                                 using (var rdr = cmd.ExecuteReader())
                                     while (rdr.Read())

@@ -24,7 +24,7 @@ namespace Data.Actions.FmpCloud
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "SELECT date from TradingDays WHERE date between '2019-01-01' and '2023-03-31' order by date desc";
+                cmd.CommandText = "SELECT date from dbQ2023Others..TradingDays WHERE date between '2019-01-01' and '2023-03-31' order by date desc";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         dates.Add((DateTime)rdr["Date"]);

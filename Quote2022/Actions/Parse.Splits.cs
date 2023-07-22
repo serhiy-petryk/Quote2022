@@ -124,9 +124,9 @@ namespace Quote2022.Actions
                 }
 
             showStatusAction($"StockSplitHistory is saving to database..");
-            SaveToDb.ClearAndSaveToDbTable(data.Where(a => a.Date <= a.TimeStamp), "Bfr_StockSplitHistory", "Symbol",
+            SaveToDb.ClearAndSaveToDbTable(data.Where(a => a.Date <= a.TimeStamp), "dbQ2023Others..Bfr_StockSplitHistory", "Symbol",
                 "Date", "Ratio", "K", "TimeStamp");
-            SaveToDb.RunProcedure("pUpdateStockSplitHistory");
+            SaveToDb.RunProcedure("dbQ2023Others..pUpdateStockSplitHistory");
 
             showStatusAction($"StockSplitHistory parse + save to db FINISHED!");
         }

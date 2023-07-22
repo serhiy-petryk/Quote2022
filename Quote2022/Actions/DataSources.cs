@@ -30,10 +30,10 @@ namespace Quote2022.Actions
                         // "a.Asset, a.Sector, a.Industry, a.TvType, a.TvSubtype, a.TvSector, a.TvIndustry, a.TvRecommend " +
                         $"select a.Exchange, a.Symbol, c.TradeValue, " +
                         "a.TvType, a.TvSubtype, a.TvSector, a.TvIndustry, a.TvRecommend " +
-                        "FROM SymbolsEoddata a " +
-                        "left join [Indexes] b on a.Symbol = b.Symbol " +
+                        "FROM dbQ2023Others..SymbolsEoddata a " +
+                        "left join dbQ2023Others..[Indexes] b on a.Symbol = b.Symbol " +
                         $"inner join (select TOP {numberOfSymbols} exchange, symbol, SUM([Close] * Volume) TradeValue, " +
-                        "MIN([Close]) MinClose, MAX([Close]) MaxClose, Min(Volume) MinVolume FROM DayEoddata " +
+                        "MIN([Close]) MinClose, MAX([Close]) MaxClose, Min(Volume) MinVolume FROM dbQ2023Others..DayEoddata " +
                         $"WHERE date between '{from:yyyy-MM-dd}' and '{to:yyyy-MM-dd}' " +
                         "GROUP BY Exchange, Symbol " +
                         "HAVING Min([Close])>=1.0 AND MAX([Close])<=300 AND Min(Volume)>=300000 " +

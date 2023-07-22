@@ -71,7 +71,7 @@ namespace Quote2022.Actions
             {
                 conn.Open();
                 cmd.CommandText = "SELECT symbol, sum(volume*[close])/1000000 TradingValue, count(*) recs, min(Date) MinDate , max(Date) MaxDate " +
-                                  "FROM DayEoddata where volume>= 300000 and symbol not like '%.%' and symbol not like '%-%' "+
+                                  "FROM dbQ2023Others..DayEoddata where volume>= 300000 and symbol not like '%.%' and symbol not like '%-%' "+
                                   "group by symbol order by 2 desc";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
@@ -228,7 +228,7 @@ namespace Quote2022.Actions
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = "select distinct symbol from DayEoddata WHERE " +
+                cmd.CommandText = "select distinct symbol from dbQ2023Others..DayEoddata WHERE " +
                                   "Volume>1000000 and date>=DATEADD(HOUR, 5, DATEADD(day, -15, GetDate())) AND " +
                                   "((symbol not like '%-%' and symbol not like '%.%') or symbol like '%.[A-B]')";
                 using (var rdr = cmd.ExecuteReader())

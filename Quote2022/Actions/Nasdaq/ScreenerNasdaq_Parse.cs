@@ -71,18 +71,18 @@ namespace Quote2022.Actions.Nasdaq
                             foreach (var item in stockItems)
                                 item.TimeStamp = timeStamp;
 
-                            SaveToDb.ClearAndSaveToDbTable(stockItems, "Bfr_ScreenerNasdaqStock", "symbol", "Name", "LastSale",
+                            SaveToDb.ClearAndSaveToDbTable(stockItems, "dbQ2023Others..Bfr_ScreenerNasdaqStock", "symbol", "Name", "LastSale",
                                 "Volume", "netChange", "Change", "MarketCap", "Country", "ipoYear", "Sector", "Industry", "TimeStamp");
-                            SaveToDb.RunProcedure("pUpdateScreenerNasdaqStock", new Dictionary<string, object> { { "@Date", timeStamp } });
+                            SaveToDb.RunProcedure("dbQ2023Others..pUpdateScreenerNasdaqStock", new Dictionary<string, object> { { "@Date", timeStamp } });
                         }
                         if (etfItems.Count > 0)
                         {
                             foreach (var item in etfItems)
                                 item.TimeStamp = timeStamp;
 
-                            SaveToDb.ClearAndSaveToDbTable(etfItems, "Bfr_ScreenerNasdaqEtf", "symbol", "Name",
+                            SaveToDb.ClearAndSaveToDbTable(etfItems, "dbQ2023Others..Bfr_ScreenerNasdaqEtf", "symbol", "Name",
                                 "LastSale", "netChange", "Change", "TimeStamp");
-                            SaveToDb.RunProcedure("pUpdateScreenerNasdaqEtf", new Dictionary<string, object> { { "@Date", timeStamp } });
+                            SaveToDb.RunProcedure("dbQ2023Others..pUpdateScreenerNasdaqEtf", new Dictionary<string, object> { { "@Date", timeStamp } });
                         }
                     }
                 }

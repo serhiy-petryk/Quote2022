@@ -16,7 +16,7 @@ namespace Quote2022.Actions
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = $"SELECT * from DayEoddata WHERE symbol='{symbol}' AND date='{date:yyyy-MM-dd}'";
+                cmd.CommandText = $"SELECT * from dbQ2023Others..DayEoddata WHERE symbol='{symbol}' AND date='{date:yyyy-MM-dd}'";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                     {
@@ -122,8 +122,8 @@ namespace Quote2022.Actions
         public static void DayEoddata_SaveToDb(IEnumerable<DayEoddata> items, Action<string> showStatusAction)
         {
             showStatusAction($"DayEoddata_SaveToDb. Saving data to database ...");
-            SaveToDbTable(items, "DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
-            SaveToDb.RunProcedure("pUpdateDayEoddata");
+            SaveToDbTable(items, "dbQ2023Others..DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
+            SaveToDb.RunProcedure("dbQ2023Others..pUpdateDayEoddata");
         }
 
         #endregion
@@ -142,14 +142,14 @@ namespace Quote2022.Actions
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
-                ClearAndSaveToDbTable(conn, items, "Bfr_DayYahooIndexes", "Symbol", "Date", "Open", "High", "Low", "Close",
+                ClearAndSaveToDbTable(conn, items, "dbQ2023Others..Bfr_DayYahooIndexes", "Symbol", "Date", "Open", "High", "Low", "Close",
                     "Volume", "AdjClose");
 
                 cmd.CommandText =
-                    "INSERT into DayYahooIndexes (Symbol, Date, [Open], High, Low, [Close], Volume, AdjClose) " +
+                    "INSERT into dbQ2023Others..DayYahooIndexes (Symbol, Date, [Open], High, Low, [Close], Volume, AdjClose) " +
                     "SELECT a.Symbol, a.Date, a.[Open], a.High, a.Low, a.[Close], a.Volume, a.AdjClose " +
-                    "from Bfr_DayYahooIndexes a " +
-                    "left join DayYahooIndexes b on a.Symbol = b.Symbol and a.Date = b.Date " +
+                    "from dbQ2023Others..Bfr_DayYahooIndexes a " +
+                    "left join dbQ2023Others..DayYahooIndexes b on a.Symbol = b.Symbol and a.Date = b.Date " +
                     "where b.Symbol is null";
                 cmd.ExecuteNonQuery();
             }

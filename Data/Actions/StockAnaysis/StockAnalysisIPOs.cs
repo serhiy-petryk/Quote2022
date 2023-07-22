@@ -47,10 +47,10 @@ namespace Data.Actions.StockAnaysis
                     // Save data to database
                     if (oo.data.data.Length > 0)
                     {
-                        DbUtils.ClearAndSaveToDbTable(oo.data.data, "dbQuote2023..Bfr_IpoStockAnalysis", "Symbol", "Date", "Exchange",
+                        DbUtils.ClearAndSaveToDbTable(oo.data.data, "dbQ2023Others..Bfr_IpoStockAnalysis", "Symbol", "Date", "Exchange",
                             "Name", "IpoPrice", "CurrentPrice", "Sector", "Industry", "employees", "TimeStamp");
 
-                        DbUtils.RunProcedure("dbQuote2023..pUpdateIpoStockAnalysis");
+                        DbUtils.RunProcedure("dbQ2023Others..pUpdateIpoStockAnalysis");
                     }
                 }
 

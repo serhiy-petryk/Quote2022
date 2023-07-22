@@ -47,10 +47,10 @@ namespace Data.Actions.TradingView
 
                     if (items.Length > 0)
                     {
-                        DbUtils.ClearAndSaveToDbTable(items, "Bfr_ScreenerTradingView", "Symbol", "Exchange", "Name",
+                        DbUtils.ClearAndSaveToDbTable(items, "dbQ2023Others..Bfr_ScreenerTradingView", "Symbol", "Exchange", "Name",
                             "Type", "Subtype", "Sector", "Industry", "Close", "MarketCap", "Volume", "Recommend",
                             "TimeStamp");
-                        DbUtils.RunProcedure("pUpdateScreenerTradingView");
+                        DbUtils.RunProcedure("dbQ2023Others..pUpdateScreenerTradingView");
                     }
 
                     itemCount += items.Length;

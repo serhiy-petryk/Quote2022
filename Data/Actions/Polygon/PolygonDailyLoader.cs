@@ -25,7 +25,7 @@ namespace Data.Actions.Polygon
                 conn.Open();
                 cmd.CommandTimeout = 150;
                 // cmd.CommandText = "SELECT date from TradingDays WHERE date between '2018-03-27' and '2023-03-31' order by date desc";
-                cmd.CommandText = "select a.Date from (select date from dbQuote2022..TradingDays "+
+                cmd.CommandText = "select a.Date from (select date from dbQ2023Others..TradingDays " +
                                   "where date >= (select min(date) from dbQ2023..DayPolygon)) a "+
                                   "left join dbQ2023..DayPolygon b on a.Date = b.Date where b.Date is null order by 1";
                 using (var rdr = cmd.ExecuteReader())

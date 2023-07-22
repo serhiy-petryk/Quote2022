@@ -22,7 +22,7 @@ namespace Data.Actions.Yahoo
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = "select max([date]) MaxDate from TradingDays";
+                cmd.CommandText = "select max([date]) MaxDate from dbQ2023Others..TradingDays";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                     {
@@ -71,16 +71,16 @@ namespace Data.Actions.Yahoo
 
             if (data.Count > 0)
             {
-                DbUtils.ClearAndSaveToDbTable(data, "Bfr_DayYahooIndexes", "Symbol", "Date", "Open", "High", "Low",
+                DbUtils.ClearAndSaveToDbTable(data, "dbQ2023Others..Bfr_DayYahooIndexes", "Symbol", "Date", "Open", "High", "Low",
                     "Close", "Volume", "AdjClose");
-                DbUtils.ExecuteSql("INSERT into DayYahooIndexes (Symbol, Date, [Open], High, Low, [Close], Volume, AdjClose) " +
+                DbUtils.ExecuteSql("INSERT into dbQ2023Others..DayYahooIndexes (Symbol, Date, [Open], High, Low, [Close], Volume, AdjClose) " +
                                    "SELECT a.Symbol, a.Date, a.[Open], a.High, a.Low, a.[Close], a.Volume, a.AdjClose " +
-                                   "from Bfr_DayYahooIndexes a " +
-                                   "left join DayYahooIndexes b on a.Symbol = b.Symbol and a.Date = b.Date " +
+                                   "from dbQ2023Others..Bfr_DayYahooIndexes a " +
+                                   "left join dbQ2023Others..DayYahooIndexes b on a.Symbol = b.Symbol and a.Date = b.Date " +
                                    "where b.Symbol is null");
 
                 Logger.AddMessage($"Update trading days");
-                DbUtils.RunProcedure("pRefreshTradingDays");
+                DbUtils.RunProcedure("dbQ2023Others..pRefreshTradingDays");
             }
 
             Logger.AddMessage($"!Finished. Last trade date: {data.Max(a => a.Date):yyyy-MM-dd}");

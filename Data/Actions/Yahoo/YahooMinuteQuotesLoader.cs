@@ -20,7 +20,7 @@ namespace Data.Actions.Yahoo
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                cmd.CommandText = "SELECT min(date) MinDate, max(date) MaxDate FROM TradingDays where Date >= DATEADD(day, -7, GetDate())";
+                cmd.CommandText = "SELECT min(date) MinDate, max(date) MaxDate FROM dbQ2023Others..TradingDays where Date >= DATEADD(day, -7, GetDate())";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                     {
@@ -102,11 +102,11 @@ namespace Data.Actions.Yahoo
             {
                 conn.Open();
                 cmd.CommandText = "SELECT '^DJI' Symbol UNION SELECT '^GSPC' UNION " +
-                                  "SELECT b.YahooSymbol FROM dbQuote2022..DayEoddata a " +
-                                  "INNER JOIN dbQuote2022..SymbolsEoddata b on a.Exchange = b.Exchange and a.Symbol = b.Symbol " +
+                                  "SELECT b.YahooSymbol FROM dbQ2023Others..DayEoddata a " +
+                                  "INNER JOIN dbQ2023Others..SymbolsEoddata b on a.Exchange = b.Exchange and a.Symbol = b.Symbol " +
                                   "WHERE b.YahooSymbol is not null AND a.volume* a.[close]>= 5000000 and a.date >= DATEADD(day, -30, GetDate()) UNION " +
-                                  "SELECT b.Symbol from dbQuote2022..SymbolsEoddata a " +
-                                  "RIGHT JOIN(SELECT * from dbQuote2022..ScreenerNasdaqStock " +
+                                  "SELECT b.Symbol from dbQ2023Others..SymbolsEoddata a " +
+                                  "RIGHT JOIN(SELECT * from dbQ2023Others..ScreenerNasdaqStock " +
                                   "WHERE Deleted is null or Deleted > DATEADD(day, -30, GetDate())) b " +
                                   "ON a.NasdaqSymbol = b.Symbol WHERE a.Symbol is null AND b.MaxTradeValue > 5 ORDER BY 1";
 

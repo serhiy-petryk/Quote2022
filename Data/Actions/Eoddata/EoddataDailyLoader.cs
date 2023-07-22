@@ -27,7 +27,7 @@ namespace Data.Actions.Eoddata
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = "SELECT [date] FROM TradingDays WHERE [date] > DATEADD(day,-30, GETDATE())";
+                cmd.CommandText = "SELECT [date] FROM dbQ2023Others..TradingDays WHERE [date] > DATEADD(day,-30, GETDATE())";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         tradingDays.Add((DateTime) rdr["Date"]);
@@ -90,7 +90,7 @@ namespace Data.Actions.Eoddata
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandTimeout = 150;
-                    cmd.CommandText = "SELECT distinct Exchange, date from DayEoddata";
+                    cmd.CommandText = "SELECT distinct Exchange, date from dbQ2023Others..DayEoddata";
                     using (var rdr = cmd.ExecuteReader())
                         while (rdr.Read())
                             existingQuotes.Add($"{FILE_FOLDER}{(string)rdr["Exchange"]}_{(DateTime)rdr["Date"]:yyyyMMdd}.zip", null);
@@ -116,7 +116,7 @@ namespace Data.Actions.Eoddata
             if (newFileCount > 0)
             {
                 Logger.AddMessage($"Update data in database ('pUpdateDayEoddata' procedure)");
-                DbUtils.RunProcedure("pUpdateDayEoddata");
+                DbUtils.RunProcedure("dbQ2023Others..pUpdateDayEoddata");
             }
 
             Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {newFileCount}. Size of files: {fileSize:N0}KB");
@@ -146,7 +146,7 @@ namespace Data.Actions.Eoddata
                 }
             }
 
-            DbUtils.SaveToDbTable(quotes, "DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
+            DbUtils.SaveToDbTable(quotes, "dbQ2023Others..DayEoddata", "Symbol", "Exchange", "Date", "Open", "High", "Low", "Close", "Volume");
             return itemCount;
         }
 

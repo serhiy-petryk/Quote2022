@@ -51,7 +51,7 @@ namespace Quote2022.Actions
                 {
                     conn.Open();
                     cmd.CommandText =
-                        $"DELETE dbQuote2023..FileLogMinuteYahoo WHERE [file]='{Path.GetFileNameWithoutExtension(zipFile)}'";
+                        $"DELETE dbQ2023Others..FileLogMinuteYahoo WHERE [file]='{Path.GetFileNameWithoutExtension(zipFile)}'";
                     cmd.ExecuteNonQuery();
                 }
 
@@ -108,7 +108,7 @@ namespace Quote2022.Actions
 
                 showStatusAction($"MinuteYahoo_SaveLogToDb. Save data to database ...");
                 // Save items to database table
-                SaveToDb.SaveToDbTable(log, "dbQuote2023..FileLogMinuteYahoo", "File", "Symbol", "Date", "MinTime", "MaxTime",
+                SaveToDb.SaveToDbTable(log, " dbQ2023Others..FileLogMinuteYahoo", "File", "Symbol", "Date", "MinTime", "MaxTime",
                     "Count", "Open", "High", "Low", "Close", "Volume");
 
                 _isBusy = false;

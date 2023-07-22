@@ -76,9 +76,9 @@ namespace Data.Actions.Eoddata
                     itemCount += items.Length;
 
                     // Save data to buffer table of data server
-                    DbUtils.ClearAndSaveToDbTable(items, "Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name",
+                    DbUtils.ClearAndSaveToDbTable(items, "dbQ2023Others..Bfr_SymbolsEoddata", "Symbol", "Exchange", "Name",
                         "TimeStamp");
-                    DbUtils.RunProcedure("pUpdateSymbolsEoddata");
+                    DbUtils.RunProcedure("dbQ2023Others..pUpdateSymbolsEoddata");
                 }
 
             return itemCount;

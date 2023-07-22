@@ -67,7 +67,7 @@ namespace Data.Actions.Polygon
             {
                 conn.Open();
                 cmd.CommandTimeout = 300;
-                cmd.CommandText = "select date from dbQuote2022..TradingDays where date>=(select min(date) from dbQ2023..DayPolygon) order by 1";
+                cmd.CommandText = "select date from dbQ2023Others..TradingDays where date>=(select min(date) from dbQ2023..DayPolygon) order by 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         dates.Add((DateTime)rdr["Date"]);

@@ -61,7 +61,7 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"Refresh summary data (~10 minutes)");
             DbUtils.RunProcedure("dbQ2023..pUpdateDayPolygon");
 
-            Logger.AddMessage($"!Finished. Loaded quotes into DayEoddata table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");
+            Logger.AddMessage($"!Finished. Loaded quotes into DayPolygon table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");
         }
 
         public static int ParseAndSaveToDbAllFiles()

@@ -53,7 +53,7 @@ namespace Data.Actions.Investing
             return items.Count;
         }
 
-        private static int ParseZipAndSaveToDb(string zipFileName)
+        public static int ParseZipAndSaveToDb(string zipFileName)
         {
             var itemCount = 0;
             using (var zip = ZipFile.Open(zipFileName, ZipArchiveMode.Read))

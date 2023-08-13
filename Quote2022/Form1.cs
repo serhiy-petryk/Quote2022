@@ -848,7 +848,19 @@ namespace Quote2022
         {
             btnTemp.Enabled = false;
 
-            Data.Actions.Polygon.PolygonSymbolsLoader.ParseAndSaveAllZip();
+            /*var files = Directory.GetFiles(@"E:\Quote\WebData\Daily\Polygon\Data\", "DayPolygon_**.zip").Where(a=> string.Compare(Path.GetFileName(a), "DayPolygon_20230724.zip", StringComparison.InvariantCultureIgnoreCase) == 1).OrderBy(a=>a).ToArray();
+            foreach (var file in files)
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    Data.Actions.Polygon.PolygonDailyLoader.ParseAndSaveToDb(file);
+                });
+            }
+
+            Data.Helpers.DbUtils.RunProcedure("dbQ2023..pUpdateDayPolygon");*/
+
+            // if (CsUtils.OpenZipFileDialog($@"E:\Quote\WebData\Indices\Wikipedia\IndexComponents") is string zipFileName && !string.IsNullOrEmpty(zipFileName))
+            //  await Task.Factory.StartNew(() => Data.Actions.Wikipedia.WikipediaIndexLoader.ParseAndSaveToDb(zipFileName));
 
             btnTemp.Enabled = true;
         }

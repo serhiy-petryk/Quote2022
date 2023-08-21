@@ -39,6 +39,7 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.btnPolygonCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.btnMinutePolygonSplitFilesByDates = new System.Windows.Forms.Button();
             this.btnMinutePolygonSaveLogToDb = new System.Windows.Forms.Button();
             this.btnMavCopyZipInfoToDb = new System.Windows.Forms.Button();
@@ -154,7 +155,7 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnPolygonCopyZipInfoToDb = new System.Windows.Forms.Button();
+            this.lblEoddataLogged = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
@@ -183,9 +184,10 @@ namespace Quote2022
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 437);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 508);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1166, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1360, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -207,13 +209,15 @@ namespace Quote2022
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1166, 437);
+            this.tabControl1.Size = new System.Drawing.Size(1360, 508);
             this.tabControl1.TabIndex = 12;
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.lblEoddataLogged);
             this.tpLoaderNew.Controls.Add(this.btnPolygonCopyZipInfoToDb);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSplitFilesByDates);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSaveLogToDb);
@@ -226,19 +230,32 @@ namespace Quote2022
             this.tpLoaderNew.Controls.Add(this.btnRunMultiItemsLoader);
             this.tpLoaderNew.Controls.Add(this.button4);
             this.tpLoaderNew.Controls.Add(this.dataGridView1);
-            this.tpLoaderNew.Location = new System.Drawing.Point(4, 22);
+            this.tpLoaderNew.Location = new System.Drawing.Point(4, 24);
+            this.tpLoaderNew.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpLoaderNew.Name = "tpLoaderNew";
-            this.tpLoaderNew.Padding = new System.Windows.Forms.Padding(3);
-            this.tpLoaderNew.Size = new System.Drawing.Size(1158, 411);
+            this.tpLoaderNew.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tpLoaderNew.Size = new System.Drawing.Size(1352, 480);
             this.tpLoaderNew.TabIndex = 6;
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
             // 
+            // btnPolygonCopyZipInfoToDb
+            // 
+            this.btnPolygonCopyZipInfoToDb.Location = new System.Drawing.Point(822, 142);
+            this.btnPolygonCopyZipInfoToDb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnPolygonCopyZipInfoToDb.Name = "btnPolygonCopyZipInfoToDb";
+            this.btnPolygonCopyZipInfoToDb.Size = new System.Drawing.Size(196, 48);
+            this.btnPolygonCopyZipInfoToDb.TabIndex = 62;
+            this.btnPolygonCopyZipInfoToDb.Text = "MinutePolygon copy info from zip to DB";
+            this.btnPolygonCopyZipInfoToDb.UseVisualStyleBackColor = true;
+            this.btnPolygonCopyZipInfoToDb.Click += new System.EventHandler(this.btnPolygonCopyZipInfoToDb_Click);
+            // 
             // btnMinutePolygonSplitFilesByDates
             // 
-            this.btnMinutePolygonSplitFilesByDates.Location = new System.Drawing.Point(705, 60);
+            this.btnMinutePolygonSplitFilesByDates.Location = new System.Drawing.Point(822, 69);
+            this.btnMinutePolygonSplitFilesByDates.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinutePolygonSplitFilesByDates.Name = "btnMinutePolygonSplitFilesByDates";
-            this.btnMinutePolygonSplitFilesByDates.Size = new System.Drawing.Size(168, 40);
+            this.btnMinutePolygonSplitFilesByDates.Size = new System.Drawing.Size(196, 46);
             this.btnMinutePolygonSplitFilesByDates.TabIndex = 61;
             this.btnMinutePolygonSplitFilesByDates.Text = "MinutePolygon split files by dates";
             this.btnMinutePolygonSplitFilesByDates.UseVisualStyleBackColor = true;
@@ -246,9 +263,10 @@ namespace Quote2022
             // 
             // btnMinutePolygonSaveLogToDb
             // 
-            this.btnMinutePolygonSaveLogToDb.Location = new System.Drawing.Point(705, 18);
+            this.btnMinutePolygonSaveLogToDb.Location = new System.Drawing.Point(822, 21);
+            this.btnMinutePolygonSaveLogToDb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinutePolygonSaveLogToDb.Name = "btnMinutePolygonSaveLogToDb";
-            this.btnMinutePolygonSaveLogToDb.Size = new System.Drawing.Size(168, 23);
+            this.btnMinutePolygonSaveLogToDb.Size = new System.Drawing.Size(196, 27);
             this.btnMinutePolygonSaveLogToDb.TabIndex = 59;
             this.btnMinutePolygonSaveLogToDb.Text = "MinutePolygon Save Log to DB";
             this.btnMinutePolygonSaveLogToDb.UseVisualStyleBackColor = true;
@@ -256,9 +274,10 @@ namespace Quote2022
             // 
             // btnMavCopyZipInfoToDb
             // 
-            this.btnMavCopyZipInfoToDb.Location = new System.Drawing.Point(891, 163);
+            this.btnMavCopyZipInfoToDb.Location = new System.Drawing.Point(1040, 188);
+            this.btnMavCopyZipInfoToDb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMavCopyZipInfoToDb.Name = "btnMavCopyZipInfoToDb";
-            this.btnMavCopyZipInfoToDb.Size = new System.Drawing.Size(195, 51);
+            this.btnMavCopyZipInfoToDb.Size = new System.Drawing.Size(227, 59);
             this.btnMavCopyZipInfoToDb.TabIndex = 58;
             this.btnMavCopyZipInfoToDb.Text = "MinuteAlphaVantage copy info from zip to DB";
             this.btnMavCopyZipInfoToDb.UseVisualStyleBackColor = true;
@@ -266,9 +285,10 @@ namespace Quote2022
             // 
             // btnMavSplitDataAndSaveToZip
             // 
-            this.btnMavSplitDataAndSaveToZip.Location = new System.Drawing.Point(891, 95);
+            this.btnMavSplitDataAndSaveToZip.Location = new System.Drawing.Point(1040, 110);
+            this.btnMavSplitDataAndSaveToZip.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMavSplitDataAndSaveToZip.Name = "btnMavSplitDataAndSaveToZip";
-            this.btnMavSplitDataAndSaveToZip.Size = new System.Drawing.Size(195, 40);
+            this.btnMavSplitDataAndSaveToZip.Size = new System.Drawing.Size(227, 46);
             this.btnMavSplitDataAndSaveToZip.TabIndex = 57;
             this.btnMavSplitDataAndSaveToZip.Text = "MinuteAlphaVantage split files by dates and save to zip";
             this.btnMavSplitDataAndSaveToZip.UseVisualStyleBackColor = true;
@@ -276,9 +296,10 @@ namespace Quote2022
             // 
             // btnMavSplitDataLog
             // 
-            this.btnMavSplitDataLog.Location = new System.Drawing.Point(891, 53);
+            this.btnMavSplitDataLog.Location = new System.Drawing.Point(1040, 61);
+            this.btnMavSplitDataLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMavSplitDataLog.Name = "btnMavSplitDataLog";
-            this.btnMavSplitDataLog.Size = new System.Drawing.Size(195, 27);
+            this.btnMavSplitDataLog.Size = new System.Drawing.Size(227, 31);
             this.btnMavSplitDataLog.TabIndex = 56;
             this.btnMavSplitDataLog.Text = "MinuteAlphaVantage split files LOG";
             this.btnMavSplitDataLog.UseVisualStyleBackColor = true;
@@ -286,9 +307,10 @@ namespace Quote2022
             // 
             // btnMavSaveLogToDb
             // 
-            this.btnMavSaveLogToDb.Location = new System.Drawing.Point(892, 18);
+            this.btnMavSaveLogToDb.Location = new System.Drawing.Point(1041, 21);
+            this.btnMavSaveLogToDb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMavSaveLogToDb.Name = "btnMavSaveLogToDb";
-            this.btnMavSaveLogToDb.Size = new System.Drawing.Size(195, 23);
+            this.btnMavSaveLogToDb.Size = new System.Drawing.Size(227, 27);
             this.btnMavSaveLogToDb.TabIndex = 55;
             this.btnMavSaveLogToDb.Text = "MinuteAlphaVantage Save Log to DB";
             this.btnMavSaveLogToDb.UseVisualStyleBackColor = true;
@@ -296,9 +318,10 @@ namespace Quote2022
             // 
             // btnRussellIndicesParseZipFile
             // 
-            this.btnRussellIndicesParseZipFile.Location = new System.Drawing.Point(523, 18);
+            this.btnRussellIndicesParseZipFile.Location = new System.Drawing.Point(610, 21);
+            this.btnRussellIndicesParseZipFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnRussellIndicesParseZipFile.Name = "btnRussellIndicesParseZipFile";
-            this.btnRussellIndicesParseZipFile.Size = new System.Drawing.Size(162, 23);
+            this.btnRussellIndicesParseZipFile.Size = new System.Drawing.Size(189, 27);
             this.btnRussellIndicesParseZipFile.TabIndex = 54;
             this.btnRussellIndicesParseZipFile.Text = "Russell Indices Parse Zip file";
             this.btnRussellIndicesParseZipFile.UseVisualStyleBackColor = true;
@@ -306,9 +329,10 @@ namespace Quote2022
             // 
             // btnTemp
             // 
-            this.btnTemp.Location = new System.Drawing.Point(988, 323);
+            this.btnTemp.Location = new System.Drawing.Point(1153, 373);
+            this.btnTemp.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnTemp.Name = "btnTemp";
-            this.btnTemp.Size = new System.Drawing.Size(81, 23);
+            this.btnTemp.Size = new System.Drawing.Size(94, 27);
             this.btnTemp.TabIndex = 18;
             this.btnTemp.Text = "Temp";
             this.btnTemp.UseVisualStyleBackColor = true;
@@ -316,9 +340,10 @@ namespace Quote2022
             // 
             // btnRunMultiItemsLoader
             // 
-            this.btnRunMultiItemsLoader.Location = new System.Drawing.Point(357, 18);
+            this.btnRunMultiItemsLoader.Location = new System.Drawing.Point(416, 21);
+            this.btnRunMultiItemsLoader.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnRunMultiItemsLoader.Name = "btnRunMultiItemsLoader";
-            this.btnRunMultiItemsLoader.Size = new System.Drawing.Size(128, 23);
+            this.btnRunMultiItemsLoader.Size = new System.Drawing.Size(149, 27);
             this.btnRunMultiItemsLoader.TabIndex = 6;
             this.btnRunMultiItemsLoader.Text = "Run multiItems loader";
             this.btnRunMultiItemsLoader.UseVisualStyleBackColor = true;
@@ -326,9 +351,10 @@ namespace Quote2022
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(542, 194);
+            this.button4.Location = new System.Drawing.Point(632, 224);
+            this.button4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(88, 27);
             this.button4.TabIndex = 5;
             this.button4.Text = "button4";
             this.button4.UseVisualStyleBackColor = true;
@@ -354,18 +380,19 @@ namespace Quote2022
             this.dataGridView1.DataSource = this.loaderItemBindingSource;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridView1.Location = new System.Drawing.Point(8, 15);
+            this.dataGridView1.Location = new System.Drawing.Point(9, 17);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 18;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(321, 331);
+            this.dataGridView1.Size = new System.Drawing.Size(374, 382);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
@@ -430,19 +457,21 @@ namespace Quote2022
             this.tpOneTime.Controls.Add(this.btnWaEoddataSymbolsParseAndSaveToDb);
             this.tpOneTime.Controls.Add(this.btnFmpCloudSplits);
             this.tpOneTime.Controls.Add(this.btnWAEoddataSymbols);
-            this.tpOneTime.Location = new System.Drawing.Point(4, 22);
+            this.tpOneTime.Location = new System.Drawing.Point(4, 24);
+            this.tpOneTime.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpOneTime.Name = "tpOneTime";
-            this.tpOneTime.Padding = new System.Windows.Forms.Padding(3);
-            this.tpOneTime.Size = new System.Drawing.Size(1158, 411);
+            this.tpOneTime.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tpOneTime.Size = new System.Drawing.Size(1352, 476);
             this.tpOneTime.TabIndex = 7;
             this.tpOneTime.Text = "One Time";
             this.tpOneTime.UseVisualStyleBackColor = true;
             // 
             // btnWaEoddataSymbolsParseAndSaveToDb
             // 
-            this.btnWaEoddataSymbolsParseAndSaveToDb.Location = new System.Drawing.Point(20, 60);
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Location = new System.Drawing.Point(23, 69);
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWaEoddataSymbolsParseAndSaveToDb.Name = "btnWaEoddataSymbolsParseAndSaveToDb";
-            this.btnWaEoddataSymbolsParseAndSaveToDb.Size = new System.Drawing.Size(160, 40);
+            this.btnWaEoddataSymbolsParseAndSaveToDb.Size = new System.Drawing.Size(187, 46);
             this.btnWaEoddataSymbolsParseAndSaveToDb.TabIndex = 4;
             this.btnWaEoddataSymbolsParseAndSaveToDb.Text = "WA Eoddata Symbols Parse and SaveTo Db";
             this.btnWaEoddataSymbolsParseAndSaveToDb.UseVisualStyleBackColor = true;
@@ -450,9 +479,10 @@ namespace Quote2022
             // 
             // btnFmpCloudSplits
             // 
-            this.btnFmpCloudSplits.Location = new System.Drawing.Point(205, 15);
+            this.btnFmpCloudSplits.Location = new System.Drawing.Point(239, 17);
+            this.btnFmpCloudSplits.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnFmpCloudSplits.Name = "btnFmpCloudSplits";
-            this.btnFmpCloudSplits.Size = new System.Drawing.Size(130, 23);
+            this.btnFmpCloudSplits.Size = new System.Drawing.Size(152, 27);
             this.btnFmpCloudSplits.TabIndex = 3;
             this.btnFmpCloudSplits.Text = "FmpCloud Splits";
             this.btnFmpCloudSplits.UseVisualStyleBackColor = true;
@@ -460,9 +490,10 @@ namespace Quote2022
             // 
             // btnWAEoddataSymbols
             // 
-            this.btnWAEoddataSymbols.Location = new System.Drawing.Point(21, 15);
+            this.btnWAEoddataSymbols.Location = new System.Drawing.Point(24, 17);
+            this.btnWAEoddataSymbols.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWAEoddataSymbols.Name = "btnWAEoddataSymbols";
-            this.btnWAEoddataSymbols.Size = new System.Drawing.Size(130, 23);
+            this.btnWAEoddataSymbols.Size = new System.Drawing.Size(152, 27);
             this.btnWAEoddataSymbols.TabIndex = 0;
             this.btnWAEoddataSymbols.Text = "WA Eoddata Symbols";
             this.btnWAEoddataSymbols.UseVisualStyleBackColor = true;
@@ -506,10 +537,11 @@ namespace Quote2022
             this.tabLoader.Controls.Add(this.btnNanexSymbols);
             this.tabLoader.Controls.Add(this.btnDayYahooIndicesParse);
             this.tabLoader.Controls.Add(this.btnDayYahooParse);
-            this.tabLoader.Location = new System.Drawing.Point(4, 22);
+            this.tabLoader.Location = new System.Drawing.Point(4, 24);
+            this.tabLoader.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabLoader.Name = "tabLoader";
-            this.tabLoader.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLoader.Size = new System.Drawing.Size(1158, 411);
+            this.tabLoader.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabLoader.Size = new System.Drawing.Size(1352, 476);
             this.tabLoader.TabIndex = 0;
             this.tabLoader.Text = "Loader";
             this.tabLoader.UseVisualStyleBackColor = true;
@@ -517,9 +549,10 @@ namespace Quote2022
             // btnNasdaqScreenerParse
             // 
             this.btnNasdaqScreenerParse.Enabled = false;
-            this.btnNasdaqScreenerParse.Location = new System.Drawing.Point(572, 171);
+            this.btnNasdaqScreenerParse.Location = new System.Drawing.Point(667, 197);
+            this.btnNasdaqScreenerParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnNasdaqScreenerParse.Name = "btnNasdaqScreenerParse";
-            this.btnNasdaqScreenerParse.Size = new System.Drawing.Size(157, 23);
+            this.btnNasdaqScreenerParse.Size = new System.Drawing.Size(183, 27);
             this.btnNasdaqScreenerParse.TabIndex = 59;
             this.btnNasdaqScreenerParse.Text = "Nasdaq Screener Parse";
             this.btnNasdaqScreenerParse.UseVisualStyleBackColor = true;
@@ -528,9 +561,10 @@ namespace Quote2022
             // btnScreenerNasdaqDownload
             // 
             this.btnScreenerNasdaqDownload.Enabled = false;
-            this.btnScreenerNasdaqDownload.Location = new System.Drawing.Point(572, 142);
+            this.btnScreenerNasdaqDownload.Location = new System.Drawing.Point(667, 164);
+            this.btnScreenerNasdaqDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnScreenerNasdaqDownload.Name = "btnScreenerNasdaqDownload";
-            this.btnScreenerNasdaqDownload.Size = new System.Drawing.Size(157, 23);
+            this.btnScreenerNasdaqDownload.Size = new System.Drawing.Size(183, 27);
             this.btnScreenerNasdaqDownload.TabIndex = 58;
             this.btnScreenerNasdaqDownload.Text = "Nasdaq Screener Download";
             this.btnScreenerNasdaqDownload.UseVisualStyleBackColor = true;
@@ -538,9 +572,10 @@ namespace Quote2022
             // 
             // btnProfileYahooParse
             // 
-            this.btnProfileYahooParse.Location = new System.Drawing.Point(384, 330);
+            this.btnProfileYahooParse.Location = new System.Drawing.Point(448, 381);
+            this.btnProfileYahooParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnProfileYahooParse.Name = "btnProfileYahooParse";
-            this.btnProfileYahooParse.Size = new System.Drawing.Size(146, 23);
+            this.btnProfileYahooParse.Size = new System.Drawing.Size(170, 27);
             this.btnProfileYahooParse.TabIndex = 57;
             this.btnProfileYahooParse.Text = "Profile Yahoo Parse";
             this.btnProfileYahooParse.UseVisualStyleBackColor = true;
@@ -548,9 +583,10 @@ namespace Quote2022
             // 
             // btnDayAlphaVantageParse
             // 
-            this.btnDayAlphaVantageParse.Location = new System.Drawing.Point(214, 160);
+            this.btnDayAlphaVantageParse.Location = new System.Drawing.Point(250, 185);
+            this.btnDayAlphaVantageParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDayAlphaVantageParse.Name = "btnDayAlphaVantageParse";
-            this.btnDayAlphaVantageParse.Size = new System.Drawing.Size(159, 23);
+            this.btnDayAlphaVantageParse.Size = new System.Drawing.Size(186, 27);
             this.btnDayAlphaVantageParse.TabIndex = 56;
             this.btnDayAlphaVantageParse.Text = "DailyAlphaVantage parse (zip)";
             this.btnDayAlphaVantageParse.UseVisualStyleBackColor = true;
@@ -558,9 +594,10 @@ namespace Quote2022
             // 
             // btnDayAlphaVantageDownload
             // 
-            this.btnDayAlphaVantageDownload.Location = new System.Drawing.Point(214, 131);
+            this.btnDayAlphaVantageDownload.Location = new System.Drawing.Point(250, 151);
+            this.btnDayAlphaVantageDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDayAlphaVantageDownload.Name = "btnDayAlphaVantageDownload";
-            this.btnDayAlphaVantageDownload.Size = new System.Drawing.Size(159, 23);
+            this.btnDayAlphaVantageDownload.Size = new System.Drawing.Size(186, 27);
             this.btnDayAlphaVantageDownload.TabIndex = 55;
             this.btnDayAlphaVantageDownload.Text = "DailyAlphaVantage download";
             this.btnDayAlphaVantageDownload.UseVisualStyleBackColor = true;
@@ -568,9 +605,10 @@ namespace Quote2022
             // 
             // btnMinuteAlphaVantageSplitData
             // 
-            this.btnMinuteAlphaVantageSplitData.Location = new System.Drawing.Point(3, 292);
+            this.btnMinuteAlphaVantageSplitData.Location = new System.Drawing.Point(4, 337);
+            this.btnMinuteAlphaVantageSplitData.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinuteAlphaVantageSplitData.Name = "btnMinuteAlphaVantageSplitData";
-            this.btnMinuteAlphaVantageSplitData.Size = new System.Drawing.Size(178, 40);
+            this.btnMinuteAlphaVantageSplitData.Size = new System.Drawing.Size(208, 46);
             this.btnMinuteAlphaVantageSplitData.TabIndex = 54;
             this.btnMinuteAlphaVantageSplitData.Text = "MinuteAlphaVantage split files by dates";
             this.btnMinuteAlphaVantageSplitData.UseVisualStyleBackColor = true;
@@ -578,9 +616,10 @@ namespace Quote2022
             // 
             // btnMinuteAlphaVantageDownloadStop
             // 
-            this.btnMinuteAlphaVantageDownloadStop.Location = new System.Drawing.Point(8, 53);
+            this.btnMinuteAlphaVantageDownloadStop.Location = new System.Drawing.Point(9, 61);
+            this.btnMinuteAlphaVantageDownloadStop.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinuteAlphaVantageDownloadStop.Name = "btnMinuteAlphaVantageDownloadStop";
-            this.btnMinuteAlphaVantageDownloadStop.Size = new System.Drawing.Size(178, 43);
+            this.btnMinuteAlphaVantageDownloadStop.Size = new System.Drawing.Size(208, 50);
             this.btnMinuteAlphaVantageDownloadStop.TabIndex = 53;
             this.btnMinuteAlphaVantageDownloadStop.Text = "STOP download of MinuteAlphaVantage";
             this.btnMinuteAlphaVantageDownloadStop.UseVisualStyleBackColor = true;
@@ -588,9 +627,10 @@ namespace Quote2022
             // 
             // btnIntradayAlphaVantageRefreshProxyList
             // 
-            this.btnIntradayAlphaVantageRefreshProxyList.Location = new System.Drawing.Point(8, 113);
+            this.btnIntradayAlphaVantageRefreshProxyList.Location = new System.Drawing.Point(9, 130);
+            this.btnIntradayAlphaVantageRefreshProxyList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIntradayAlphaVantageRefreshProxyList.Name = "btnIntradayAlphaVantageRefreshProxyList";
-            this.btnIntradayAlphaVantageRefreshProxyList.Size = new System.Drawing.Size(178, 23);
+            this.btnIntradayAlphaVantageRefreshProxyList.Size = new System.Drawing.Size(208, 27);
             this.btnIntradayAlphaVantageRefreshProxyList.TabIndex = 52;
             this.btnIntradayAlphaVantageRefreshProxyList.Text = "Refresh Proxy list";
             this.btnIntradayAlphaVantageRefreshProxyList.UseVisualStyleBackColor = true;
@@ -599,9 +639,10 @@ namespace Quote2022
             // xxbtnMinuteAlphaVantageSaveLogToDb
             // 
             this.xxbtnMinuteAlphaVantageSaveLogToDb.Enabled = false;
-            this.xxbtnMinuteAlphaVantageSaveLogToDb.Location = new System.Drawing.Point(3, 252);
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Location = new System.Drawing.Point(4, 291);
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.xxbtnMinuteAlphaVantageSaveLogToDb.Name = "xxbtnMinuteAlphaVantageSaveLogToDb";
-            this.xxbtnMinuteAlphaVantageSaveLogToDb.Size = new System.Drawing.Size(195, 23);
+            this.xxbtnMinuteAlphaVantageSaveLogToDb.Size = new System.Drawing.Size(227, 27);
             this.xxbtnMinuteAlphaVantageSaveLogToDb.TabIndex = 50;
             this.xxbtnMinuteAlphaVantageSaveLogToDb.Text = "MinuteAlphaVantage Save Log to DB";
             this.xxbtnMinuteAlphaVantageSaveLogToDb.UseVisualStyleBackColor = true;
@@ -609,9 +650,10 @@ namespace Quote2022
             // 
             // btnMinuteAlphaVantageDownload
             // 
-            this.btnMinuteAlphaVantageDownload.Location = new System.Drawing.Point(8, 15);
+            this.btnMinuteAlphaVantageDownload.Location = new System.Drawing.Point(9, 17);
+            this.btnMinuteAlphaVantageDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinuteAlphaVantageDownload.Name = "btnMinuteAlphaVantageDownload";
-            this.btnMinuteAlphaVantageDownload.Size = new System.Drawing.Size(178, 23);
+            this.btnMinuteAlphaVantageDownload.Size = new System.Drawing.Size(208, 27);
             this.btnMinuteAlphaVantageDownload.TabIndex = 49;
             this.btnMinuteAlphaVantageDownload.Text = "MinuteAlphaVantage download";
             this.btnMinuteAlphaVantageDownload.UseVisualStyleBackColor = true;
@@ -619,9 +661,10 @@ namespace Quote2022
             // 
             // btnDayYahooDownload
             // 
-            this.btnDayYahooDownload.Location = new System.Drawing.Point(214, 15);
+            this.btnDayYahooDownload.Location = new System.Drawing.Point(250, 17);
+            this.btnDayYahooDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDayYahooDownload.Name = "btnDayYahooDownload";
-            this.btnDayYahooDownload.Size = new System.Drawing.Size(146, 23);
+            this.btnDayYahooDownload.Size = new System.Drawing.Size(170, 27);
             this.btnDayYahooDownload.TabIndex = 45;
             this.btnDayYahooDownload.Text = "?DayYahoo Download";
             this.btnDayYahooDownload.UseVisualStyleBackColor = true;
@@ -629,9 +672,10 @@ namespace Quote2022
             // 
             // btnSymbolsYahooLookupParse
             // 
-            this.btnSymbolsYahooLookupParse.Location = new System.Drawing.Point(384, 73);
+            this.btnSymbolsYahooLookupParse.Location = new System.Drawing.Point(448, 84);
+            this.btnSymbolsYahooLookupParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsYahooLookupParse.Name = "btnSymbolsYahooLookupParse";
-            this.btnSymbolsYahooLookupParse.Size = new System.Drawing.Size(181, 23);
+            this.btnSymbolsYahooLookupParse.Size = new System.Drawing.Size(211, 27);
             this.btnSymbolsYahooLookupParse.TabIndex = 44;
             this.btnSymbolsYahooLookupParse.Text = "Symbols Yahoo Lookup Parse";
             this.btnSymbolsYahooLookupParse.UseVisualStyleBackColor = true;
@@ -639,9 +683,10 @@ namespace Quote2022
             // 
             // btnSymbolsYahooLookupDownload
             // 
-            this.btnSymbolsYahooLookupDownload.Location = new System.Drawing.Point(384, 44);
+            this.btnSymbolsYahooLookupDownload.Location = new System.Drawing.Point(448, 51);
+            this.btnSymbolsYahooLookupDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsYahooLookupDownload.Name = "btnSymbolsYahooLookupDownload";
-            this.btnSymbolsYahooLookupDownload.Size = new System.Drawing.Size(181, 23);
+            this.btnSymbolsYahooLookupDownload.Size = new System.Drawing.Size(211, 27);
             this.btnSymbolsYahooLookupDownload.TabIndex = 43;
             this.btnSymbolsYahooLookupDownload.Text = "Symbols Yahoo Lookup Download";
             this.btnSymbolsYahooLookupDownload.UseVisualStyleBackColor = true;
@@ -650,9 +695,10 @@ namespace Quote2022
             // btnUpdateTradingDays
             // 
             this.btnUpdateTradingDays.Enabled = false;
-            this.btnUpdateTradingDays.Location = new System.Drawing.Point(214, 292);
+            this.btnUpdateTradingDays.Location = new System.Drawing.Point(250, 337);
+            this.btnUpdateTradingDays.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnUpdateTradingDays.Name = "btnUpdateTradingDays";
-            this.btnUpdateTradingDays.Size = new System.Drawing.Size(146, 23);
+            this.btnUpdateTradingDays.Size = new System.Drawing.Size(170, 27);
             this.btnUpdateTradingDays.TabIndex = 42;
             this.btnUpdateTradingDays.Text = "Update Trading Days";
             this.btnUpdateTradingDays.UseVisualStyleBackColor = true;
@@ -661,9 +707,10 @@ namespace Quote2022
             // btnTimeSalesNasdaqSaveSummary
             // 
             this.btnTimeSalesNasdaqSaveSummary.Enabled = false;
-            this.btnTimeSalesNasdaqSaveSummary.Location = new System.Drawing.Point(952, 171);
+            this.btnTimeSalesNasdaqSaveSummary.Location = new System.Drawing.Point(1111, 197);
+            this.btnTimeSalesNasdaqSaveSummary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnTimeSalesNasdaqSaveSummary.Name = "btnTimeSalesNasdaqSaveSummary";
-            this.btnTimeSalesNasdaqSaveSummary.Size = new System.Drawing.Size(178, 23);
+            this.btnTimeSalesNasdaqSaveSummary.Size = new System.Drawing.Size(208, 27);
             this.btnTimeSalesNasdaqSaveSummary.TabIndex = 41;
             this.btnTimeSalesNasdaqSaveSummary.Text = "TimeSalesNasdaq Save Summary";
             this.btnToolTip.SetToolTip(this.btnTimeSalesNasdaqSaveSummary, "Copy data from text file to DB and then convert DB data to text and compare data");
@@ -673,9 +720,10 @@ namespace Quote2022
             // btnRefreshSpitsData
             // 
             this.btnRefreshSpitsData.Enabled = false;
-            this.btnRefreshSpitsData.Location = new System.Drawing.Point(754, 330);
+            this.btnRefreshSpitsData.Location = new System.Drawing.Point(880, 381);
+            this.btnRefreshSpitsData.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnRefreshSpitsData.Name = "btnRefreshSpitsData";
-            this.btnRefreshSpitsData.Size = new System.Drawing.Size(146, 23);
+            this.btnRefreshSpitsData.Size = new System.Drawing.Size(170, 27);
             this.btnRefreshSpitsData.TabIndex = 40;
             this.btnRefreshSpitsData.Text = "Refresh Spits Data";
             this.btnRefreshSpitsData.UseVisualStyleBackColor = true;
@@ -684,9 +732,10 @@ namespace Quote2022
             // btnTimeSalesNasdaqSaveLog
             // 
             this.btnTimeSalesNasdaqSaveLog.Enabled = false;
-            this.btnTimeSalesNasdaqSaveLog.Location = new System.Drawing.Point(952, 142);
+            this.btnTimeSalesNasdaqSaveLog.Location = new System.Drawing.Point(1111, 164);
+            this.btnTimeSalesNasdaqSaveLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnTimeSalesNasdaqSaveLog.Name = "btnTimeSalesNasdaqSaveLog";
-            this.btnTimeSalesNasdaqSaveLog.Size = new System.Drawing.Size(178, 23);
+            this.btnTimeSalesNasdaqSaveLog.Size = new System.Drawing.Size(208, 27);
             this.btnTimeSalesNasdaqSaveLog.TabIndex = 38;
             this.btnTimeSalesNasdaqSaveLog.Text = "TimeSalesNasdaq Save Log";
             this.btnToolTip.SetToolTip(this.btnTimeSalesNasdaqSaveLog, "Copy data from text file to DB and then convert DB data to text and compare data");
@@ -695,9 +744,10 @@ namespace Quote2022
             // 
             // btnSymbolsQuantumonlineParse
             // 
-            this.btnSymbolsQuantumonlineParse.Location = new System.Drawing.Point(952, 53);
+            this.btnSymbolsQuantumonlineParse.Location = new System.Drawing.Point(1111, 61);
+            this.btnSymbolsQuantumonlineParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsQuantumonlineParse.Name = "btnSymbolsQuantumonlineParse";
-            this.btnSymbolsQuantumonlineParse.Size = new System.Drawing.Size(187, 23);
+            this.btnSymbolsQuantumonlineParse.Size = new System.Drawing.Size(218, 27);
             this.btnSymbolsQuantumonlineParse.TabIndex = 37;
             this.btnSymbolsQuantumonlineParse.Text = "SymbolsQuantumonline Parse";
             this.btnSymbolsQuantumonlineParse.UseVisualStyleBackColor = true;
@@ -705,9 +755,10 @@ namespace Quote2022
             // 
             // btnSymbolsQuantumonlineDownload
             // 
-            this.btnSymbolsQuantumonlineDownload.Location = new System.Drawing.Point(952, 15);
+            this.btnSymbolsQuantumonlineDownload.Location = new System.Drawing.Point(1111, 17);
+            this.btnSymbolsQuantumonlineDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsQuantumonlineDownload.Name = "btnSymbolsQuantumonlineDownload";
-            this.btnSymbolsQuantumonlineDownload.Size = new System.Drawing.Size(187, 23);
+            this.btnSymbolsQuantumonlineDownload.Size = new System.Drawing.Size(218, 27);
             this.btnSymbolsQuantumonlineDownload.TabIndex = 36;
             this.btnSymbolsQuantumonlineDownload.Text = "SymbolsQuantumonline Download";
             this.btnSymbolsQuantumonlineDownload.UseVisualStyleBackColor = true;
@@ -716,9 +767,10 @@ namespace Quote2022
             // btnTimeSalesNasdaqDownload
             // 
             this.btnTimeSalesNasdaqDownload.Enabled = false;
-            this.btnTimeSalesNasdaqDownload.Location = new System.Drawing.Point(214, 91);
+            this.btnTimeSalesNasdaqDownload.Location = new System.Drawing.Point(250, 105);
+            this.btnTimeSalesNasdaqDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnTimeSalesNasdaqDownload.Name = "btnTimeSalesNasdaqDownload";
-            this.btnTimeSalesNasdaqDownload.Size = new System.Drawing.Size(159, 23);
+            this.btnTimeSalesNasdaqDownload.Size = new System.Drawing.Size(186, 27);
             this.btnTimeSalesNasdaqDownload.TabIndex = 35;
             this.btnTimeSalesNasdaqDownload.Text = "TimeSalesNasdaq Download";
             this.btnTimeSalesNasdaqDownload.UseVisualStyleBackColor = true;
@@ -726,9 +778,10 @@ namespace Quote2022
             // 
             // btnRefreshSymbolsData
             // 
-            this.btnRefreshSymbolsData.Location = new System.Drawing.Point(384, 368);
+            this.btnRefreshSymbolsData.Location = new System.Drawing.Point(448, 425);
+            this.btnRefreshSymbolsData.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnRefreshSymbolsData.Name = "btnRefreshSymbolsData";
-            this.btnRefreshSymbolsData.Size = new System.Drawing.Size(146, 23);
+            this.btnRefreshSymbolsData.Size = new System.Drawing.Size(170, 27);
             this.btnRefreshSymbolsData.TabIndex = 34;
             this.btnRefreshSymbolsData.Text = "Refresh Symbols Data";
             this.btnRefreshSymbolsData.UseVisualStyleBackColor = true;
@@ -737,9 +790,10 @@ namespace Quote2022
             // btnSymbolsNasdaqParse
             // 
             this.btnSymbolsNasdaqParse.Enabled = false;
-            this.btnSymbolsNasdaqParse.Location = new System.Drawing.Point(384, 252);
+            this.btnSymbolsNasdaqParse.Location = new System.Drawing.Point(448, 291);
+            this.btnSymbolsNasdaqParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsNasdaqParse.Name = "btnSymbolsNasdaqParse";
-            this.btnSymbolsNasdaqParse.Size = new System.Drawing.Size(146, 23);
+            this.btnSymbolsNasdaqParse.Size = new System.Drawing.Size(170, 27);
             this.btnSymbolsNasdaqParse.TabIndex = 31;
             this.btnSymbolsNasdaqParse.Text = "Symbols Nasdaq Parse";
             this.btnSymbolsNasdaqParse.UseVisualStyleBackColor = true;
@@ -747,9 +801,10 @@ namespace Quote2022
             // 
             // btnSymbolsStockanalysisParse
             // 
-            this.btnSymbolsStockanalysisParse.Location = new System.Drawing.Point(715, 73);
+            this.btnSymbolsStockanalysisParse.Location = new System.Drawing.Point(834, 84);
+            this.btnSymbolsStockanalysisParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsStockanalysisParse.Name = "btnSymbolsStockanalysisParse";
-            this.btnSymbolsStockanalysisParse.Size = new System.Drawing.Size(194, 23);
+            this.btnSymbolsStockanalysisParse.Size = new System.Drawing.Size(226, 27);
             this.btnSymbolsStockanalysisParse.TabIndex = 30;
             this.btnSymbolsStockanalysisParse.Text = "Symbols Stockanalysis Parse";
             this.btnSymbolsStockanalysisParse.UseVisualStyleBackColor = true;
@@ -757,9 +812,10 @@ namespace Quote2022
             // 
             // btnSymbolsStockanalysisDownload
             // 
-            this.btnSymbolsStockanalysisDownload.Location = new System.Drawing.Point(715, 44);
+            this.btnSymbolsStockanalysisDownload.Location = new System.Drawing.Point(834, 51);
+            this.btnSymbolsStockanalysisDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsStockanalysisDownload.Name = "btnSymbolsStockanalysisDownload";
-            this.btnSymbolsStockanalysisDownload.Size = new System.Drawing.Size(194, 23);
+            this.btnSymbolsStockanalysisDownload.Size = new System.Drawing.Size(226, 27);
             this.btnSymbolsStockanalysisDownload.TabIndex = 29;
             this.btnSymbolsStockanalysisDownload.Text = "Symbols Stockanalysis Download";
             this.btnSymbolsStockanalysisDownload.UseVisualStyleBackColor = true;
@@ -767,9 +823,10 @@ namespace Quote2022
             // 
             // btnQuantumonlineProfilesParse
             // 
-            this.btnQuantumonlineProfilesParse.Location = new System.Drawing.Point(952, 91);
+            this.btnQuantumonlineProfilesParse.Location = new System.Drawing.Point(1111, 105);
+            this.btnQuantumonlineProfilesParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnQuantumonlineProfilesParse.Name = "btnQuantumonlineProfilesParse";
-            this.btnQuantumonlineProfilesParse.Size = new System.Drawing.Size(164, 23);
+            this.btnQuantumonlineProfilesParse.Size = new System.Drawing.Size(191, 27);
             this.btnQuantumonlineProfilesParse.TabIndex = 28;
             this.btnQuantumonlineProfilesParse.Text = "Quantumonline Profiles Parse";
             this.btnQuantumonlineProfilesParse.UseVisualStyleBackColor = true;
@@ -777,9 +834,10 @@ namespace Quote2022
             // 
             // btnSplitInvestingHistoryParse
             // 
-            this.btnSplitInvestingHistoryParse.Location = new System.Drawing.Point(715, 15);
+            this.btnSplitInvestingHistoryParse.Location = new System.Drawing.Point(834, 17);
+            this.btnSplitInvestingHistoryParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSplitInvestingHistoryParse.Name = "btnSplitInvestingHistoryParse";
-            this.btnSplitInvestingHistoryParse.Size = new System.Drawing.Size(146, 23);
+            this.btnSplitInvestingHistoryParse.Size = new System.Drawing.Size(170, 27);
             this.btnSplitInvestingHistoryParse.TabIndex = 27;
             this.btnSplitInvestingHistoryParse.Text = "Split InvestingHistory Parse";
             this.btnSplitInvestingHistoryParse.UseVisualStyleBackColor = true;
@@ -787,9 +845,10 @@ namespace Quote2022
             // 
             // btnStockSplitHistoryParse
             // 
-            this.btnStockSplitHistoryParse.Location = new System.Drawing.Point(754, 226);
+            this.btnStockSplitHistoryParse.Location = new System.Drawing.Point(880, 261);
+            this.btnStockSplitHistoryParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnStockSplitHistoryParse.Name = "btnStockSplitHistoryParse";
-            this.btnStockSplitHistoryParse.Size = new System.Drawing.Size(146, 23);
+            this.btnStockSplitHistoryParse.Size = new System.Drawing.Size(170, 27);
             this.btnStockSplitHistoryParse.TabIndex = 26;
             this.btnStockSplitHistoryParse.Text = "StockSplitHistory Parse";
             this.btnStockSplitHistoryParse.UseVisualStyleBackColor = true;
@@ -798,9 +857,10 @@ namespace Quote2022
             // btnScreenerNasdaqParse
             // 
             this.btnScreenerNasdaqParse.Enabled = false;
-            this.btnScreenerNasdaqParse.Location = new System.Drawing.Point(384, 212);
+            this.btnScreenerNasdaqParse.Location = new System.Drawing.Point(448, 245);
+            this.btnScreenerNasdaqParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnScreenerNasdaqParse.Name = "btnScreenerNasdaqParse";
-            this.btnScreenerNasdaqParse.Size = new System.Drawing.Size(173, 23);
+            this.btnScreenerNasdaqParse.Size = new System.Drawing.Size(202, 27);
             this.btnScreenerNasdaqParse.TabIndex = 25;
             this.btnScreenerNasdaqParse.Text = "Nasdaq Stock Screener Parse";
             this.btnScreenerNasdaqParse.UseVisualStyleBackColor = true;
@@ -809,9 +869,10 @@ namespace Quote2022
             // btnSplitEoddataParse
             // 
             this.btnSplitEoddataParse.Enabled = false;
-            this.btnSplitEoddataParse.Location = new System.Drawing.Point(754, 142);
+            this.btnSplitEoddataParse.Location = new System.Drawing.Point(880, 164);
+            this.btnSplitEoddataParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSplitEoddataParse.Name = "btnSplitEoddataParse";
-            this.btnSplitEoddataParse.Size = new System.Drawing.Size(146, 23);
+            this.btnSplitEoddataParse.Size = new System.Drawing.Size(170, 27);
             this.btnSplitEoddataParse.TabIndex = 23;
             this.btnSplitEoddataParse.Text = "Split Eoddata Parse";
             this.btnSplitEoddataParse.UseVisualStyleBackColor = true;
@@ -820,9 +881,10 @@ namespace Quote2022
             // btnSplitInvestingParse
             // 
             this.btnSplitInvestingParse.Enabled = false;
-            this.btnSplitInvestingParse.Location = new System.Drawing.Point(754, 182);
+            this.btnSplitInvestingParse.Location = new System.Drawing.Point(880, 210);
+            this.btnSplitInvestingParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSplitInvestingParse.Name = "btnSplitInvestingParse";
-            this.btnSplitInvestingParse.Size = new System.Drawing.Size(146, 23);
+            this.btnSplitInvestingParse.Size = new System.Drawing.Size(170, 27);
             this.btnSplitInvestingParse.TabIndex = 22;
             this.btnSplitInvestingParse.Text = "Split Investing.com Parse";
             this.btnSplitInvestingParse.UseVisualStyleBackColor = true;
@@ -830,9 +892,10 @@ namespace Quote2022
             // 
             // btnSplitYahooParse
             // 
-            this.btnSplitYahooParse.Location = new System.Drawing.Point(754, 268);
+            this.btnSplitYahooParse.Location = new System.Drawing.Point(880, 309);
+            this.btnSplitYahooParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSplitYahooParse.Name = "btnSplitYahooParse";
-            this.btnSplitYahooParse.Size = new System.Drawing.Size(146, 23);
+            this.btnSplitYahooParse.Size = new System.Drawing.Size(170, 27);
             this.btnSplitYahooParse.TabIndex = 21;
             this.btnSplitYahooParse.Text = "Split Yahoo Parse (zip)";
             this.btnSplitYahooParse.UseVisualStyleBackColor = true;
@@ -841,9 +904,10 @@ namespace Quote2022
             // btnSymbolsEoddataParse
             // 
             this.btnSymbolsEoddataParse.Enabled = false;
-            this.btnSymbolsEoddataParse.Location = new System.Drawing.Point(384, 290);
+            this.btnSymbolsEoddataParse.Location = new System.Drawing.Point(448, 335);
+            this.btnSymbolsEoddataParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSymbolsEoddataParse.Name = "btnSymbolsEoddataParse";
-            this.btnSymbolsEoddataParse.Size = new System.Drawing.Size(146, 23);
+            this.btnSymbolsEoddataParse.Size = new System.Drawing.Size(170, 27);
             this.btnSymbolsEoddataParse.TabIndex = 16;
             this.btnSymbolsEoddataParse.Text = "Symbols Eoddata Parse";
             this.btnSymbolsEoddataParse.UseVisualStyleBackColor = true;
@@ -852,9 +916,10 @@ namespace Quote2022
             // btnDayEoddataParse
             // 
             this.btnDayEoddataParse.Enabled = false;
-            this.btnDayEoddataParse.Location = new System.Drawing.Point(214, 330);
+            this.btnDayEoddataParse.Location = new System.Drawing.Point(250, 381);
+            this.btnDayEoddataParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDayEoddataParse.Name = "btnDayEoddataParse";
-            this.btnDayEoddataParse.Size = new System.Drawing.Size(146, 23);
+            this.btnDayEoddataParse.Size = new System.Drawing.Size(170, 27);
             this.btnDayEoddataParse.TabIndex = 15;
             this.btnDayEoddataParse.Text = "Daily Eoddata Parse";
             this.btnDayEoddataParse.UseVisualStyleBackColor = true;
@@ -862,9 +927,10 @@ namespace Quote2022
             // 
             // btnNanexSymbols
             // 
-            this.btnNanexSymbols.Location = new System.Drawing.Point(384, 15);
+            this.btnNanexSymbols.Location = new System.Drawing.Point(448, 17);
+            this.btnNanexSymbols.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnNanexSymbols.Name = "btnNanexSymbols";
-            this.btnNanexSymbols.Size = new System.Drawing.Size(146, 23);
+            this.btnNanexSymbols.Size = new System.Drawing.Size(170, 27);
             this.btnNanexSymbols.TabIndex = 14;
             this.btnNanexSymbols.Text = "?Nanex Symbols";
             this.btnNanexSymbols.UseVisualStyleBackColor = true;
@@ -873,9 +939,10 @@ namespace Quote2022
             // btnDayYahooIndicesParse
             // 
             this.btnDayYahooIndicesParse.Enabled = false;
-            this.btnDayYahooIndicesParse.Location = new System.Drawing.Point(214, 252);
+            this.btnDayYahooIndicesParse.Location = new System.Drawing.Point(250, 291);
+            this.btnDayYahooIndicesParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDayYahooIndicesParse.Name = "btnDayYahooIndicesParse";
-            this.btnDayYahooIndicesParse.Size = new System.Drawing.Size(146, 23);
+            this.btnDayYahooIndicesParse.Size = new System.Drawing.Size(170, 27);
             this.btnDayYahooIndicesParse.TabIndex = 13;
             this.btnDayYahooIndicesParse.Text = "DayYahoo Indices Parse";
             this.btnDayYahooIndicesParse.UseVisualStyleBackColor = true;
@@ -883,9 +950,10 @@ namespace Quote2022
             // 
             // btnDayYahooParse
             // 
-            this.btnDayYahooParse.Location = new System.Drawing.Point(214, 44);
+            this.btnDayYahooParse.Location = new System.Drawing.Point(250, 51);
+            this.btnDayYahooParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDayYahooParse.Name = "btnDayYahooParse";
-            this.btnDayYahooParse.Size = new System.Drawing.Size(146, 23);
+            this.btnDayYahooParse.Size = new System.Drawing.Size(170, 27);
             this.btnDayYahooParse.TabIndex = 12;
             this.btnDayYahooParse.Text = "?DayYahoo Parse";
             this.btnDayYahooParse.UseVisualStyleBackColor = true;
@@ -896,19 +964,21 @@ namespace Quote2022
             this.tabLayers.Controls.Add(this.button1);
             this.tabLayers.Controls.Add(this.gbDataSet);
             this.tabLayers.Controls.Add(this.btnAlgorithm1);
-            this.tabLayers.Location = new System.Drawing.Point(4, 22);
+            this.tabLayers.Location = new System.Drawing.Point(4, 24);
+            this.tabLayers.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabLayers.Name = "tabLayers";
-            this.tabLayers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLayers.Size = new System.Drawing.Size(1158, 411);
+            this.tabLayers.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabLayers.Size = new System.Drawing.Size(1352, 476);
             this.tabLayers.TabIndex = 1;
             this.tabLayers.Text = "Layers";
             this.tabLayers.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(426, 97);
+            this.button1.Location = new System.Drawing.Point(497, 112);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(88, 27);
             this.button1.TabIndex = 2;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
@@ -918,9 +988,11 @@ namespace Quote2022
             // 
             this.gbDataSet.Controls.Add(this.cb2013);
             this.gbDataSet.Controls.Add(this.cb2022);
-            this.gbDataSet.Location = new System.Drawing.Point(23, 17);
+            this.gbDataSet.Location = new System.Drawing.Point(27, 20);
+            this.gbDataSet.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbDataSet.Name = "gbDataSet";
-            this.gbDataSet.Size = new System.Drawing.Size(76, 68);
+            this.gbDataSet.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.gbDataSet.Size = new System.Drawing.Size(89, 78);
             this.gbDataSet.TabIndex = 1;
             this.gbDataSet.TabStop = false;
             this.gbDataSet.Text = "Data Set";
@@ -928,9 +1000,10 @@ namespace Quote2022
             // cb2013
             // 
             this.cb2013.AutoSize = true;
-            this.cb2013.Location = new System.Drawing.Point(6, 42);
+            this.cb2013.Location = new System.Drawing.Point(7, 48);
+            this.cb2013.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cb2013.Name = "cb2013";
-            this.cb2013.Size = new System.Drawing.Size(50, 17);
+            this.cb2013.Size = new System.Drawing.Size(50, 19);
             this.cb2013.TabIndex = 3;
             this.cb2013.Text = "2013";
             this.cb2013.UseVisualStyleBackColor = true;
@@ -940,18 +1013,20 @@ namespace Quote2022
             this.cb2022.AutoSize = true;
             this.cb2022.Checked = true;
             this.cb2022.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cb2022.Location = new System.Drawing.Point(6, 19);
+            this.cb2022.Location = new System.Drawing.Point(7, 22);
+            this.cb2022.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cb2022.Name = "cb2022";
-            this.cb2022.Size = new System.Drawing.Size(50, 17);
+            this.cb2022.Size = new System.Drawing.Size(50, 19);
             this.cb2022.TabIndex = 2;
             this.cb2022.Text = "2022";
             this.cb2022.UseVisualStyleBackColor = true;
             // 
             // btnAlgorithm1
             // 
-            this.btnAlgorithm1.Location = new System.Drawing.Point(23, 97);
+            this.btnAlgorithm1.Location = new System.Drawing.Point(27, 112);
+            this.btnAlgorithm1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnAlgorithm1.Name = "btnAlgorithm1";
-            this.btnAlgorithm1.Size = new System.Drawing.Size(75, 23);
+            this.btnAlgorithm1.Size = new System.Drawing.Size(88, 27);
             this.btnAlgorithm1.TabIndex = 0;
             this.btnAlgorithm1.Text = "Algorithm 1";
             this.btnAlgorithm1.UseVisualStyleBackColor = true;
@@ -965,10 +1040,11 @@ namespace Quote2022
             this.tabPage4.Controls.Add(this.btnWikipediaIndicesParse);
             this.tabPage4.Controls.Add(this.btnWikipediaIndicesDownload);
             this.tabPage4.Controls.Add(this.btnTradingViewRecommendParse);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Location = new System.Drawing.Point(4, 24);
+            this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(1158, 411);
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabPage4.Size = new System.Drawing.Size(1352, 476);
             this.tabPage4.TabIndex = 5;
             this.tabPage4.Text = "EOD";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -976,9 +1052,10 @@ namespace Quote2022
             // btnStockAnalysisIPO
             // 
             this.btnStockAnalysisIPO.Enabled = false;
-            this.btnStockAnalysisIPO.Location = new System.Drawing.Point(566, 17);
+            this.btnStockAnalysisIPO.Location = new System.Drawing.Point(660, 20);
+            this.btnStockAnalysisIPO.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnStockAnalysisIPO.Name = "btnStockAnalysisIPO";
-            this.btnStockAnalysisIPO.Size = new System.Drawing.Size(135, 23);
+            this.btnStockAnalysisIPO.Size = new System.Drawing.Size(158, 27);
             this.btnStockAnalysisIPO.TabIndex = 55;
             this.btnStockAnalysisIPO.Text = "StockAnalysis IPO";
             this.btnToolTip.SetToolTip(this.btnStockAnalysisIPO, "Download, parse and save to database");
@@ -987,9 +1064,10 @@ namespace Quote2022
             // 
             // btnWebArchiveWikipediaIndicesParse
             // 
-            this.btnWebArchiveWikipediaIndicesParse.Location = new System.Drawing.Point(217, 17);
+            this.btnWebArchiveWikipediaIndicesParse.Location = new System.Drawing.Point(253, 20);
+            this.btnWebArchiveWikipediaIndicesParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWebArchiveWikipediaIndicesParse.Name = "btnWebArchiveWikipediaIndicesParse";
-            this.btnWebArchiveWikipediaIndicesParse.Size = new System.Drawing.Size(203, 23);
+            this.btnWebArchiveWikipediaIndicesParse.Size = new System.Drawing.Size(237, 27);
             this.btnWebArchiveWikipediaIndicesParse.TabIndex = 54;
             this.btnWebArchiveWikipediaIndicesParse.Text = "WebArchive Wikipedia Indices Parse";
             this.btnWebArchiveWikipediaIndicesParse.UseVisualStyleBackColor = true;
@@ -997,9 +1075,10 @@ namespace Quote2022
             // 
             // btnRussellIndicesParse
             // 
-            this.btnRussellIndicesParse.Location = new System.Drawing.Point(415, 87);
+            this.btnRussellIndicesParse.Location = new System.Drawing.Point(484, 100);
+            this.btnRussellIndicesParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnRussellIndicesParse.Name = "btnRussellIndicesParse";
-            this.btnRussellIndicesParse.Size = new System.Drawing.Size(135, 23);
+            this.btnRussellIndicesParse.Size = new System.Drawing.Size(158, 27);
             this.btnRussellIndicesParse.TabIndex = 53;
             this.btnRussellIndicesParse.Text = "Russell Indices Parse";
             this.btnRussellIndicesParse.UseVisualStyleBackColor = true;
@@ -1007,9 +1086,10 @@ namespace Quote2022
             // 
             // btnWikipediaIndicesParse
             // 
-            this.btnWikipediaIndicesParse.Location = new System.Drawing.Point(217, 87);
+            this.btnWikipediaIndicesParse.Location = new System.Drawing.Point(253, 100);
+            this.btnWikipediaIndicesParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWikipediaIndicesParse.Name = "btnWikipediaIndicesParse";
-            this.btnWikipediaIndicesParse.Size = new System.Drawing.Size(178, 23);
+            this.btnWikipediaIndicesParse.Size = new System.Drawing.Size(208, 27);
             this.btnWikipediaIndicesParse.TabIndex = 52;
             this.btnWikipediaIndicesParse.Text = "Wikipedia Indices Parse";
             this.btnWikipediaIndicesParse.UseVisualStyleBackColor = true;
@@ -1017,9 +1097,10 @@ namespace Quote2022
             // 
             // btnWikipediaIndicesDownload
             // 
-            this.btnWikipediaIndicesDownload.Location = new System.Drawing.Point(217, 58);
+            this.btnWikipediaIndicesDownload.Location = new System.Drawing.Point(253, 67);
+            this.btnWikipediaIndicesDownload.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWikipediaIndicesDownload.Name = "btnWikipediaIndicesDownload";
-            this.btnWikipediaIndicesDownload.Size = new System.Drawing.Size(178, 23);
+            this.btnWikipediaIndicesDownload.Size = new System.Drawing.Size(208, 27);
             this.btnWikipediaIndicesDownload.TabIndex = 51;
             this.btnWikipediaIndicesDownload.Text = "Wikipedia Indices Download";
             this.btnWikipediaIndicesDownload.UseVisualStyleBackColor = true;
@@ -1027,9 +1108,10 @@ namespace Quote2022
             // 
             // btnTradingViewRecommendParse
             // 
-            this.btnTradingViewRecommendParse.Location = new System.Drawing.Point(19, 17);
+            this.btnTradingViewRecommendParse.Location = new System.Drawing.Point(22, 20);
+            this.btnTradingViewRecommendParse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnTradingViewRecommendParse.Name = "btnTradingViewRecommendParse";
-            this.btnTradingViewRecommendParse.Size = new System.Drawing.Size(178, 23);
+            this.btnTradingViewRecommendParse.Size = new System.Drawing.Size(208, 27);
             this.btnTradingViewRecommendParse.TabIndex = 50;
             this.btnTradingViewRecommendParse.Text = "TradingView Recommend Parse";
             this.btnTradingViewRecommendParse.UseVisualStyleBackColor = true;
@@ -1052,19 +1134,21 @@ namespace Quote2022
             this.tabPage1.Controls.Add(this.btnIntradayGenerateReport);
             this.tabPage1.Controls.Add(this.btnPrepareYahooMinuteTextCache);
             this.tabPage1.Controls.Add(this.btnCheckYahooMinuteData);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1158, 411);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabPage1.Size = new System.Drawing.Size(1352, 476);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Intraday";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // btnIntradayYahooQuotesSaveToDB
             // 
-            this.btnIntradayYahooQuotesSaveToDB.Location = new System.Drawing.Point(740, 22);
+            this.btnIntradayYahooQuotesSaveToDB.Location = new System.Drawing.Point(863, 25);
+            this.btnIntradayYahooQuotesSaveToDB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIntradayYahooQuotesSaveToDB.Name = "btnIntradayYahooQuotesSaveToDB";
-            this.btnIntradayYahooQuotesSaveToDB.Size = new System.Drawing.Size(184, 41);
+            this.btnIntradayYahooQuotesSaveToDB.Size = new System.Drawing.Size(215, 47);
             this.btnIntradayYahooQuotesSaveToDB.TabIndex = 39;
             this.btnIntradayYahooQuotesSaveToDB.Text = "Save Yahoo Intraday Quotes to DB (09:45-15:45)";
             this.btnIntradayYahooQuotesSaveToDB.UseVisualStyleBackColor = true;
@@ -1073,8 +1157,9 @@ namespace Quote2022
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label7.Location = new System.Drawing.Point(276, 234);
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label7.Location = new System.Drawing.Point(322, 270);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(145, 15);
             this.label7.TabIndex = 38;
@@ -1083,20 +1168,21 @@ namespace Quote2022
             // nudIntradayFees
             // 
             this.nudIntradayFees.DecimalPlaces = 3;
-            this.nudIntradayFees.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nudIntradayFees.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.nudIntradayFees.Increment = new decimal(new int[] {
             1,
             0,
             0,
             196608});
-            this.nudIntradayFees.Location = new System.Drawing.Point(356, 257);
+            this.nudIntradayFees.Location = new System.Drawing.Point(415, 297);
+            this.nudIntradayFees.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nudIntradayFees.Maximum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.nudIntradayFees.Name = "nudIntradayFees";
-            this.nudIntradayFees.Size = new System.Drawing.Size(65, 23);
+            this.nudIntradayFees.Size = new System.Drawing.Size(76, 23);
             this.nudIntradayFees.TabIndex = 37;
             this.nudIntradayFees.Value = new decimal(new int[] {
             2,
@@ -1109,8 +1195,9 @@ namespace Quote2022
             this.cbIntradayStopInPercent.AutoSize = true;
             this.cbIntradayStopInPercent.Checked = true;
             this.cbIntradayStopInPercent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIntradayStopInPercent.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.cbIntradayStopInPercent.Location = new System.Drawing.Point(279, 168);
+            this.cbIntradayStopInPercent.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.cbIntradayStopInPercent.Location = new System.Drawing.Point(326, 194);
+            this.cbIntradayStopInPercent.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbIntradayStopInPercent.Name = "cbIntradayStopInPercent";
             this.cbIntradayStopInPercent.Size = new System.Drawing.Size(177, 19);
             this.cbIntradayStopInPercent.TabIndex = 36;
@@ -1121,8 +1208,9 @@ namespace Quote2022
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(276, 195);
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label6.Location = new System.Drawing.Point(322, 225);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(67, 15);
             this.label6.TabIndex = 35;
@@ -1131,13 +1219,14 @@ namespace Quote2022
             // nudIntradayStop
             // 
             this.nudIntradayStop.DecimalPlaces = 2;
-            this.nudIntradayStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nudIntradayStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.nudIntradayStop.Increment = new decimal(new int[] {
             1,
             0,
             0,
             131072});
-            this.nudIntradayStop.Location = new System.Drawing.Point(356, 193);
+            this.nudIntradayStop.Location = new System.Drawing.Point(415, 223);
+            this.nudIntradayStop.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nudIntradayStop.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -1149,7 +1238,7 @@ namespace Quote2022
             0,
             131072});
             this.nudIntradayStop.Name = "nudIntradayStop";
-            this.nudIntradayStop.Size = new System.Drawing.Size(65, 23);
+            this.nudIntradayStop.Size = new System.Drawing.Size(76, 23);
             this.nudIntradayStop.TabIndex = 34;
             this.nudIntradayStop.Value = new decimal(new int[] {
             3,
@@ -1159,9 +1248,10 @@ namespace Quote2022
             // 
             // btnIntradayStatisticsSaveToDB
             // 
-            this.btnIntradayStatisticsSaveToDB.Location = new System.Drawing.Point(494, 101);
+            this.btnIntradayStatisticsSaveToDB.Location = new System.Drawing.Point(576, 117);
+            this.btnIntradayStatisticsSaveToDB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIntradayStatisticsSaveToDB.Name = "btnIntradayStatisticsSaveToDB";
-            this.btnIntradayStatisticsSaveToDB.Size = new System.Drawing.Size(220, 23);
+            this.btnIntradayStatisticsSaveToDB.Size = new System.Drawing.Size(257, 27);
             this.btnIntradayStatisticsSaveToDB.TabIndex = 33;
             this.btnIntradayStatisticsSaveToDB.Text = "Save Statistics of Intraday Quotes to DB";
             this.btnIntradayStatisticsSaveToDB.UseVisualStyleBackColor = true;
@@ -1180,30 +1270,33 @@ namespace Quote2022
             this.groupBox2.Controls.Add(this.nudFromMinute);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.nudFromHour);
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.groupBox2.Location = new System.Drawing.Point(268, 6);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.groupBox2.Location = new System.Drawing.Point(313, 7);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(159, 142);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox2.Size = new System.Drawing.Size(186, 164);
             this.groupBox2.TabIndex = 32;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Time Frames";
             // 
             // nudInterval
             // 
-            this.nudInterval.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nudInterval.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.nudInterval.Increment = new decimal(new int[] {
             15,
             0,
             0,
             0});
-            this.nudInterval.Location = new System.Drawing.Point(110, 78);
+            this.nudInterval.Location = new System.Drawing.Point(128, 90);
+            this.nudInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nudInterval.Maximum = new decimal(new int[] {
             390,
             0,
             0,
             0});
             this.nudInterval.Name = "nudInterval";
-            this.nudInterval.Size = new System.Drawing.Size(38, 23);
+            this.nudInterval.Size = new System.Drawing.Size(44, 23);
             this.nudInterval.TabIndex = 10;
             this.nudInterval.Value = new decimal(new int[] {
             30,
@@ -1214,8 +1307,9 @@ namespace Quote2022
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.Location = new System.Drawing.Point(8, 80);
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label5.Location = new System.Drawing.Point(9, 92);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(101, 15);
             this.label5.TabIndex = 9;
@@ -1226,8 +1320,9 @@ namespace Quote2022
             this.cbCloseInNextFrame.AutoSize = true;
             this.cbCloseInNextFrame.Checked = true;
             this.cbCloseInNextFrame.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCloseInNextFrame.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.cbCloseInNextFrame.Location = new System.Drawing.Point(11, 108);
+            this.cbCloseInNextFrame.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.cbCloseInNextFrame.Location = new System.Drawing.Point(13, 125);
+            this.cbCloseInNextFrame.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbCloseInNextFrame.Name = "cbCloseInNextFrame";
             this.cbCloseInNextFrame.Size = new System.Drawing.Size(131, 19);
             this.cbCloseInNextFrame.TabIndex = 8;
@@ -1237,8 +1332,9 @@ namespace Quote2022
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(96, 51);
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label3.Location = new System.Drawing.Point(112, 59);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(12, 17);
             this.label3.TabIndex = 7;
@@ -1246,20 +1342,21 @@ namespace Quote2022
             // 
             // nudToMinute
             // 
-            this.nudToMinute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nudToMinute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.nudToMinute.Increment = new decimal(new int[] {
             15,
             0,
             0,
             0});
-            this.nudToMinute.Location = new System.Drawing.Point(110, 49);
+            this.nudToMinute.Location = new System.Drawing.Point(128, 57);
+            this.nudToMinute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nudToMinute.Maximum = new decimal(new int[] {
             60,
             0,
             0,
             0});
             this.nudToMinute.Name = "nudToMinute";
-            this.nudToMinute.Size = new System.Drawing.Size(38, 23);
+            this.nudToMinute.Size = new System.Drawing.Size(44, 23);
             this.nudToMinute.TabIndex = 6;
             this.nudToMinute.Value = new decimal(new int[] {
             45,
@@ -1270,8 +1367,9 @@ namespace Quote2022
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(23, 53);
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label4.Location = new System.Drawing.Point(27, 61);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(21, 15);
             this.label4.TabIndex = 5;
@@ -1279,8 +1377,9 @@ namespace Quote2022
             // 
             // nudToHour
             // 
-            this.nudToHour.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudToHour.Location = new System.Drawing.Point(54, 49);
+            this.nudToHour.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.nudToHour.Location = new System.Drawing.Point(63, 57);
+            this.nudToHour.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nudToHour.Maximum = new decimal(new int[] {
             15,
             0,
@@ -1292,7 +1391,7 @@ namespace Quote2022
             0,
             0});
             this.nudToHour.Name = "nudToHour";
-            this.nudToHour.Size = new System.Drawing.Size(38, 23);
+            this.nudToHour.Size = new System.Drawing.Size(44, 23);
             this.nudToHour.TabIndex = 4;
             this.nudToHour.Value = new decimal(new int[] {
             15,
@@ -1303,8 +1402,9 @@ namespace Quote2022
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(96, 22);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label2.Location = new System.Drawing.Point(112, 25);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(12, 17);
             this.label2.TabIndex = 3;
@@ -1312,20 +1412,21 @@ namespace Quote2022
             // 
             // nudFromMinute
             // 
-            this.nudFromMinute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.nudFromMinute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.nudFromMinute.Increment = new decimal(new int[] {
             15,
             0,
             0,
             0});
-            this.nudFromMinute.Location = new System.Drawing.Point(110, 20);
+            this.nudFromMinute.Location = new System.Drawing.Point(128, 23);
+            this.nudFromMinute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nudFromMinute.Maximum = new decimal(new int[] {
             60,
             0,
             0,
             0});
             this.nudFromMinute.Name = "nudFromMinute";
-            this.nudFromMinute.Size = new System.Drawing.Size(38, 23);
+            this.nudFromMinute.Size = new System.Drawing.Size(44, 23);
             this.nudFromMinute.TabIndex = 2;
             this.nudFromMinute.Value = new decimal(new int[] {
             45,
@@ -1336,8 +1437,9 @@ namespace Quote2022
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(8, 22);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(9, 25);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(36, 15);
             this.label1.TabIndex = 1;
@@ -1345,8 +1447,9 @@ namespace Quote2022
             // 
             // nudFromHour
             // 
-            this.nudFromHour.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudFromHour.Location = new System.Drawing.Point(54, 20);
+            this.nudFromHour.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.nudFromHour.Location = new System.Drawing.Point(63, 23);
+            this.nudFromHour.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.nudFromHour.Maximum = new decimal(new int[] {
             15,
             0,
@@ -1358,7 +1461,7 @@ namespace Quote2022
             0,
             0});
             this.nudFromHour.Name = "nudFromHour";
-            this.nudFromHour.Size = new System.Drawing.Size(38, 23);
+            this.nudFromHour.Size = new System.Drawing.Size(44, 23);
             this.nudFromHour.TabIndex = 0;
             this.nudFromHour.Value = new decimal(new int[] {
             9,
@@ -1368,9 +1471,10 @@ namespace Quote2022
             // 
             // btnIntradayByTimeReportsClosedInNextFrame
             // 
-            this.btnIntradayByTimeReportsClosedInNextFrame.Location = new System.Drawing.Point(494, 328);
+            this.btnIntradayByTimeReportsClosedInNextFrame.Location = new System.Drawing.Point(576, 378);
+            this.btnIntradayByTimeReportsClosedInNextFrame.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIntradayByTimeReportsClosedInNextFrame.Name = "btnIntradayByTimeReportsClosedInNextFrame";
-            this.btnIntradayByTimeReportsClosedInNextFrame.Size = new System.Drawing.Size(138, 42);
+            this.btnIntradayByTimeReportsClosedInNextFrame.Size = new System.Drawing.Size(161, 48);
             this.btnIntradayByTimeReportsClosedInNextFrame.TabIndex = 31;
             this.btnIntradayByTimeReportsClosedInNextFrame.Text = "Generate ByTime reports (closedInNextFrame)";
             this.btnIntradayByTimeReportsClosedInNextFrame.UseVisualStyleBackColor = true;
@@ -1378,9 +1482,10 @@ namespace Quote2022
             // 
             // btnIntradayByTimeReports
             // 
-            this.btnIntradayByTimeReports.Location = new System.Drawing.Point(494, 299);
+            this.btnIntradayByTimeReports.Location = new System.Drawing.Point(576, 345);
+            this.btnIntradayByTimeReports.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIntradayByTimeReports.Name = "btnIntradayByTimeReports";
-            this.btnIntradayByTimeReports.Size = new System.Drawing.Size(138, 23);
+            this.btnIntradayByTimeReports.Size = new System.Drawing.Size(161, 27);
             this.btnIntradayByTimeReports.TabIndex = 30;
             this.btnIntradayByTimeReports.Text = "Generate ByTime reports";
             this.btnIntradayByTimeReports.UseVisualStyleBackColor = true;
@@ -1388,9 +1493,10 @@ namespace Quote2022
             // 
             // btnIntradayPrintDetails
             // 
-            this.btnIntradayPrintDetails.Location = new System.Drawing.Point(556, 256);
+            this.btnIntradayPrintDetails.Location = new System.Drawing.Point(649, 295);
+            this.btnIntradayPrintDetails.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIntradayPrintDetails.Name = "btnIntradayPrintDetails";
-            this.btnIntradayPrintDetails.Size = new System.Drawing.Size(75, 23);
+            this.btnIntradayPrintDetails.Size = new System.Drawing.Size(88, 27);
             this.btnIntradayPrintDetails.TabIndex = 29;
             this.btnIntradayPrintDetails.Text = "Print Details";
             this.btnIntradayPrintDetails.UseVisualStyleBackColor = true;
@@ -1399,9 +1505,11 @@ namespace Quote2022
             // gbIntradayDataList
             // 
             this.gbIntradayDataList.Controls.Add(this.clbIntradayDataList);
-            this.gbIntradayDataList.Location = new System.Drawing.Point(8, 6);
+            this.gbIntradayDataList.Location = new System.Drawing.Point(9, 7);
+            this.gbIntradayDataList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbIntradayDataList.Name = "gbIntradayDataList";
-            this.gbIntradayDataList.Size = new System.Drawing.Size(254, 370);
+            this.gbIntradayDataList.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.gbIntradayDataList.Size = new System.Drawing.Size(296, 427);
             this.gbIntradayDataList.TabIndex = 28;
             this.gbIntradayDataList.TabStop = false;
             this.gbIntradayDataList.Text = "Data List";
@@ -1411,19 +1519,21 @@ namespace Quote2022
             this.clbIntradayDataList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.clbIntradayDataList.CheckOnClick = true;
             this.clbIntradayDataList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clbIntradayDataList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.clbIntradayDataList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.clbIntradayDataList.FormattingEnabled = true;
-            this.clbIntradayDataList.Location = new System.Drawing.Point(3, 16);
+            this.clbIntradayDataList.Location = new System.Drawing.Point(4, 19);
+            this.clbIntradayDataList.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.clbIntradayDataList.Name = "clbIntradayDataList";
-            this.clbIntradayDataList.Size = new System.Drawing.Size(248, 351);
+            this.clbIntradayDataList.Size = new System.Drawing.Size(288, 405);
             this.clbIntradayDataList.TabIndex = 27;
             // 
             // btnIntradayGenerateReport
             // 
-            this.btnIntradayGenerateReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnIntradayGenerateReport.Location = new System.Drawing.Point(494, 209);
+            this.btnIntradayGenerateReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnIntradayGenerateReport.Location = new System.Drawing.Point(576, 241);
+            this.btnIntradayGenerateReport.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnIntradayGenerateReport.Name = "btnIntradayGenerateReport";
-            this.btnIntradayGenerateReport.Size = new System.Drawing.Size(109, 23);
+            this.btnIntradayGenerateReport.Size = new System.Drawing.Size(127, 27);
             this.btnIntradayGenerateReport.TabIndex = 27;
             this.btnIntradayGenerateReport.Text = "Generate report";
             this.btnIntradayGenerateReport.UseVisualStyleBackColor = true;
@@ -1431,9 +1541,10 @@ namespace Quote2022
             // 
             // btnPrepareYahooMinuteTextCache
             // 
-            this.btnPrepareYahooMinuteTextCache.Location = new System.Drawing.Point(494, 60);
+            this.btnPrepareYahooMinuteTextCache.Location = new System.Drawing.Point(576, 69);
+            this.btnPrepareYahooMinuteTextCache.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnPrepareYahooMinuteTextCache.Name = "btnPrepareYahooMinuteTextCache";
-            this.btnPrepareYahooMinuteTextCache.Size = new System.Drawing.Size(184, 23);
+            this.btnPrepareYahooMinuteTextCache.Size = new System.Drawing.Size(215, 27);
             this.btnPrepareYahooMinuteTextCache.TabIndex = 18;
             this.btnPrepareYahooMinuteTextCache.Text = "Prepare Yahoo Minute Text Cache";
             this.btnPrepareYahooMinuteTextCache.UseVisualStyleBackColor = true;
@@ -1441,9 +1552,10 @@ namespace Quote2022
             // 
             // btnCheckYahooMinuteData
             // 
-            this.btnCheckYahooMinuteData.Location = new System.Drawing.Point(494, 22);
+            this.btnCheckYahooMinuteData.Location = new System.Drawing.Point(576, 25);
+            this.btnCheckYahooMinuteData.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCheckYahooMinuteData.Name = "btnCheckYahooMinuteData";
-            this.btnCheckYahooMinuteData.Size = new System.Drawing.Size(184, 23);
+            this.btnCheckYahooMinuteData.Size = new System.Drawing.Size(215, 27);
             this.btnCheckYahooMinuteData.TabIndex = 17;
             this.btnCheckYahooMinuteData.Text = "Check Yahoo Minute Data";
             this.btnCheckYahooMinuteData.UseVisualStyleBackColor = true;
@@ -1456,19 +1568,21 @@ namespace Quote2022
             this.tabPage2.Controls.Add(this.btnDailyEoddataCheck);
             this.tabPage2.Controls.Add(this.btnCompareMinuteYahooZips);
             this.tabPage2.Controls.Add(this.btnMinuteYahooLog);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 24);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1158, 411);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabPage2.Size = new System.Drawing.Size(1352, 476);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Checks";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // btnMinuteYahooSaveLogToDb
             // 
-            this.btnMinuteYahooSaveLogToDb.Location = new System.Drawing.Point(24, 103);
+            this.btnMinuteYahooSaveLogToDb.Location = new System.Drawing.Point(28, 119);
+            this.btnMinuteYahooSaveLogToDb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinuteYahooSaveLogToDb.Name = "btnMinuteYahooSaveLogToDb";
-            this.btnMinuteYahooSaveLogToDb.Size = new System.Drawing.Size(168, 23);
+            this.btnMinuteYahooSaveLogToDb.Size = new System.Drawing.Size(196, 27);
             this.btnMinuteYahooSaveLogToDb.TabIndex = 54;
             this.btnMinuteYahooSaveLogToDb.Text = "Minute Yahoo Save Log to DB";
             this.btnMinuteYahooSaveLogToDb.UseVisualStyleBackColor = true;
@@ -1476,9 +1590,10 @@ namespace Quote2022
             // 
             // btnMinuteYahooErrorCheck
             // 
-            this.btnMinuteYahooErrorCheck.Location = new System.Drawing.Point(24, 58);
+            this.btnMinuteYahooErrorCheck.Location = new System.Drawing.Point(28, 67);
+            this.btnMinuteYahooErrorCheck.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinuteYahooErrorCheck.Name = "btnMinuteYahooErrorCheck";
-            this.btnMinuteYahooErrorCheck.Size = new System.Drawing.Size(146, 23);
+            this.btnMinuteYahooErrorCheck.Size = new System.Drawing.Size(170, 27);
             this.btnMinuteYahooErrorCheck.TabIndex = 53;
             this.btnMinuteYahooErrorCheck.Text = "Minute Yahoo Error Check";
             this.btnMinuteYahooErrorCheck.UseVisualStyleBackColor = true;
@@ -1487,9 +1602,10 @@ namespace Quote2022
             // btnDailyEoddataCheck
             // 
             this.btnDailyEoddataCheck.Enabled = false;
-            this.btnDailyEoddataCheck.Location = new System.Drawing.Point(203, 20);
+            this.btnDailyEoddataCheck.Location = new System.Drawing.Point(237, 23);
+            this.btnDailyEoddataCheck.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDailyEoddataCheck.Name = "btnDailyEoddataCheck";
-            this.btnDailyEoddataCheck.Size = new System.Drawing.Size(146, 23);
+            this.btnDailyEoddataCheck.Size = new System.Drawing.Size(170, 27);
             this.btnDailyEoddataCheck.TabIndex = 52;
             this.btnDailyEoddataCheck.Text = "Daily Eoddata Check";
             this.btnDailyEoddataCheck.UseVisualStyleBackColor = true;
@@ -1497,9 +1613,10 @@ namespace Quote2022
             // 
             // btnCompareMinuteYahooZips
             // 
-            this.btnCompareMinuteYahooZips.Location = new System.Drawing.Point(24, 148);
+            this.btnCompareMinuteYahooZips.Location = new System.Drawing.Point(28, 171);
+            this.btnCompareMinuteYahooZips.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCompareMinuteYahooZips.Name = "btnCompareMinuteYahooZips";
-            this.btnCompareMinuteYahooZips.Size = new System.Drawing.Size(146, 38);
+            this.btnCompareMinuteYahooZips.Size = new System.Drawing.Size(170, 44);
             this.btnCompareMinuteYahooZips.TabIndex = 51;
             this.btnCompareMinuteYahooZips.Text = "Compare 2 zip of Minute Yahoo";
             this.btnCompareMinuteYahooZips.UseVisualStyleBackColor = true;
@@ -1507,9 +1624,10 @@ namespace Quote2022
             // 
             // btnMinuteYahooLog
             // 
-            this.btnMinuteYahooLog.Location = new System.Drawing.Point(24, 20);
+            this.btnMinuteYahooLog.Location = new System.Drawing.Point(28, 23);
+            this.btnMinuteYahooLog.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnMinuteYahooLog.Name = "btnMinuteYahooLog";
-            this.btnMinuteYahooLog.Size = new System.Drawing.Size(146, 23);
+            this.btnMinuteYahooLog.Size = new System.Drawing.Size(170, 27);
             this.btnMinuteYahooLog.TabIndex = 50;
             this.btnMinuteYahooLog.Text = "Minute Yahoo Log (for zip)";
             this.btnMinuteYahooLog.UseVisualStyleBackColor = true;
@@ -1525,10 +1643,11 @@ namespace Quote2022
             this.tabPage3.Controls.Add(this.btnWebArchiveDownloadHtmlTradingViewScreener);
             this.tabPage3.Controls.Add(this.btnWA_ParseEoddataSymbols);
             this.tabPage3.Controls.Add(this.btnWA_DownloadEoddataSymbols);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Location = new System.Drawing.Point(4, 24);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1158, 411);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tabPage3.Size = new System.Drawing.Size(1352, 476);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Web Archive";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1536,9 +1655,10 @@ namespace Quote2022
             // btnWebArchiveParseStockAnalysisActions
             // 
             this.btnWebArchiveParseStockAnalysisActions.Enabled = false;
-            this.btnWebArchiveParseStockAnalysisActions.Location = new System.Drawing.Point(667, 16);
+            this.btnWebArchiveParseStockAnalysisActions.Location = new System.Drawing.Point(778, 18);
+            this.btnWebArchiveParseStockAnalysisActions.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWebArchiveParseStockAnalysisActions.Name = "btnWebArchiveParseStockAnalysisActions";
-            this.btnWebArchiveParseStockAnalysisActions.Size = new System.Drawing.Size(173, 23);
+            this.btnWebArchiveParseStockAnalysisActions.Size = new System.Drawing.Size(202, 27);
             this.btnWebArchiveParseStockAnalysisActions.TabIndex = 7;
             this.btnWebArchiveParseStockAnalysisActions.Text = "Parse StockAnalysis Actions";
             this.btnWebArchiveParseStockAnalysisActions.UseVisualStyleBackColor = true;
@@ -1546,9 +1666,10 @@ namespace Quote2022
             // 
             // btnWebArchiveParseTradingViewProfiles
             // 
-            this.btnWebArchiveParseTradingViewProfiles.Location = new System.Drawing.Point(469, 45);
+            this.btnWebArchiveParseTradingViewProfiles.Location = new System.Drawing.Point(547, 52);
+            this.btnWebArchiveParseTradingViewProfiles.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWebArchiveParseTradingViewProfiles.Name = "btnWebArchiveParseTradingViewProfiles";
-            this.btnWebArchiveParseTradingViewProfiles.Size = new System.Drawing.Size(173, 23);
+            this.btnWebArchiveParseTradingViewProfiles.Size = new System.Drawing.Size(202, 27);
             this.btnWebArchiveParseTradingViewProfiles.TabIndex = 6;
             this.btnWebArchiveParseTradingViewProfiles.Text = "Parse TradingView Profiles";
             this.btnWebArchiveParseTradingViewProfiles.UseVisualStyleBackColor = true;
@@ -1556,9 +1677,10 @@ namespace Quote2022
             // 
             // btnWebArchiveDownloadTradingViewProfiles
             // 
-            this.btnWebArchiveDownloadTradingViewProfiles.Location = new System.Drawing.Point(469, 16);
+            this.btnWebArchiveDownloadTradingViewProfiles.Location = new System.Drawing.Point(547, 18);
+            this.btnWebArchiveDownloadTradingViewProfiles.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWebArchiveDownloadTradingViewProfiles.Name = "btnWebArchiveDownloadTradingViewProfiles";
-            this.btnWebArchiveDownloadTradingViewProfiles.Size = new System.Drawing.Size(173, 23);
+            this.btnWebArchiveDownloadTradingViewProfiles.Size = new System.Drawing.Size(202, 27);
             this.btnWebArchiveDownloadTradingViewProfiles.TabIndex = 5;
             this.btnWebArchiveDownloadTradingViewProfiles.Text = "Download TradingView Profiles";
             this.btnWebArchiveDownloadTradingViewProfiles.UseVisualStyleBackColor = true;
@@ -1566,9 +1688,10 @@ namespace Quote2022
             // 
             // btnWebArchiveDownloadJsonTradingViewScreener
             // 
-            this.btnWebArchiveDownloadJsonTradingViewScreener.Location = new System.Drawing.Point(231, 45);
+            this.btnWebArchiveDownloadJsonTradingViewScreener.Location = new System.Drawing.Point(270, 52);
+            this.btnWebArchiveDownloadJsonTradingViewScreener.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWebArchiveDownloadJsonTradingViewScreener.Name = "btnWebArchiveDownloadJsonTradingViewScreener";
-            this.btnWebArchiveDownloadJsonTradingViewScreener.Size = new System.Drawing.Size(215, 23);
+            this.btnWebArchiveDownloadJsonTradingViewScreener.Size = new System.Drawing.Size(251, 27);
             this.btnWebArchiveDownloadJsonTradingViewScreener.TabIndex = 4;
             this.btnWebArchiveDownloadJsonTradingViewScreener.Text = "Download TradingView Screener (json)";
             this.btnWebArchiveDownloadJsonTradingViewScreener.UseVisualStyleBackColor = true;
@@ -1576,9 +1699,10 @@ namespace Quote2022
             // 
             // btnWebArchiveParseTradingViewScreener
             // 
-            this.btnWebArchiveParseTradingViewScreener.Location = new System.Drawing.Point(231, 74);
+            this.btnWebArchiveParseTradingViewScreener.Location = new System.Drawing.Point(270, 85);
+            this.btnWebArchiveParseTradingViewScreener.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWebArchiveParseTradingViewScreener.Name = "btnWebArchiveParseTradingViewScreener";
-            this.btnWebArchiveParseTradingViewScreener.Size = new System.Drawing.Size(175, 23);
+            this.btnWebArchiveParseTradingViewScreener.Size = new System.Drawing.Size(204, 27);
             this.btnWebArchiveParseTradingViewScreener.TabIndex = 3;
             this.btnWebArchiveParseTradingViewScreener.Text = "Parse TradingView Screener";
             this.btnWebArchiveParseTradingViewScreener.UseVisualStyleBackColor = true;
@@ -1586,9 +1710,10 @@ namespace Quote2022
             // 
             // btnWebArchiveDownloadHtmlTradingViewScreener
             // 
-            this.btnWebArchiveDownloadHtmlTradingViewScreener.Location = new System.Drawing.Point(231, 16);
+            this.btnWebArchiveDownloadHtmlTradingViewScreener.Location = new System.Drawing.Point(270, 18);
+            this.btnWebArchiveDownloadHtmlTradingViewScreener.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWebArchiveDownloadHtmlTradingViewScreener.Name = "btnWebArchiveDownloadHtmlTradingViewScreener";
-            this.btnWebArchiveDownloadHtmlTradingViewScreener.Size = new System.Drawing.Size(215, 23);
+            this.btnWebArchiveDownloadHtmlTradingViewScreener.Size = new System.Drawing.Size(251, 27);
             this.btnWebArchiveDownloadHtmlTradingViewScreener.TabIndex = 2;
             this.btnWebArchiveDownloadHtmlTradingViewScreener.Text = "Download TradingView Screener (html)";
             this.btnWebArchiveDownloadHtmlTradingViewScreener.UseVisualStyleBackColor = true;
@@ -1596,9 +1721,10 @@ namespace Quote2022
             // 
             // btnWA_ParseEoddataSymbols
             // 
-            this.btnWA_ParseEoddataSymbols.Location = new System.Drawing.Point(30, 45);
+            this.btnWA_ParseEoddataSymbols.Location = new System.Drawing.Point(35, 52);
+            this.btnWA_ParseEoddataSymbols.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWA_ParseEoddataSymbols.Name = "btnWA_ParseEoddataSymbols";
-            this.btnWA_ParseEoddataSymbols.Size = new System.Drawing.Size(175, 23);
+            this.btnWA_ParseEoddataSymbols.Size = new System.Drawing.Size(204, 27);
             this.btnWA_ParseEoddataSymbols.TabIndex = 1;
             this.btnWA_ParseEoddataSymbols.Text = "Parse Eoddata Symbols";
             this.btnWA_ParseEoddataSymbols.UseVisualStyleBackColor = true;
@@ -1606,37 +1732,41 @@ namespace Quote2022
             // 
             // btnWA_DownloadEoddataSymbols
             // 
-            this.btnWA_DownloadEoddataSymbols.Location = new System.Drawing.Point(30, 16);
+            this.btnWA_DownloadEoddataSymbols.Location = new System.Drawing.Point(35, 18);
+            this.btnWA_DownloadEoddataSymbols.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnWA_DownloadEoddataSymbols.Name = "btnWA_DownloadEoddataSymbols";
-            this.btnWA_DownloadEoddataSymbols.Size = new System.Drawing.Size(175, 23);
+            this.btnWA_DownloadEoddataSymbols.Size = new System.Drawing.Size(204, 27);
             this.btnWA_DownloadEoddataSymbols.TabIndex = 0;
             this.btnWA_DownloadEoddataSymbols.Text = "Download Eoddata Symbols";
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnPolygonCopyZipInfoToDb
+            // lblEoddataLogged
             // 
-            this.btnPolygonCopyZipInfoToDb.Location = new System.Drawing.Point(705, 123);
-            this.btnPolygonCopyZipInfoToDb.Name = "btnPolygonCopyZipInfoToDb";
-            this.btnPolygonCopyZipInfoToDb.Size = new System.Drawing.Size(168, 42);
-            this.btnPolygonCopyZipInfoToDb.TabIndex = 62;
-            this.btnPolygonCopyZipInfoToDb.Text = "MinutePolygon copy info from zip to DB";
-            this.btnPolygonCopyZipInfoToDb.UseVisualStyleBackColor = true;
-            this.btnPolygonCopyZipInfoToDb.Click += new System.EventHandler(this.btnPolygonCopyZipInfoToDb_Click);
+            this.lblEoddataLogged.AutoSize = true;
+            this.lblEoddataLogged.BackColor = System.Drawing.Color.Red;
+            this.lblEoddataLogged.ForeColor = System.Drawing.Color.White;
+            this.lblEoddataLogged.Location = new System.Drawing.Point(416, 69);
+            this.lblEoddataLogged.Name = "lblEoddataLogged";
+            this.lblEoddataLogged.Size = new System.Drawing.Size(153, 15);
+            this.lblEoddataLogged.TabIndex = 64;
+            this.lblEoddataLogged.Text = "Not logged in eoddata.com";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1166, 459);
+            this.ClientSize = new System.Drawing.Size(1360, 530);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "Form1";
             this.Text = "Form1";
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tpLoaderNew.ResumeLayout(false);
+            this.tpLoaderNew.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.loaderItemBindingSource)).EndInit();
             this.tpOneTime.ResumeLayout(false);
@@ -1788,6 +1918,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnMinutePolygonSaveLogToDb;
         private System.Windows.Forms.Button btnMinutePolygonSplitFilesByDates;
         private System.Windows.Forms.Button btnPolygonCopyZipInfoToDb;
+        private System.Windows.Forms.Label lblEoddataLogged;
     }
 }
 

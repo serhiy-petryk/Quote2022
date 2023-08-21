@@ -22,17 +22,14 @@ namespace Data.Actions.Eoddata
             var zipFileName = $@"E:\Quote\WebData\Symbols\Eoddata\SymbolsEoddata_{timeStamp.Item2}.zip";
 
             // Prepare cookies
-            var urlForCookie = "https://www.eoddata.com/";
-            var cookieContainer = CookiesGoogle.GetCookies(urlForCookie);
-            if (cookieContainer.Count == 0)
-                throw new Exception("Check login to www.eoddata.com in Chrome browser");
+            var cookies = EoddataCommon.GetEoddataCookies();
 
             // Download data
             foreach (var exchange in Exchanges)
             {
                 Logger.AddMessage($"Download Symbols data for {exchange}");
                 var url = string.Format(UrlTemplate, exchange);
-                var o = Download.DownloadToString(url, false, cookieContainer);
+                var o = Download.DownloadToString(url, false, cookies);
                 if (o is Exception ex)
                     throw new Exception($"EoddataSymbolsLoader: Error while download from {url}. Error message: {ex.Message}");
 

@@ -48,12 +48,10 @@ namespace Data.Actions.Eoddata
             if (missingFiles.Count > 0)
             {
                 // Prepare cookies
-                var cookieContainer = CookiesGoogle.GetCookies(URL_FOR_COOKIES);
-                if (cookieContainer.Count == 0)
-                    throw new Exception("Check login to www.eoddata.com in Chrome browser");
+                var cookies = EoddataCommon.GetEoddataCookies();
 
                 // Get k parameter of eoddata url
-                var o = Download.DownloadToString(URL_HOME, false, cookieContainer);
+                var o = Download.DownloadToString(URL_HOME, false, cookies);
                 if (o is Exception ex)
                     throw new Exception($"EoddataDailyLoader: Error while download from {URL_HOME}. Error message: {ex.Message}");
 
@@ -69,7 +67,7 @@ namespace Data.Actions.Eoddata
                 {
                     Logger.AddMessage($"Download Eoddata daily data for {fileId.Item1} and {fileId.Item2}");
                     var url = string.Format(URL_TEMPLATE, fileId.Item1, fileId.Item2, kParameter.Substring(2));
-                    o = Download.DownloadToString(url, false, cookieContainer);
+                    o = Download.DownloadToString(url, false, cookies);
                     if (o is Exception ex2)
                         throw new Exception($"EoddataDailyLoader: Error while download from {url}. Error message: {ex2.Message}");
 

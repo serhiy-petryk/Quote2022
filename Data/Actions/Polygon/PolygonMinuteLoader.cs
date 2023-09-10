@@ -27,6 +27,26 @@ namespace Data.Actions.Polygon
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
+                cmd.CommandText = "select count(*) from dbQ2023..DayPolygon a " +
+                                  "left join dbQ2023..SymbolsPolygon b on a.Symbol = b.Symbol and a.Date between b.Date and isnull(b.[To], GetDate()) " +
+                                  "inner join(select symbol, min(date) MinDate from dbQ2023..SymbolsPolygon group by symbol) c on a.Symbol = c.Symbol " +
+                                  "where b.Symbol is null";
+                var recs1 = (int)cmd.ExecuteScalar();
+
+                cmd.CommandText = "select count(*) from dbQ2023..SymbolsPolygon a " +
+                                  "inner join dbQ2023..SymbolsPolygon b on a.Symbol = b.Symbol and b.Date between a.Date and isnull(a.[To], GetDate()) " +
+                                  "where a.Date<>b.Date";
+                var recs2 = (int)cmd.ExecuteScalar();
+
+                if (recs1 != 0 || recs2 != 0)
+                {
+                    MessageBox.Show(
+                        $"There are errors in DayPolygon & DaySymbols tables. Check data using CheckPolygonSymbols.sql",
+                        "", MessageBoxButtons.OK);
+                    return;
+                }
+
+
                 cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon "+
                                   "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) "+
                                   "GROUP BY Symbol ORDER BY 1";

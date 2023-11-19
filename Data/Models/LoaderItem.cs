@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Threading;
@@ -98,6 +99,8 @@ namespace Data.Models
         }
         public async Task Start()
         {
+            var t1 = Data.Helpers.CsUtils.MemoryUsedInBytes;
+            Debug.Print($"Memory before {Name} {t1:N0} bytes");
             Started = DateTime.Now;
             _finished = null;
             Status = ItemStatus.Working;
@@ -109,6 +112,8 @@ namespace Data.Models
             Checked = false;
             Status = ItemStatus.Done;
             UpdateUI();
+            t1 = Data.Helpers.CsUtils.MemoryUsedInBytes;
+            Debug.Print($"Memory after {Name} {t1:N0} bytes");
         }
 
         public override void UpdateUI()

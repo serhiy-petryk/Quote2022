@@ -46,7 +46,7 @@ namespace Data.Actions.Polygon
                 foreach (var entry in zip.Entries.Where(a => a.Name.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase)).ToArray())
                 {
                     cnt++;
-                    if (cnt % 10 == 0)
+                    if (cnt % 100 == 0)
                         Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} entries in {Path.GetFileName(zipFileName)}");
 
                     var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());

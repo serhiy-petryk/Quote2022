@@ -157,17 +157,24 @@ namespace Data.Actions.Wikipedia
                                 var addedName = GetCellValue(cells[1 + offset]);
                                 var removedSymbol = GetCellValue(cells[2 + offset]);
                                 var removedName = GetCellValue(cells[3 + offset]);
-                                var item = new Models.IndexDbChangeItem
+                                var addedSymbols = new[] {addedSymbol};
+                                if (addedSymbol != null)
+                                    addedSymbols = addedSymbol.Split(',');
+                                foreach (var aSymbol in addedSymbols.Where(a=>!string.IsNullOrEmpty(a)))
                                 {
-                                    Index = indexName,
-                                    Date = date,
-                                    AddedSymbol = addedSymbol,
-                                    AddedName = addedName,
-                                    RemovedSymbol = removedSymbol,
-                                    RemovedName = removedName,
-                                    TimeStamp = timeStamp
-                                };
-                                changes.Add(item);
+                                    var aSymbol2 = string.IsNullOrEmpty(aSymbol) ? null : aSymbol.Trim();
+                                    var item = new Models.IndexDbChangeItem
+                                    {
+                                        Index = indexName,
+                                        Date = date,
+                                        AddedSymbol = aSymbol2,
+                                        AddedName = addedName,
+                                        RemovedSymbol = removedSymbol,
+                                        RemovedName = removedName,
+                                        TimeStamp = timeStamp
+                                    };
+                                    changes.Add(item);
+                                }
                             }
                         }
 

@@ -1081,6 +1081,21 @@ namespace Quote2022
             await Task.Factory.StartNew(Data.Actions.Polygon.PolygonCopyZipInfoToDb.Start);
             btnPolygonCopyZipInfoToDb.Enabled = true;
         }
+
+        private async void btnPolygon2003_daily_Click(object sender, EventArgs e)
+        {
+            /*btnPolygon2003_daily.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonDailyLoader2003.Start);
+            btnPolygon2003_daily.Enabled = true;*/
+        }
+
+        private async void btnPolygon2003_symbols_Click(object sender, EventArgs e)
+        {
+            /*btnPolygon2003_symbols.Enabled = false;
+            // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.Start);
+            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
+            btnPolygon2003_symbols.Enabled = true;*/
+        }
     }
 }
 

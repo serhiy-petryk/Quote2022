@@ -18,6 +18,7 @@ namespace Data.Actions.Polygon
         };
 
         public static string GetApiKey() => CsUtils.GetApiKeys("polygon.io")[1];
+        public static string GetApiKey2003() => CsUtils.GetApiKeys("polygon.io.2003")[0];
 
         public static bool IsTestTicker(string ticker)
         {
@@ -30,7 +31,13 @@ namespace Data.Actions.Polygon
 
         public static string GetMyTicker(string polygonTicker)
         {
-            if (polygonTicker.Contains("p"))
+            if (polygonTicker.EndsWith("pw"))
+                polygonTicker = polygonTicker.Replace("pw", "^^W");
+            else if (polygonTicker.EndsWith("pAw"))
+                polygonTicker = polygonTicker.Replace("pAw", "^^AW");
+            else if (polygonTicker.EndsWith("pEw"))
+                polygonTicker = polygonTicker.Replace("pEw", "^^EW");
+            else if (polygonTicker.Contains("p"))
                 polygonTicker = polygonTicker.Replace("p", "^");
             else if (polygonTicker.Contains("rw"))
                 polygonTicker = polygonTicker.Replace("rw", ".RTW");
@@ -47,7 +54,13 @@ namespace Data.Actions.Polygon
 
         public static string GetPolygonTicker(string myTicker)
         {
-            if (myTicker.Contains("^"))
+            if (myTicker.EndsWith("^^W"))
+                myTicker = myTicker.Replace("^^W", "pw");
+            else if (myTicker.EndsWith("^^AW"))
+                myTicker = myTicker.Replace("^^AW", "pAw");
+            else if (myTicker.EndsWith("^^EW"))
+                myTicker = myTicker.Replace("^^EW", "pEw");
+            else if (myTicker.Contains("^"))
                 myTicker = myTicker.Replace("^", "p");
             else if (myTicker.Contains(".RTW"))
                 myTicker = myTicker.Replace(".RTW", "rw");

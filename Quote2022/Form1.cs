@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -45,8 +46,11 @@ namespace Quote2022
             // Logger.MessageAdded += (sender, args) => StatusLabel.Text = args.FullMessage;
             Data.Helpers.Logger.MessageAdded += (sender, args) => this.BeginInvoke((Action)(() => StatusLabel.Text = args.FullMessage));
 
-            browser = new ChromiumWebBrowser("www.eoddata.com");
-            browser.FrameLoadEnd += Browser_FrameLoadEnd;
+            if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
+            {
+                browser = new ChromiumWebBrowser("www.eoddata.com");
+                browser.FrameLoadEnd += Browser_FrameLoadEnd;
+            }
         }
 
         private async void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)

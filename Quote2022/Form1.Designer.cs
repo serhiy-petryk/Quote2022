@@ -39,6 +39,7 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.lblEoddataLogged = new System.Windows.Forms.Label();
             this.btnPolygonCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.btnMinutePolygonSplitFilesByDates = new System.Windows.Forms.Button();
             this.btnMinutePolygonSaveLogToDb = new System.Windows.Forms.Button();
@@ -155,7 +156,7 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.lblEoddataLogged = new System.Windows.Forms.Label();
+            this.btnMinutePolygonUpdateDailyIn = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
@@ -187,7 +188,7 @@ namespace Quote2022
             this.statusStrip1.Location = new System.Drawing.Point(0, 508);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1360, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1284, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -212,11 +213,12 @@ namespace Quote2022
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1360, 508);
+            this.tabControl1.Size = new System.Drawing.Size(1284, 508);
             this.tabControl1.TabIndex = 12;
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnMinutePolygonUpdateDailyIn);
             this.tpLoaderNew.Controls.Add(this.lblEoddataLogged);
             this.tpLoaderNew.Controls.Add(this.btnPolygonCopyZipInfoToDb);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonSplitFilesByDates);
@@ -234,10 +236,21 @@ namespace Quote2022
             this.tpLoaderNew.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpLoaderNew.Name = "tpLoaderNew";
             this.tpLoaderNew.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tpLoaderNew.Size = new System.Drawing.Size(1352, 480);
+            this.tpLoaderNew.Size = new System.Drawing.Size(1276, 480);
             this.tpLoaderNew.TabIndex = 6;
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
+            // 
+            // lblEoddataLogged
+            // 
+            this.lblEoddataLogged.AutoSize = true;
+            this.lblEoddataLogged.BackColor = System.Drawing.Color.Red;
+            this.lblEoddataLogged.ForeColor = System.Drawing.Color.White;
+            this.lblEoddataLogged.Location = new System.Drawing.Point(416, 69);
+            this.lblEoddataLogged.Name = "lblEoddataLogged";
+            this.lblEoddataLogged.Size = new System.Drawing.Size(153, 15);
+            this.lblEoddataLogged.TabIndex = 64;
+            this.lblEoddataLogged.Text = "Not logged in eoddata.com";
             // 
             // btnPolygonCopyZipInfoToDb
             // 
@@ -461,7 +474,7 @@ namespace Quote2022
             this.tpOneTime.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpOneTime.Name = "tpOneTime";
             this.tpOneTime.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tpOneTime.Size = new System.Drawing.Size(1352, 476);
+            this.tpOneTime.Size = new System.Drawing.Size(1352, 480);
             this.tpOneTime.TabIndex = 7;
             this.tpOneTime.Text = "One Time";
             this.tpOneTime.UseVisualStyleBackColor = true;
@@ -541,7 +554,7 @@ namespace Quote2022
             this.tabLoader.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabLoader.Name = "tabLoader";
             this.tabLoader.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabLoader.Size = new System.Drawing.Size(1352, 476);
+            this.tabLoader.Size = new System.Drawing.Size(1352, 480);
             this.tabLoader.TabIndex = 0;
             this.tabLoader.Text = "Loader";
             this.tabLoader.UseVisualStyleBackColor = true;
@@ -968,7 +981,7 @@ namespace Quote2022
             this.tabLayers.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabLayers.Name = "tabLayers";
             this.tabLayers.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabLayers.Size = new System.Drawing.Size(1352, 476);
+            this.tabLayers.Size = new System.Drawing.Size(1352, 480);
             this.tabLayers.TabIndex = 1;
             this.tabLayers.Text = "Layers";
             this.tabLayers.UseVisualStyleBackColor = true;
@@ -1044,7 +1057,7 @@ namespace Quote2022
             this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage4.Size = new System.Drawing.Size(1352, 476);
+            this.tabPage4.Size = new System.Drawing.Size(1352, 480);
             this.tabPage4.TabIndex = 5;
             this.tabPage4.Text = "EOD";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -1138,7 +1151,7 @@ namespace Quote2022
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage1.Size = new System.Drawing.Size(1352, 476);
+            this.tabPage1.Size = new System.Drawing.Size(1352, 480);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Intraday";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -1572,7 +1585,7 @@ namespace Quote2022
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage2.Size = new System.Drawing.Size(1352, 476);
+            this.tabPage2.Size = new System.Drawing.Size(1352, 480);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Checks";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1647,7 +1660,7 @@ namespace Quote2022
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage3.Size = new System.Drawing.Size(1352, 476);
+            this.tabPage3.Size = new System.Drawing.Size(1352, 480);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Web Archive";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1741,22 +1754,22 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // lblEoddataLogged
+            // btnMinutePolygonUpdateDailyIn
             // 
-            this.lblEoddataLogged.AutoSize = true;
-            this.lblEoddataLogged.BackColor = System.Drawing.Color.Red;
-            this.lblEoddataLogged.ForeColor = System.Drawing.Color.White;
-            this.lblEoddataLogged.Location = new System.Drawing.Point(416, 69);
-            this.lblEoddataLogged.Name = "lblEoddataLogged";
-            this.lblEoddataLogged.Size = new System.Drawing.Size(153, 15);
-            this.lblEoddataLogged.TabIndex = 64;
-            this.lblEoddataLogged.Text = "Not logged in eoddata.com";
+            this.btnMinutePolygonUpdateDailyIn.Location = new System.Drawing.Point(822, 220);
+            this.btnMinutePolygonUpdateDailyIn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnMinutePolygonUpdateDailyIn.Name = "btnMinutePolygonUpdateDailyIn";
+            this.btnMinutePolygonUpdateDailyIn.Size = new System.Drawing.Size(196, 31);
+            this.btnMinutePolygonUpdateDailyIn.TabIndex = 65;
+            this.btnMinutePolygonUpdateDailyIn.Text = "MinutePolygon Update DailyIn ";
+            this.btnMinutePolygonUpdateDailyIn.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonUpdateDailyIn.Click += new System.EventHandler(this.btnMinutePolygonUpdateDailyIn_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1360, 530);
+            this.ClientSize = new System.Drawing.Size(1284, 530);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.statusStrip1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -1919,6 +1932,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnMinutePolygonSplitFilesByDates;
         private System.Windows.Forms.Button btnPolygonCopyZipInfoToDb;
         private System.Windows.Forms.Label lblEoddataLogged;
+        private System.Windows.Forms.Button btnMinutePolygonUpdateDailyIn;
     }
 }
 

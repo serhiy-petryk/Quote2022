@@ -1100,6 +1100,13 @@ namespace Quote2022
             await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
             btnPolygon2003_symbols.Enabled = true;*/
         }
+
+        private async void btnMinutePolygonUpdateDailyIn_Click(object sender, EventArgs e)
+        {
+            btnMinutePolygonUpdateDailyIn.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.Polygon.PolygonDailyInUpdater.Run);
+            btnMinutePolygonUpdateDailyIn.Enabled = true;
+        }
     }
 }
 

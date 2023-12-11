@@ -1,35 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data.Helpers;
 using Microsoft.Data.SqlClient;
 
 namespace Data.Actions.Polygon
 {
     public class PolygonDailyInUpdater
     {
+        private const string ZipFolder = @"E:\Quote\WebData\Minute\Polygon\Data";
+        private const string ZipFileTemplate = ZipFolder + @"\MinutePolygon_{0}.zip";
+        private static readonly TimeSpan StartTime = new TimeSpan(9, 54, 0);
+        private static readonly TimeSpan EndTime = new TimeSpan(15, 45, 0);
+
         public static void Run()
         {
+            Logger.AddMessage("Get symbol/date list");
+
+            var items = new List<DbEntry>();
+            var itemCount = 0;
             using (var conn = new SqlConnection(Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = "SELECT a.Symbol, a.Date from DayPolygon a "+
-                                  "left join DayPolygonIn b on a.Symbol = b.Symbol and a.Date = b.Date "+
-                                  "where a.TradeCount >= 5000 and a.Volume* a.[Close]/ 1000000 > 10 and b.Symbol is null "+
+                cmd.CommandText = "SELECT * from dbQ2023..DayPolygon a "+
+                                  "left join dbQ2023..DayPolygonIn b on a.Symbol = b.Symbol and a.Date = b.Date "+
+                                  "left join dbQ2023Others..TradingDaysSpecific c on a.Date = c.Date "+
+                                  "where c.Date is null and a.TradeCount >= 5000 and a.Volume* a.[Close]/ 1000000 > 10 and b.Symbol is null "+
                                   "order by a.Date, a.Symbol";
 
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
-                        Update((string)rdr["Symbol"], (DateTime)rdr["Date"]);
+                    {
+                        if (itemCount % 100 == 0)
+                            Logger.AddMessage($"Generated {itemCount:N0} items");
+                        var item = GetDbEntry((string)rdr["Symbol"], (DateTime)rdr["Date"]);
+                        if (item != null)
+                        {
+                            items.Add(item);
+                            itemCount++;
+                        }
+
+                        if (items.Count > 1000)
+                        {
+                            Logger.AddMessage($"Saving items to database");
+                            DbUtils.SaveToDbTable(items, "dbQ2023..DayPolygonIn", "Symbol", "Date", "Open", "High",
+                                "Low", "Close", "Final", "Volume", "TradeCount");
+                            items.Clear();
+                        }
+                    }
+
+                if (items.Count > 0)
+                {
+                    Logger.AddMessage($"Saving items to database");
+                    DbUtils.SaveToDbTable(items, "dbQ2023..DayPolygonIn", "Symbol", "Date", "Open", "High",
+                        "Low", "Close", "Final", "Volume", "TradeCount");
+                    items.Clear();
+                }
+
+                Logger.AddMessage($"!Finished. Processed {itemCount} items.");
             }
         }
 
-        private static void Update(string symbol, DateTime date)
+        private static DbEntry GetDbEntry(string symbol, DateTime date)
         {
+            var zipFilename = string.Format(ZipFileTemplate, date.ToString("yyyyMMdd"));
+            if (File.Exists(zipFilename))
+            {
+                var entryToFind = $"{symbol}_{date:yyyyMMdd}.csv";
+                using (var zipArchive = ZipFile.Open(zipFilename, ZipArchiveMode.Read))
+                    foreach (var entry in zipArchive.Entries.Where(a =>
+                        string.Equals(a.Name, entryToFind, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var lines = entry.GetLinesOfZipEntry().ToArray();
+                        var dbEntry = new DbEntry() { Symbol = symbol, Date = date };
+                        for (var k = 1; k < lines.Length; k++)
+                        {
+                            var ss = lines[k].Split(',');
+                            var dateTime = DateTime.ParseExact(ss[0], "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+                            var open = float.Parse(ss[1], CultureInfo.InvariantCulture);
+                            var high = float.Parse(ss[2], CultureInfo.InvariantCulture);
+                            var low = float.Parse(ss[3], CultureInfo.InvariantCulture);
+                            var close = float.Parse(ss[4], CultureInfo.InvariantCulture);
+                            var volume = long.Parse(ss[5], CultureInfo.InvariantCulture);
+                            var tradeCount = int.Parse(ss[7], CultureInfo.InvariantCulture);
 
+                            if (dateTime.Date != date)
+                                throw new Exception($"Bad date in zip {entry.Name}: {dateTime:yyyy-MM-dd HH:mm} ");
+
+                            if (dateTime.TimeOfDay >= StartTime && dateTime.TimeOfDay < EndTime)
+                            {
+                                dbEntry.Count++;
+                                dbEntry.Volume += volume;
+                                dbEntry.TradeCount += tradeCount;
+                                if (dbEntry.Count == 1)
+                                {
+                                    dbEntry.Open = open;
+                                    dbEntry.High = high;
+                                    dbEntry.Low = low;
+                                    dbEntry.Close = close;
+                                }
+                                else
+                                {
+                                    dbEntry.Close = close;
+                                    if (high > dbEntry.High) dbEntry.High = high;
+                                    if (low < dbEntry.Low) dbEntry.Low = low;
+                                }
+                            }
+                            else if (dateTime.TimeOfDay >= EndTime && dateTime.TimeOfDay < CsUtils.EndTrading)
+                            {
+                                dbEntry.Final = open;
+                                break;
+                            }
+                        }
+                        return dbEntry;
+                    }
+
+            }
+            return null;
         }
 
+        private class DbEntry
+        {
+            public string Symbol;
+            public DateTime Date;
+            public float Open;
+            public float High;
+            public float Low;
+            public float Close;
+            public float? Final;
+            public long Volume;
+            public int TradeCount;
+            public int Count;
+        }
     }
 }

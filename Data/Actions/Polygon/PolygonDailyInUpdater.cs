@@ -31,20 +31,19 @@ namespace Data.Actions.Polygon
                 cmd.CommandText = "SELECT * from dbQ2023..DayPolygon a "+
                                   "left join dbQ2023..DayPolygonIn b on a.Symbol = b.Symbol and a.Date = b.Date "+
                                   "left join dbQ2023Others..TradingDaysSpecific c on a.Date = c.Date "+
-                                  "where c.Date is null and a.TradeCount >= 5000 and a.Volume* a.[Close]/ 1000000 > 10 and b.Symbol is null "+
+                                  "where c.Date is null and b.Symbol is null "+
                                   "order by a.Date, a.Symbol";
+                cmd.CommandTimeout = 60 * 5;
 
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                     {
                         if (itemCount % 100 == 0)
                             Logger.AddMessage($"Generated {itemCount:N0} items");
-                        var item = GetDbEntry((string)rdr["Symbol"], (DateTime)rdr["Date"]);
-                        if (item != null)
-                        {
-                            items.Add(item);
-                            itemCount++;
-                        }
+                        var item = new DbEntry() { Symbol = (string)rdr["Symbol"], Date = (DateTime)rdr["Date"] };
+                        FillDbEntry(item);
+                        items.Add(item);
+                        itemCount++;
 
                         if (items.Count > 1000)
                         {
@@ -67,18 +66,18 @@ namespace Data.Actions.Polygon
             }
         }
 
-        private static DbEntry GetDbEntry(string symbol, DateTime date)
+        private static void FillDbEntry(DbEntry dbEntry)
         {
-            var zipFilename = string.Format(ZipFileTemplate, date.ToString("yyyyMMdd"));
+            var zipFilename = string.Format(ZipFileTemplate, dbEntry.Date.ToString("yyyyMMdd"));
             if (File.Exists(zipFilename))
             {
-                var entryToFind = $"{symbol}_{date:yyyyMMdd}.csv";
+                var entryToFind = $"{dbEntry.Symbol}_{dbEntry.Date:yyyyMMdd}.csv";
                 using (var zipArchive = ZipFile.Open(zipFilename, ZipArchiveMode.Read))
                     foreach (var entry in zipArchive.Entries.Where(a =>
                         string.Equals(a.Name, entryToFind, StringComparison.OrdinalIgnoreCase)))
                     {
                         var lines = entry.GetLinesOfZipEntry().ToArray();
-                        var dbEntry = new DbEntry() { Symbol = symbol, Date = date };
+                        // var dbEntry = new DbEntry() { Symbol = symbol, Date = date };
                         for (var k = 1; k < lines.Length; k++)
                         {
                             var ss = lines[k].Split(',');
@@ -90,7 +89,7 @@ namespace Data.Actions.Polygon
                             var volume = long.Parse(ss[5], CultureInfo.InvariantCulture);
                             var tradeCount = int.Parse(ss[7], CultureInfo.InvariantCulture);
 
-                            if (dateTime.Date != date)
+                            if (dateTime.Date != dbEntry.Date)
                                 throw new Exception($"Bad date in zip {entry.Name}: {dateTime:yyyy-MM-dd HH:mm} ");
 
                             if (dateTime.TimeOfDay >= StartTime && dateTime.TimeOfDay < EndTime)
@@ -118,11 +117,8 @@ namespace Data.Actions.Polygon
                                 break;
                             }
                         }
-                        return dbEntry;
                     }
-
             }
-            return null;
         }
 
         private class DbEntry

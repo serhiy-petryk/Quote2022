@@ -48,7 +48,7 @@ namespace Data.Actions.Polygon
 
 
                 cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon "+
-                                  "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) "+
+                                  "WHERE Date >= DATEADD(day, -14, GetDate()) "+
                                   "GROUP BY Symbol ORDER BY 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
@@ -62,29 +62,6 @@ namespace Data.Actions.Polygon
             }
 
             Start(symbols, from, to);
-        }
-
-        public static void StartAll()
-        {
-            var dates = new List<DateTime>();
-            using (var conn = new SqlConnection(Settings.DbConnectionString))
-            using (var cmd = conn.CreateCommand())
-            {
-                conn.Open();
-                cmd.CommandText = "select * from dbQ2023Others..TradingDays where year(Date)>=2019 and IsSpecificDay is null order by Date";
-                using (var rdr = cmd.ExecuteReader())
-                    while (rdr.Read()) dates.Add((DateTime)rdr["Date"]);
-
-                foreach (var date in dates)
-                {
-                    var symbols = new List<string>();
-                    cmd.CommandText = $"SELECT symbol from dbQ2023..DayPolygon where date='{date:yyyy-MM-dd}'";
-                    using (var rdr = cmd.ExecuteReader())
-                        while (rdr.Read()) symbols.Add((string)rdr["Symbol"]);
-                    Start(symbols, date, date);
-                }
-            }
-            // var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\Data", "*.zip");
         }
 
         public static void RunOthers_2023_12_14()
@@ -135,7 +112,7 @@ namespace Data.Actions.Polygon
             }*/
 
             var cnt = 0;
-            var zipFileName = $@"E:\Quote\WebData\Minute\Polygon\DataBufferOthers\MinutePolygon_{to.AddDays(1):yyyyMMdd}.zip";
+            var zipFileName = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_{to.AddDays(1):yyyyMMdd}.zip";
             var zipEntries = new Dictionary<string, object>();
             if (File.Exists(zipFileName))
             {

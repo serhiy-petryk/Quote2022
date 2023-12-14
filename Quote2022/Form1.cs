@@ -909,13 +909,12 @@ namespace Quote2022
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var item = Data.Models.LoaderItem.DataGridLoaderItems[1];
-            /*if (item.Status == LoaderItem.ItemStatus.Working)
-                item.Finished();
-            else if (item.Status == LoaderItem.ItemStatus.Done)
-                item.Reset();
-            else
-                item.Start(ShowStatus);*/
+            var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12", "MinutePolygon_*.zip");
+            foreach (var file in files)
+            {
+                var newFN = file.Replace("MinutePolygon_", "MinutePolygon2023_");
+                File.Move(file, newFN);
+            }
         }
 
         private async void btnRunMultiItemsLoader_Click(object sender, EventArgs e)

@@ -103,13 +103,13 @@ namespace Data.Actions.Polygon
             Logger.AddMessage($"Started");
 
             var folder = string.Format(FolderTemplate, to.AddDays(1).ToString("yyyyMMdd"));
-            /*if (MessageBox.Show(
+            if (MessageBox.Show(
                     $"You are going to download data from {from:yyyy-MM-dd} to {to:yyyy-MM-dd} for {mySymbols.Count} symbols in {folder} folder! Continue?", "",
                     MessageBoxButtons.OKCancel) != DialogResult.OK)
             {
                 Logger.AddMessage($"!Canceled.");
                 return;
-            }*/
+            }
 
             var cnt = 0;
             var zipFileName = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_{to.AddDays(1):yyyyMMdd}.zip";

@@ -79,8 +79,11 @@ namespace Data.Actions.Yahoo
                                    "left join dbQ2023Others..DayYahooIndexes b on a.Symbol = b.Symbol and a.Date = b.Date " +
                                    "where b.Symbol is null");
 
-                Logger.AddMessage($"Update trading days");
+                Logger.AddMessage($"Update trading days in dbQ2023Others database");
                 DbUtils.RunProcedure("dbQ2023Others..pRefreshTradingDays");
+                
+                Logger.AddMessage($"Update trading days in dbPolygon2003 database");
+                DbUtils.RunProcedure("dbPolygon2003..pRefreshTradingDays");
             }
 
             Logger.AddMessage($"!Finished. Last trade date: {data.Max(a => a.Date):yyyy-MM-dd}");

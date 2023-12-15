@@ -59,6 +59,9 @@ namespace Data.Actions.Polygon
                         errorLog.Add($"{entry.Name}\tPartial downloading\tNext url: {oo.next_url}");
                     }
 
+                    if (PolygonCommon.IsTestTicker(oo.Symbol))
+                        continue;
+
                     if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
                     {
                         blankFiles.Add(new BlankFile

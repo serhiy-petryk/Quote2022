@@ -1062,6 +1062,13 @@ namespace Quote2022
         {
             btnMinutePolygonSaveLogToDb.Enabled = false;
 
+            /*var folder = @"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12";
+            var files = Directory.GetFiles(folder, "MinutePolygon2023_*.zip").OrderBy(a=>a).ToArray();
+            foreach (var file in files)
+            {
+                await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(file));
+            }*/
+
             if (CsUtils.OpenZipFileDialog(@"E:\Quote\WebData\Minute\Polygon\DataBuffer") is string zipFileName && File.Exists(zipFileName))
                 await Task.Factory.StartNew(() => Data.Actions.Polygon.PolygonMinuteSaveLogToDb.Start(zipFileName));
 
@@ -1106,6 +1113,14 @@ namespace Quote2022
             await Task.Factory.StartNew(Data.Actions.Polygon.PolygonDailyInUpdater.Run);
             // await Task.Factory.StartNew(Data.Actions.Polygon.PolygonMinuteLoader.RunOthers_2023_12_14);
             btnMinutePolygonUpdateDailyIn.Enabled = true;
+        }
+
+        private async void btnPolygon2003Daily_Click(object sender, EventArgs e)
+        {
+            btnPolygon2003Daily.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonDailyLoader2003.Start);
+            btnPolygon2003Daily.Enabled = true;
+
         }
     }
 }

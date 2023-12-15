@@ -39,6 +39,7 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.btnMinutePolygonUpdateDailyIn = new System.Windows.Forms.Button();
             this.lblEoddataLogged = new System.Windows.Forms.Label();
             this.btnPolygonCopyZipInfoToDb = new System.Windows.Forms.Button();
             this.btnMinutePolygonSplitFilesByDates = new System.Windows.Forms.Button();
@@ -156,7 +157,7 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnMinutePolygonUpdateDailyIn = new System.Windows.Forms.Button();
+            this.btnPolygon2003Daily = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
@@ -218,6 +219,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnPolygon2003Daily);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonUpdateDailyIn);
             this.tpLoaderNew.Controls.Add(this.lblEoddataLogged);
             this.tpLoaderNew.Controls.Add(this.btnPolygonCopyZipInfoToDb);
@@ -240,6 +242,17 @@ namespace Quote2022
             this.tpLoaderNew.TabIndex = 6;
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
+            // 
+            // btnMinutePolygonUpdateDailyIn
+            // 
+            this.btnMinutePolygonUpdateDailyIn.Location = new System.Drawing.Point(822, 220);
+            this.btnMinutePolygonUpdateDailyIn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnMinutePolygonUpdateDailyIn.Name = "btnMinutePolygonUpdateDailyIn";
+            this.btnMinutePolygonUpdateDailyIn.Size = new System.Drawing.Size(196, 31);
+            this.btnMinutePolygonUpdateDailyIn.TabIndex = 65;
+            this.btnMinutePolygonUpdateDailyIn.Text = "MinutePolygon Update DailyIn ";
+            this.btnMinutePolygonUpdateDailyIn.UseVisualStyleBackColor = true;
+            this.btnMinutePolygonUpdateDailyIn.Click += new System.EventHandler(this.btnMinutePolygonUpdateDailyIn_Click);
             // 
             // lblEoddataLogged
             // 
@@ -474,7 +487,7 @@ namespace Quote2022
             this.tpOneTime.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpOneTime.Name = "tpOneTime";
             this.tpOneTime.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tpOneTime.Size = new System.Drawing.Size(1352, 480);
+            this.tpOneTime.Size = new System.Drawing.Size(1276, 480);
             this.tpOneTime.TabIndex = 7;
             this.tpOneTime.Text = "One Time";
             this.tpOneTime.UseVisualStyleBackColor = true;
@@ -554,7 +567,7 @@ namespace Quote2022
             this.tabLoader.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabLoader.Name = "tabLoader";
             this.tabLoader.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabLoader.Size = new System.Drawing.Size(1352, 480);
+            this.tabLoader.Size = new System.Drawing.Size(1276, 480);
             this.tabLoader.TabIndex = 0;
             this.tabLoader.Text = "Loader";
             this.tabLoader.UseVisualStyleBackColor = true;
@@ -981,7 +994,7 @@ namespace Quote2022
             this.tabLayers.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabLayers.Name = "tabLayers";
             this.tabLayers.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabLayers.Size = new System.Drawing.Size(1352, 480);
+            this.tabLayers.Size = new System.Drawing.Size(1276, 480);
             this.tabLayers.TabIndex = 1;
             this.tabLayers.Text = "Layers";
             this.tabLayers.UseVisualStyleBackColor = true;
@@ -1057,7 +1070,7 @@ namespace Quote2022
             this.tabPage4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage4.Size = new System.Drawing.Size(1352, 480);
+            this.tabPage4.Size = new System.Drawing.Size(1276, 480);
             this.tabPage4.TabIndex = 5;
             this.tabPage4.Text = "EOD";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -1151,7 +1164,7 @@ namespace Quote2022
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage1.Size = new System.Drawing.Size(1352, 480);
+            this.tabPage1.Size = new System.Drawing.Size(1276, 480);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Intraday";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -1585,7 +1598,7 @@ namespace Quote2022
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage2.Size = new System.Drawing.Size(1352, 480);
+            this.tabPage2.Size = new System.Drawing.Size(1276, 480);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Checks";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1660,7 +1673,7 @@ namespace Quote2022
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tabPage3.Size = new System.Drawing.Size(1352, 480);
+            this.tabPage3.Size = new System.Drawing.Size(1276, 480);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Web Archive";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1754,16 +1767,16 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnMinutePolygonUpdateDailyIn
+            // btnPolygon2003Daily
             // 
-            this.btnMinutePolygonUpdateDailyIn.Location = new System.Drawing.Point(822, 220);
-            this.btnMinutePolygonUpdateDailyIn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnMinutePolygonUpdateDailyIn.Name = "btnMinutePolygonUpdateDailyIn";
-            this.btnMinutePolygonUpdateDailyIn.Size = new System.Drawing.Size(196, 31);
-            this.btnMinutePolygonUpdateDailyIn.TabIndex = 65;
-            this.btnMinutePolygonUpdateDailyIn.Text = "MinutePolygon Update DailyIn ";
-            this.btnMinutePolygonUpdateDailyIn.UseVisualStyleBackColor = true;
-            this.btnMinutePolygonUpdateDailyIn.Click += new System.EventHandler(this.btnMinutePolygonUpdateDailyIn_Click);
+            this.btnPolygon2003Daily.Location = new System.Drawing.Point(416, 129);
+            this.btnPolygon2003Daily.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnPolygon2003Daily.Name = "btnPolygon2003Daily";
+            this.btnPolygon2003Daily.Size = new System.Drawing.Size(153, 42);
+            this.btnPolygon2003Daily.TabIndex = 66;
+            this.btnPolygon2003Daily.Text = "Polygon2003: Load and Save Daily data";
+            this.btnPolygon2003Daily.UseVisualStyleBackColor = true;
+            this.btnPolygon2003Daily.Click += new System.EventHandler(this.btnPolygon2003Daily_Click);
             // 
             // Form1
             // 
@@ -1933,6 +1946,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnPolygonCopyZipInfoToDb;
         private System.Windows.Forms.Label lblEoddataLogged;
         private System.Windows.Forms.Button btnMinutePolygonUpdateDailyIn;
+        private System.Windows.Forms.Button btnPolygon2003Daily;
     }
 }
 

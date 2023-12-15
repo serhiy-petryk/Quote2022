@@ -25,10 +25,12 @@ namespace Data.Actions.Polygon2003
             {
                 conn.Open();
                 cmd.CommandTimeout = 150;
-                // cmd.CommandText = "SELECT date from TradingDays WHERE date between '2018-03-27' and '2023-03-31' order by date desc";
-                cmd.CommandText = "select a.Date from (select date from dbPolygon2003..TradingDays " +
-                                  "where date >= isnull((select min(date) from dbPolygon2003..DayPolygon), '2003-09-10')) a " +
-                                  "left join dbPolygon2003..DayPolygon b on a.Date = b.Date where b.Date is null order by 1";
+                /*cmd.CommandText = "select a.Date from (select date from dbPolygon2003..TradingDays " +
+                                  "where date >= isnull((select min(date) from dbPolygon2003..DayPolygon), '2003-09-01')) a " +
+                                  "left join dbPolygon2003..DayPolygon b on a.Date = b.Date where b.Date is null order by 1";*/
+                cmd.CommandText = "select a.Date from dbPolygon2003..TradingDays a "+
+                                  "left join (select distinct date from dbPolygon2003..DayPolygon) b on a.Date = b.Date " +
+                                  "where b.Date is null and a.Date >= '2003-09-10'";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         dates.Add((DateTime)rdr["Date"]);
@@ -93,6 +95,8 @@ namespace Data.Actions.Polygon2003
                     if (oo.status != "OK" || oo.count != oo.queryCount || oo.count != oo.resultsCount ||
                         oo.adjusted)
                         throw new Exception($"Bad file: {zipFileName}");
+                    // if (oo.resultsCount == 0) continue; // No data
+
                     var a1 = oo.results[0].Date;
                     itemCount += oo.results.Length;
 

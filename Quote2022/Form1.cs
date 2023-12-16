@@ -907,14 +907,15 @@ namespace Quote2022
             ((Control)sender).Enabled = true;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private async void button4_Click(object sender, EventArgs e)
         {
-            var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12", "MinutePolygon_*.zip");
+            // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
+            /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12", "MinutePolygon_*.zip");
             foreach (var file in files)
             {
                 var newFN = file.Replace("MinutePolygon_", "MinutePolygon2023_");
                 File.Move(file, newFN);
-            }
+            }*/
         }
 
         private async void btnRunMultiItemsLoader_Click(object sender, EventArgs e)

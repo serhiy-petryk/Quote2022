@@ -909,6 +909,7 @@ namespace Quote2022
 
         private async void button4_Click(object sender, EventArgs e)
         {
+            // var a = Data.Actions.Polygon.PolygonCommon.TestSymbols.Select(a=>a.Key).ToArray();
             // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
             /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12", "MinutePolygon_*.zip");
             foreach (var file in files)

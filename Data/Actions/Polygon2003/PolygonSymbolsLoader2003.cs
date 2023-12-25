@@ -184,17 +184,7 @@ namespace Data.Actions.Polygon2003
                                            PolygonCommon.IsTestTicker(Symbol) || string.IsNullOrEmpty(primary_exchange));
             public string Symbol => PolygonCommon.GetMyTicker(ticker);
             public DateTime Date;
-            public string Name
-            {
-                get
-                {
-                    if (string.IsNullOrEmpty(name))
-                    {
-                        Debug.Print($"No name: {Symbol}. {market}. {primary_exchange}. {last_updated_utc:yyyy-MM-dd}");
-                    }
-                    return string.IsNullOrEmpty(name) ? Symbol : name;
-                }
-            }
+            public string Name => string.IsNullOrEmpty(name) ? null : name;
 
             public DateTime TimeStamp;
         }

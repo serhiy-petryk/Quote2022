@@ -119,8 +119,11 @@ namespace Data.Actions.Polygon2003
         {
             var folder = Path.GetDirectoryName(ZipFileNameTemplate);
             var files = Directory.GetFiles(folder, "*.zip").OrderBy(a => a).ToArray();
+            var itemCount = 0;
             foreach (var zipFileName in files)
-                ParseAndSaveToDb(zipFileName);
+                itemCount += ParseAndSaveToDb(zipFileName);
+
+            Logger.AddMessage($"!Finished. Processed {files.Length} files with {itemCount:N0} items");
         }
 
         public static int ParseAndSaveToDb(string zipFileName)
@@ -141,10 +144,10 @@ namespace Data.Actions.Polygon2003
                         item.TimeStamp = entry.LastWriteTime.DateTime;
                     }
 
-                    items.AddRange(oo.results.Where(a => a.IsValidTicker && a.market == "stocks"));
+                    items.AddRange(oo.results.Where(a => string.Equals(a.market, "stocks")));
                 }
 
-            DbUtils.ClearAndSaveToDbTable(items, "dbPolygon2003..Bfr_SymbolsPolygon", "Symbol", "Date", "primary_exchange",
+            DbUtils.ClearAndSaveToDbTable(items, "dbPolygon2003..Bfr_SymbolsPolygon", "Symbol", "Date", "Exchange",
                 "Name", "type", "cik", "composite_figi", "share_class_figi", "last_updated_utc", "TimeStamp");
 
             DbUtils.RunProcedure("dbPolygon2003..pUpdateSymbolsPolygon");
@@ -166,7 +169,7 @@ namespace Data.Actions.Polygon2003
         {
             public string ticker;
             public string name;
-            public string market;
+            public string market; // stocks, otc, indices, fx, crypto
             public string locale;
             public string primary_exchange;
             public string type;
@@ -178,13 +181,10 @@ namespace Data.Actions.Polygon2003
             public DateTime last_updated_utc;
             public DateTime delisted_utc;
 
-            public bool IsValidTicker => !(ticker.StartsWith("X:", StringComparison.InvariantCultureIgnoreCase) ||
-                                           ticker.StartsWith("C:", StringComparison.InvariantCultureIgnoreCase) ||
-                                           ticker.StartsWith("I:", StringComparison.InvariantCultureIgnoreCase) ||
-                                           PolygonCommon.IsTestTicker(Symbol) || string.IsNullOrEmpty(primary_exchange));
             public string Symbol => PolygonCommon.GetMyTicker(ticker);
             public DateTime Date;
             public string Name => string.IsNullOrEmpty(name) ? null : name;
+            public string Exchange => string.IsNullOrEmpty(primary_exchange) ? "No" : primary_exchange;
 
             public DateTime TimeStamp;
         }

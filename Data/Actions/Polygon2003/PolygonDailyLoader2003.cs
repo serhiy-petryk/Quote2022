@@ -67,7 +67,7 @@ namespace Data.Actions.Polygon2003
             Logger.AddMessage($"!Finished. Loaded quotes into DayPolygon table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");
         }
 
-        public static int ParseAndSaveToDbAllFiles()
+        public static void ParseAndSaveToDbAllFiles()
         {
             var folder = @"E:\Quote\WebData\Daily\Polygon2003\Data";
             var files = Directory.GetFiles(folder, "*.zip");
@@ -79,8 +79,10 @@ namespace Data.Actions.Polygon2003
                 itemCnt += ParseAndSaveToDb(file);
             }
 
+            Logger.AddMessage($"Refresh summary data");
+            DbUtils.RunProcedure("dbPolygon2003..pUpdateDayPolygon");
+
             Logger.AddMessage($"Finished! Parsed {fileCnt++} files from {files.Length}");
-            return itemCnt;
         }
 
         public static int ParseAndSaveToDb(string zipFileName)
@@ -95,15 +97,15 @@ namespace Data.Actions.Polygon2003
                     if (oo.status != "OK" || oo.count != oo.queryCount || oo.count != oo.resultsCount ||
                         oo.adjusted)
                         throw new Exception($"Bad file: {zipFileName}");
-                    // if (oo.resultsCount == 0) continue; // No data
+                    
+                    if (oo.resultsCount == 0) continue; // No data
 
                     var a1 = oo.results[0].Date;
                     itemCount += oo.results.Length;
 
                     // Save data to buffer table of data server
-                    DbUtils.SaveToDbTable(oo.results.Where(a => !PolygonCommon.IsTestTicker(a.Symbol)),
-                        "dbPolygon2003..DayPolygon", "Symbol", "Date", "Open", "High", "Low", "Close", "Volume",
-                        "WeightedVolume", "TradeCount");
+                    DbUtils.SaveToDbTable(oo.results, "dbPolygon2003..DayPolygon", "Symbol", "Date", "Open", "High",
+                        "Low", "Close", "Volume", "WeightedVolume", "TradeCount");
                 }
 
             return itemCount;

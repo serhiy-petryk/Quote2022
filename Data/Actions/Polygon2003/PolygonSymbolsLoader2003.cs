@@ -15,8 +15,7 @@ namespace Data.Actions.Polygon2003
 {
     public static class PolygonSymbolsLoader2003
     {
-        private const string StartUrlTemplate = "https://api.polygon.io/v3/reference/tickers?active=true&limit=1000";
-        private const string UrlTemplate = "https://api.polygon.io/v3/reference/tickers?date={0}&active=true&limit=1000";
+        private const string UrlTemplate = "https://api.polygon.io/v3/reference/tickers?market=stocks&date={0}&active=true&limit=1000";
         private const string ZipFileNameTemplate = @"E:\Quote\WebData\Symbols\Polygon2003\Data\SymbolsPolygon_{0}.zip";
 
         public static bool DbCheck()
@@ -79,11 +78,13 @@ namespace Data.Actions.Polygon2003
             foreach (var date in dates)
             {
                 var zipFileName = string.Format(ZipFileNameTemplate, date.ToString("yyyyMMdd"));
-                var virtualFileEntries = new List<VirtualFileEntry>();
                 if (!File.Exists(zipFileName))
                 {
                     fileCount++;
                     var folder = zipFileName.Substring(0, zipFileName.Length - 4);
+                    if (!Directory.Exists(folder))
+                        Directory.CreateDirectory(folder);
+
                     var url = string.Format(UrlTemplate, date.ToString("yyyy-MM-dd"));
                     var cnt = 0;
                     while (url != null)
@@ -96,8 +97,7 @@ namespace Data.Actions.Polygon2003
                         if (o is Exception ex)
                             throw new Exception($"PolygonSymbolsLoader: Error while download from {url}. Error message: {ex.Message}");
 
-                        var entry = new VirtualFileEntry($@"SymbolsPolygon_{cnt:D2}_{date:yyyyMMdd}.json", (string) o);
-                        virtualFileEntries.Add(entry);
+                        File.WriteAllText(Path.Combine(folder, $@"SymbolsPolygon_{cnt:D2}_{date:yyyyMMdd}.json"), (string)o);
 
                         var oo = JsonConvert.DeserializeObject<cRoot>((string)o);
                         if (oo.status != "OK")
@@ -107,7 +107,8 @@ namespace Data.Actions.Polygon2003
                         cnt++;
                     }
 
-                    ZipUtils.ZipVirtualFileEntries(zipFileName, virtualFileEntries);
+                    ZipUtils.CreateZip(folder, zipFileName);
+                    Directory.Delete(folder, true);
                     itemCount += ParseAndSaveToDb(zipFileName);
                 }
             }

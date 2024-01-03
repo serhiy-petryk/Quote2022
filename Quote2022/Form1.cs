@@ -909,8 +909,20 @@ namespace Quote2022
 
         private async void button4_Click(object sender, EventArgs e)
         {
+            // await Task.Run(() => Data.Helpers.ZipUtils.ReZipFiles(@"E:\Quote\WebData\Symbols\Polygon2003\Data - Copy", false, ShowStatus));
+
+            /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer", "*.zip").OrderByDescending(a => a).Take(17).ToArray();
+            foreach (var file in files)
+            {
+                await Task.Run(() => Data.Actions.Polygon2003.PolygonMinuteSaveLogToDb.Start(file));
+            }
+
+            Data.Helpers.Logger.AddMessage($"Finished for {files.Length} files");*/
+
             // var a = Data.Actions.Polygon.PolygonCommon.TestSymbols.Select(a=>a.Key).ToArray();
             // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
+            // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonMinuteLoader2003.StartAll);
+            // await Task.Run(() => Data.Actions.Polygon2003.PolygonMinuteSaveLogToDb.Start(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer\MP2003_20171111.zip"));
             /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12", "MinutePolygon_*.zip");
             foreach (var file in files)
             {
@@ -1122,7 +1134,13 @@ namespace Quote2022
             btnPolygon2003Daily.Enabled = false;
             await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonDailyLoader2003.Start);
             btnPolygon2003Daily.Enabled = true;
+        }
 
+        private async void btnPolygon2003Symbols_Click(object sender, EventArgs e)
+        {
+            btnPolygon2003Symbols.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.Start);
+            btnPolygon2003Symbols.Enabled = true;
         }
     }
 }

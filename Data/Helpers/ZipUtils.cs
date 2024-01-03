@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,6 +12,41 @@ namespace Data.Helpers
         /*  Open zip archive
          *  using (var zipArchive = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
          */
+
+        public static void ReZipFiles(string folderWithZipFiles, bool doesZipFileContainsFolder, Action<string> showStatusAction)
+        {
+            var zipFiles = Directory.GetFiles(folderWithZipFiles, "*.zip");
+            foreach (var zipFile in zipFiles)
+            {
+                showStatusAction?.Invoke($"Process {Path.GetFileName(zipFile)} file");
+
+                var folder = Path.Combine(Path.GetDirectoryName(zipFile), Path.GetFileNameWithoutExtension(zipFile));
+                if (doesZipFileContainsFolder)
+                    System.IO.Compression.ZipFile.ExtractToDirectory(zipFile, Path.GetDirectoryName(zipFile));
+                else
+                    System.IO.Compression.ZipFile.ExtractToDirectory(zipFile, folder);
+
+                File.Move(zipFile, zipFile+".old");
+
+                CreateZip(folder, zipFile);
+
+                Directory.Delete(folder, true);
+            }
+
+            showStatusAction?.Invoke($"End of ReZipFiles procedure");
+        }
+
+        public static void CreateZip(string sourceName, string targetZipFileName)
+        {
+            ProcessStartInfo p = new ProcessStartInfo();
+            p.FileName = "7za.exe";
+            p.Arguments = $"a \"{targetZipFileName}\" \"{sourceName}\"";
+            p.WindowStyle = ProcessWindowStyle.Hidden;
+            p.CreateNoWindow = true;
+            Process x = Process.Start(p);
+            x.WaitForExit();
+        }
+
 
         public static void ZipVirtualFileEntries(string zipFileName, IEnumerable<VirtualFileEntry> entries)
         {

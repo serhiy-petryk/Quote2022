@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Data.Actions.Polygon;
 using Data.Helpers;
@@ -13,11 +14,12 @@ namespace Data.Actions.Polygon2003
     public static class PolygonMinuteLoader2003
     {
         private const string UrlTemplate = "https://api.polygon.io/v2/aggs/ticker/{0}/range/1/minute/{1}/{2}?adjusted=false&sort=asc&limit=50000&apiKey={3}";
-        private const string FolderTemplate = @"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_{0}\";
+        private const string ZipFileNameTemplate = @"E:\Quote\WebData\Minute\Polygon2003\DataBuffer\MP2003_{0}.zip";
+        private const string FileNameTemplate = @"E:\Quote\WebData\Minute\Polygon2003\DataBuffer\MP2003_{0}\MP2003_{2}_{1}.json";
 
         public static void Start()
         {
-            Logger.AddMessage($"Started");
+            /*Logger.AddMessage($"Started");
 
             Logger.AddMessage($"Define symbols to download ...");
             var symbols = new List<string>();
@@ -48,8 +50,8 @@ namespace Data.Actions.Polygon2003
                 }
 
 
-                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon "+
-                                  "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) "+
+                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon " +
+                                  "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) " +
                                   "GROUP BY Symbol ORDER BY 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
@@ -62,24 +64,94 @@ namespace Data.Actions.Polygon2003
                     }
             }
 
-            Start(symbols, from, to);
+            Start(symbols, from, to);*/
+        }
+
+        public static void StartAll()
+        {
+            Logger.AddMessage($"Started");
+
+            var startDate=new DateTime(2003,9,6);
+            var endDate = DateTime.Today.AddDays(-70);
+            var dates = new List<DateTime>();
+
+            while (startDate <= endDate)
+            {
+                dates.Add(startDate);
+                startDate = startDate.AddDays(+70);
+            }
+
+            foreach (var from in dates)
+            {
+                var to = from.AddDays(70 - 1);
+                var zipFileName = string.Format(ZipFileNameTemplate, to.AddDays(1).ToString("yyyyMMdd"));
+                if (File.Exists(zipFileName)) continue;
+
+                var mySymbols = new List<string>();
+
+                Logger.AddMessage($"Define symbols to download from {from:yyyy-MM-dd} to {to:yyyy-MM-dd} ...");
+
+                using (var conn = new SqlConnection(Settings.DbConnectionString))
+                using (var cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    cmd.CommandTimeout = 150;
+                    cmd.CommandText = $"SELECT DISTINCT Symbol FROM dbPolygon2003..DayPolygon WHERE Date between '{from:yyyy-MM-dd}' AND '{to:yyyy-MM-dd}' ORDER BY 1";
+                    using (var rdr = cmd.ExecuteReader())
+                        while (rdr.Read())
+                            mySymbols.Add((string) rdr["Symbol"]);
+                }
+
+                Start(mySymbols, from, to);
+            }
+
+            Logger.AddMessage($"Finished!");
         }
 
         public static void Start(List<string> mySymbols, DateTime from, DateTime to)
         {
             Logger.AddMessage($"Started");
 
-            var folder = string.Format(FolderTemplate, to.AddDays(1).ToString("yyyyMMdd"));
-            if (MessageBox.Show(
-                    $"You are going to download data from {from:yyyy-MM-dd} to {to:yyyy-MM-dd} for {mySymbols.Count} symbols in {folder} folder! Continue?", "",
-                    MessageBoxButtons.OKCancel) != DialogResult.OK)
-            {
-                Logger.AddMessage($"!Canceled.");
+            var cnt = 0;
+            var zipFileName = string.Format(ZipFileNameTemplate, to.AddDays(1).ToString("yyyyMMdd"));
+            if (File.Exists(zipFileName))
                 return;
+
+            var folder = Path.GetDirectoryName(string.Format(FileNameTemplate, to.AddDays(1).ToString("yyyyMMdd"), "", ""));
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            Task task = null;
+            foreach (var mySymbol in mySymbols)
+            {
+                Logger.AddMessage($"Downloaded {cnt++} tickers from {mySymbols.Count}. Dates from {from:yyyy-MM-dd} to {to:yyyy-MM-dd}.");
+
+                var symbol = PolygonCommon.GetPolygonTicker(mySymbol);
+                var fileName = string.Format(FileNameTemplate, to.AddDays(1).ToString("yyyyMMdd"), from.ToString("yyyyMMdd"), mySymbol);
+                if (File.Exists(fileName))
+                    continue;
+
+                // var url = $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{from:yyyy-MM-dd}/{to:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
+                var url = string.Format(UrlTemplate, symbol, from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey2003());
+                var o = Download.DownloadToString(url);
+                if (o is Exception ex)
+                    throw new Exception($"PolygonMinuteLoader: Error while download from {url}. Error message: {ex.Message}");
+
+                task?.Wait();
+                task = File.WriteAllTextAsync(fileName, (string)o);
             }
 
+            task?.Wait();
+
+            Logger.AddMessage($"!Finished. No errors. {mySymbols.Count} symbols. Folder: {folder}");
+        }
+
+        public static void StartZip(List<string> mySymbols, DateTime from, DateTime to)
+        {
+            Logger.AddMessage($"Started");
+
             var cnt = 0;
-            var zipFileName = $@"E:\Quote\WebData\Minute\Polygon\DataBuffer\MinutePolygon_{to.AddDays(1):yyyyMMdd}.zip";
+            var zipFileName = string.Format(ZipFileNameTemplate, to.AddDays(1).ToString("yyyyMMdd"));
             var zipEntries = new Dictionary<string, object>();
             if (File.Exists(zipFileName))
             {
@@ -90,15 +162,15 @@ namespace Data.Actions.Polygon2003
             var virtualFileEntries = new List<VirtualFileEntry>();
             foreach (var mySymbol in mySymbols)
             {
-                Logger.AddMessage($"Downloaded {cnt++} tickers from {mySymbols.Count}");
+                Logger.AddMessage($"Downloaded {cnt++} tickers from {mySymbols.Count}. Dates from {from:yyyy-MM-dd} to {to:yyyy-MM-dd}.");
 
                 var entryName = $@"{Path.GetFileNameWithoutExtension(zipFileName)}\pMin_{mySymbol}_{from:yyyyMMdd}.json";
                 var urlTicker = PolygonCommon.GetPolygonTicker(mySymbol);
-                if (PolygonCommon.IsTestTicker(urlTicker) || zipEntries.ContainsKey(entryName.ToLower()))
+                if (zipEntries.ContainsKey(entryName.ToLower()))
                     continue;
 
                 // var url = $"https://api.polygon.io/v2/aggs/ticker/{urlTicker}/range/1/minute/{from:yyyy-MM-dd}/{to:yyyy-MM-dd}?adjusted=false&sort=asc&limit=50000&apiKey={PolygonCommon.GetApiKey()}";
-                var url = string.Format(UrlTemplate, urlTicker, from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey());
+                var url = string.Format(UrlTemplate, urlTicker, from.ToString("yyyy-MM-dd"), to.ToString("yyyy-MM-dd"), PolygonCommon.GetApiKey2003());
                 var o = Download.DownloadToString(url);
                 if (o is Exception ex)
                     throw new Exception($"PolygonMinuteLoader: Error while download from {url}. Error message: {ex.Message}");

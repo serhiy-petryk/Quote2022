@@ -8,6 +8,19 @@ namespace Data.Helpers
 {
     public static class Download
     {
+        public static bool IsJsonContentValid(string jsonContent)
+        {
+            if (!jsonContent.EndsWith("}"))
+                return false;
+
+            string s1 = jsonContent.Substring(0, 40);
+            string s2 = jsonContent.Substring(jsonContent.Length - 14);
+            if (!s1.Contains("\"queryCount\":0") && !s2.Contains("\"count\":"))
+                return false;
+            
+            return true;
+        }
+
         public static object DownloadToString(string url, bool isXmlHttpRequest = false, CookieContainer cookies = null)
         {
             using (var wc = new WebClientEx())

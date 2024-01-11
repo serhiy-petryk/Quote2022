@@ -48,7 +48,7 @@ namespace Data.Actions.Polygon
 
 
                 cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon "+
-                                  "WHERE Volume*[Close]>=5000000 and Date>=DATEADD(day, -14, GetDate()) " +
+                                  "WHERE Date>=DATEADD(day, -14, GetDate()) " +
                                   "GROUP BY Symbol ORDER BY 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
@@ -89,7 +89,7 @@ namespace Data.Actions.Polygon
                     conn.Open();
                     cmd.CommandText = "select distinct a.symbol from dbPolygon2003..DayPolygon a " +
                                       "left join dbQ2023..FileLogMinutePolygon b on a.Symbol = b.Symbol and a.Date = b.Date " +
-                                      $"where Volume*[Close]>=5000000 and b.Symbol is null and a.date between '{from:yyyy-MM-dd}' and '{to:yyyy-MM-dd}' "+
+                                      $"where b.Symbol is null and a.date between '{from:yyyy-MM-dd}' and '{to:yyyy-MM-dd}' "+
                                       "order by 1";
                     using (var rdr = cmd.ExecuteReader())
                         while (rdr.Read()) symbols.Add((string)rdr["Symbol"]);

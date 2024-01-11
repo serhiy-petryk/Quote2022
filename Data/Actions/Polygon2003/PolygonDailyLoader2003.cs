@@ -30,7 +30,7 @@ namespace Data.Actions.Polygon2003
                                   "left join dbPolygon2003..DayPolygon b on a.Date = b.Date where b.Date is null order by 1";*/
                 cmd.CommandText = "select a.Date from dbPolygon2003..TradingDays a "+
                                   "left join (select distinct date from dbPolygon2003..DayPolygon) b on a.Date = b.Date " +
-                                  "where b.Date is null and a.Date >= '2003-09-10'";
+                                  "where b.Date is null and a.Date >= '2003-09-10' order by 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                         dates.Add((DateTime)rdr["Date"]);
@@ -46,23 +46,28 @@ namespace Data.Actions.Polygon2003
                 filesCount++;
                 Logger.AddMessage($"Downloaded {cnt++} files from {dates.Count}");
                 var zipFileName = Folder + $"DayPolygon_{date:yyyyMMdd}.zip";
-                var url = $@"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date:yyyy-MM-dd}?adjusted=false&apiKey={PolygonCommon.GetApiKey2003()}";
                 if (!File.Exists(zipFileName))
                 {
+                    var url = $@"https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{date:yyyy-MM-dd}?adjusted=false&apiKey={PolygonCommon.GetApiKey2003()}";
                     var o = Download.DownloadToString(url);
                     if (o is Exception ex)
                         throw new Exception($"PolygonDailyLoader: Error while download from {url}. Error message: {ex.Message}");
 
-                    var entry = new VirtualFileEntry($"DayPolygon_{date:yyyyMMdd}.json", (string)o);
-                    ZipUtils.ZipVirtualFileEntries(zipFileName, new[] {entry});
+                    var jsonFileName = Folder + $"DayPolygon_{date:yyyyMMdd}.json";
+                    File.WriteAllText(jsonFileName, (string)o);
+                    if (!Download.IsJsonContentValid((string)o))
+                        throw new Exception($"PolygonDailyLoader: Invalid json content. File: {jsonFileName}");
+
+                    ZipUtils.CreateZip(jsonFileName, zipFileName);
+                    File.Delete(jsonFileName);
                 }
 
                 itemCount += ParseAndSaveToDb(zipFileName);
                 filesSize += CsUtils.GetFileSizeInKB(zipFileName);
             }
 
-            // Logger.AddMessage($"Refresh summary data (~10 minutes)");
-            // DbUtils.RunProcedure("dbQ2023..pUpdateDayPolygon");
+            Logger.AddMessage($"Update data in database");
+            DbUtils.RunProcedure("dbPolygon2003..pUpdateDayPolygon");
 
             Logger.AddMessage($"!Finished. Loaded quotes into DayPolygon table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");
         }

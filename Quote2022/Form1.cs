@@ -920,7 +920,7 @@ namespace Quote2022
             Data.Helpers.Logger.AddMessage($"Finished for {files.Length} files");*/
 
             // var a = Data.Actions.Polygon.PolygonCommon.TestSymbols.Select(a=>a.Key).ToArray();
-            // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
+            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
             // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonMinuteLoader2003.StartAll);
             // await Task.Run(() => Data.Actions.Polygon2003.PolygonMinuteSaveLogToDb.Start(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer\MP2003_20171111.zip"));
             /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12", "MinutePolygon_*.zip");

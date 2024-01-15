@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Data.Helpers;
 
@@ -105,6 +106,13 @@ namespace Data.Actions.Polygon
             public long Volume => v;
             public float WeightedVolume => vw;
             public int TradeCount => n;
+
+            public override string ToString()
+            {
+                return $"{DateTime:yyyy-MM-dd HH:mm},{ToString(Open)},{ToString(High)},{ToString(Low)},{ToString(Close)},{Volume},{ToString(WeightedVolume)},{TradeCount}";
+
+                string ToString(float f) => f.ToString(CultureInfo.InvariantCulture);
+            }
         }
         #endregion
     }

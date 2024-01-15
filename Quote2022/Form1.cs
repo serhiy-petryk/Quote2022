@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.OffScreen;
+using Microsoft.Data.SqlClient;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Quote2022.Actions;
 using Quote2022.Actions.MinuteAlphaVantage;
@@ -909,18 +910,30 @@ namespace Quote2022
 
         private async void button4_Click(object sender, EventArgs e)
         {
+            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonMinuteMissingHours.Start);
             // await Task.Run(() => Data.Helpers.ZipUtils.ReZipFiles(@"E:\Quote\WebData\Symbols\Polygon2003\Data - Copy", false, ShowStatus));
 
-            /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer", "*.zip").OrderByDescending(a => a).Take(17).ToArray();
+            /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer", "*.zip").OrderByDescending(a => a).ToArray();
+            var exists = new Dictionary<string, object>();
+            using (var conn = new SqlConnection(Data.Settings.DbConnectionString))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandText = "select distinct folder from dbPolygon2003..FileLogMinutePolygon";
+                using (var rdr = cmd.ExecuteReader())
+                    while (rdr.Read()) exists.Add(((string)rdr["Folder"]).ToUpper(), null);
+            }
+
             foreach (var file in files)
             {
-                await Task.Run(() => Data.Actions.Polygon2003.PolygonMinuteSaveLogToDb.Start(file));
+                if (!exists.ContainsKey(Path.GetFileNameWithoutExtension(file).ToUpper()))
+                    await Task.Run(() => Data.Actions.Polygon2003.PolygonMinuteSaveLogToDb.Start(file));
             }
 
             Data.Helpers.Logger.AddMessage($"Finished for {files.Length} files");*/
 
             // var a = Data.Actions.Polygon.PolygonCommon.TestSymbols.Select(a=>a.Key).ToArray();
-            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
+            // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);
             // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonMinuteLoader2003.StartAll);
             // await Task.Run(() => Data.Actions.Polygon2003.PolygonMinuteSaveLogToDb.Start(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer\MP2003_20171111.zip"));
             /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon\DataBuffer-2023-12", "MinutePolygon_*.zip");

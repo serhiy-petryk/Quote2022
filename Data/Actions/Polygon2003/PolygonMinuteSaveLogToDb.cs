@@ -112,14 +112,15 @@ namespace Data.Actions.Polygon2003
 
                         logEntry.CountFull++;
                         logEntry.VolumeFull += item.Volume;
+                        logEntry.TradeCountFull += item.TradeCount;
                         logEntry.MaxTime = item.DateTime.TimeOfDay;
-                        logEntry.TradeCount += item.TradeCount;
 
                         if (item.DateTime.TimeOfDay >= CsUtils.StartTrading &&
                             item.DateTime.TimeOfDay < CsUtils.EndTrading)
                         {
                             logEntry.Count++;
                             logEntry.Volume += item.Volume;
+                            logEntry.TradeCount += item.TradeCount;
                             if (logEntry.Count == 1)
                             {
                                 logEntry.Open = item.Open;
@@ -150,7 +151,7 @@ namespace Data.Actions.Polygon2003
             Logger.AddMessage($"Save data to database ...");
             DbUtils.SaveToDbTable(log, "dbPolygon2003..FileLogMinutePolygon", "Folder", "FileName", "Symbol", "Date",
                 "MinTime", "MaxTime", "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull",
-                "TradeCount", "Status", "Position", "Created");
+                "TradeCount", "TradeCountFull", "Status", "Position", "Created");
 
             DbUtils.SaveToDbTable(blankFiles, "dbPolygon2003..FileLogMinutePolygon_BlankFiles", "Folder", "FileName",
                 "FileCreated", "Symbol");
@@ -185,6 +186,7 @@ namespace Data.Actions.Polygon2003
             public long Volume;
             public long VolumeFull;
             public int TradeCount;
+            public int TradeCountFull;
             public string Position;
             public string Status;
             public DateTime Created;

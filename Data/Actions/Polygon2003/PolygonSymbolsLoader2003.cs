@@ -114,8 +114,8 @@ namespace Data.Actions.Polygon2003
                 }
             }
 
-            Logger.AddMessage($"Adjust data of SymbolsPolygon table");
-            DbUtils.RunProcedure("dbPolygon2003..pTempSymbolsPolygon1");
+            //Logger.AddMessage($"Adjust data of SymbolsPolygon table");
+            //DbUtils.RunProcedure("dbPolygon2003..pTempSymbolsPolygon1");
 
             Logger.AddMessage($"!Finished. Processed {fileCount} files with {itemCount:N0} items");
         }
@@ -128,8 +128,8 @@ namespace Data.Actions.Polygon2003
             foreach (var zipFileName in files)
                 itemCount += ParseAndSaveToDb(zipFileName);
 
-            Logger.AddMessage($"Adjust data of SymbolsPolygon table");
-            DbUtils.RunProcedure("dbPolygon2003..pTempSymbolsPolygon1");
+            //Logger.AddMessage($"Adjust data of SymbolsPolygon table");
+            //DbUtils.RunProcedure("dbPolygon2003..pTempSymbolsPolygon1");
 
             Logger.AddMessage($"!Finished. Processed {files.Length} files with {itemCount:N0} items");
         }

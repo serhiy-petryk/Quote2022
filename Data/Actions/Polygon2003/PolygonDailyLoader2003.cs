@@ -69,9 +69,6 @@ namespace Data.Actions.Polygon2003
             Logger.AddMessage($"Update data in database");
             DbUtils.RunProcedure("dbPolygon2003..pUpdateDayPolygon");
 
-            Logger.AddMessage($"Adjust data of SymbolsPolygon table");
-            DbUtils.RunProcedure("dbPolygon2003..pTempSymbolsPolygon1");
-
             Logger.AddMessage($"!Finished. Loaded quotes into DayPolygon table. Quotes: {itemCount:N0}. Number of files: {filesCount}. Size of files: {filesSize:N0}KB");
         }
 
@@ -89,9 +86,6 @@ namespace Data.Actions.Polygon2003
 
             Logger.AddMessage($"Refresh summary data");
             DbUtils.RunProcedure("dbPolygon2003..pUpdateDayPolygon");
-
-            Logger.AddMessage($"Adjust data of SymbolsPolygon table");
-            DbUtils.RunProcedure("dbPolygon2003..pTempSymbolsPolygon1");
 
             Logger.AddMessage($"Finished! Parsed {fileCnt++} files from {files.Length}");
         }

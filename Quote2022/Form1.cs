@@ -910,10 +910,10 @@ namespace Quote2022
 
         private async void button4_Click(object sender, EventArgs e)
         {
-            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonMinuteMissingHours.Start);
+            // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonMinuteMissingHours.Start);
             // await Task.Run(() => Data.Helpers.ZipUtils.ReZipFiles(@"E:\Quote\WebData\Symbols\Polygon2003\Data - Copy", false, ShowStatus));
 
-            /*var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer", "*.zip").OrderByDescending(a => a).ToArray();
+            var files = Directory.GetFiles(@"E:\Quote\WebData\Minute\Polygon2003\DataBuffer", "*.zip").OrderByDescending(a => a).ToArray();
             var exists = new Dictionary<string, object>();
             using (var conn = new SqlConnection(Data.Settings.DbConnectionString))
             using (var cmd = conn.CreateCommand())
@@ -930,7 +930,7 @@ namespace Quote2022
                     await Task.Run(() => Data.Actions.Polygon2003.PolygonMinuteSaveLogToDb.Start(file));
             }
 
-            Data.Helpers.Logger.AddMessage($"Finished for {files.Length} files");*/
+            Data.Helpers.Logger.AddMessage($"Finished for {files.Length} files");
 
             // var a = Data.Actions.Polygon.PolygonCommon.TestSymbols.Select(a=>a.Key).ToArray();
             // await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.ParseAndSaveAllZip);

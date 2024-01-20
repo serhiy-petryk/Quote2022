@@ -17,8 +17,8 @@ namespace Data.Actions.Polygon2003
             var folderId = Path.GetFileNameWithoutExtension(zipFileName);
 
             Logger.AddMessage($"Started. Delete old log in database.");
-            DbUtils.ExecuteSql($"DELETE dbPolygon2003..FileLogMinutePolygon WHERE folder='{folderId}'");
-            DbUtils.ExecuteSql($"DELETE dbPolygon2003..FileLogMinutePolygon_BlankFiles WHERE folder='{folderId}'");
+            DbUtils.ExecuteSql($"DELETE dbPolygon2003MinuteLog..MinutePolygonLog WHERE folder='{folderId}'");
+            DbUtils.ExecuteSql($"DELETE dbPolygon2003MinuteLog..MinutePolygonLog_BlankFiles WHERE folder='{folderId}'");
 
             var errorLog = new List<string>();
             ProcessZipFile(zipFileName, errorLog);
@@ -56,7 +56,7 @@ namespace Data.Actions.Polygon2003
                         Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} entries in {Path.GetFileName(zipFileName)}");
 
                     var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
-                    if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
+                    if (oo.adjusted || oo.status != "OK")
                         throw new Exception("Check parser");
 
                     if (!string.IsNullOrEmpty(oo.next_url))
@@ -90,7 +90,7 @@ namespace Data.Actions.Polygon2003
                             if (log.Count > 100000)
                                 SaveToDb(log, blankFiles);
 
-                            var position = (logEntry == null ? "First" : "Middle");
+                            var position = (logEntry == null ? "F" : "M"); // First, Middle
                             logEntry = new LogEntry
                             {
                                 Folder = folderId,
@@ -98,7 +98,7 @@ namespace Data.Actions.Polygon2003
                                 Symbol = oo.Symbol,
                                 Date = item.DateTime.Date,
                                 Position = position,
-                                Status = oo.status,
+                                // Status = oo.status,
                                 Created = entry.LastWriteTime.DateTime
                             };
                             log.Add(logEntry);
@@ -151,6 +151,22 @@ namespace Data.Actions.Polygon2003
                                 if (item.Low < logEntry.Low) logEntry.Low = item.Low;
                             }
                         }
+                        if (item.DateTime.TimeOfDay >= Settings.MarketStart && item.DateTime.TimeOfDay < Settings.MarketStartIn)
+                        {
+                            logEntry.CountBefore++;
+                            logEntry._volumeBefore += item.Volume;
+                            logEntry.TradeCountBefore += item.TradeCount;
+                            if (logEntry.CountBefore == 1)
+                            {
+                                logEntry.HighBefore = item.High;
+                                logEntry.LowBefore = item.Low;
+                            }
+                            else
+                            {
+                                if (item.High > logEntry.HighBefore) logEntry.HighBefore = item.High;
+                                if (item.Low < logEntry.LowBefore) logEntry.LowBefore = item.Low;
+                            }
+                        }
                         if (item.DateTime.TimeOfDay >= Settings.MarketStartIn && item.DateTime.TimeOfDay < endTradingIn)
                         {
                             logEntry.CountIn++;
@@ -175,7 +191,7 @@ namespace Data.Actions.Polygon2003
                     }
 
                     if (logEntry != null)
-                        logEntry.Position = oo.next_url == null ? "Last" : "PARTIAL";
+                        logEntry.Position = oo.next_url == null ? "L" : "X"; // Last, X- partial (?)
 
                 }
 
@@ -186,12 +202,13 @@ namespace Data.Actions.Polygon2003
         private static void SaveToDb(List<LogEntry> log, List<BlankFile> blankFiles)
         {
             Logger.AddMessage($"Save data to database ...");
-            DbUtils.SaveToDbTable(log, "dbPolygon2003..FileLogMinutePolygon", "Folder", /*"FileName",*/ "Symbol", "Date",
+            DbUtils.SaveToDbTable(log, "dbPolygon2003MinuteLog..MinutePolygonLog", "Folder", "Symbol", "Date",
                 "MinTime", "MaxTime", "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull",
-                "TradeCount", "TradeCountFull", "Status", "Position", "Created", "OpenIn", "HighIn", "LowIn", "CloseIn",
-                "FinalIn", "VolumeIn", "TradeCountIn", "CountIn", "Errors");
+                "TradeCount", "TradeCountFull", "HighBefore", "LowBefore", "VolumeBefore", "CountBefore",
+                "TradeCountBefore", "OpenIn", "HighIn", "LowIn", "CloseIn", "FinalIn", "VolumeIn", "CountIn",
+                "TradeCountIn", "Errors", "Created", "TimeStamp", "Position");
 
-            DbUtils.SaveToDbTable(blankFiles, "dbPolygon2003..FileLogMinutePolygon_BlankFiles", "Folder", "FileName",
+            DbUtils.SaveToDbTable(blankFiles, "dbPolygon2003MinuteLog..MinutePolygonLog_BlankFiles", "Folder", "FileName",
                 "FileCreated", "Symbol");
 
             log.Clear();
@@ -212,6 +229,7 @@ namespace Data.Actions.Polygon2003
             internal byte _errors;
             public long _volume;
             public long _volumeFull;
+            public long _volumeBefore;
             public long _volumeIn;
 
             public string Folder;
@@ -230,18 +248,23 @@ namespace Data.Actions.Polygon2003
             public float VolumeFull => Convert.ToSingle(_volumeFull);
             public int TradeCount;
             public int TradeCountFull;
-            public string Position;
-            public string Status;
-            public DateTime Created;
+            public float HighBefore;
+            public float LowBefore;
+            public float VolumeBefore => Convert.ToSingle(_volumeBefore);
+            public byte CountBefore;
+            public int TradeCountBefore;
             public float OpenIn;
             public float HighIn;
             public float LowIn;
             public float CloseIn;
             public float? FinalIn;
             public float VolumeIn => Convert.ToSingle(_volumeIn);
+            public short CountIn;
             public int TradeCountIn;
-            public int CountIn;
             public byte? Errors => _errors == 0 ? (byte?) null : _errors;
+            public DateTime Created;
+            public DateTime TimeStamp => DateTime.Now;
+            public string Position;
         }
         #endregion
 

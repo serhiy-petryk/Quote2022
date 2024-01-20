@@ -919,7 +919,7 @@ namespace Quote2022
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = "select distinct folder from dbPolygon2003..FileLogMinutePolygon";
+                cmd.CommandText = "select distinct folder from dbPolygon2003MinuteLog..MinutePolygonLog";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read()) exists.Add(((string)rdr["Folder"]).ToUpper(), null);
             }

@@ -19,7 +19,7 @@ namespace Data.Actions.Polygon2003
 
         public static void Start()
         {
-            /*Logger.AddMessage($"Started");
+            Logger.AddMessage($"Started");
 
             Logger.AddMessage($"Define symbols to download ...");
             var symbols = new List<string>();
@@ -29,30 +29,11 @@ namespace Data.Actions.Polygon2003
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandTimeout = 150;
-                cmd.CommandText = "select count(*) from dbQ2023..DayPolygon a " +
-                                  "left join dbQ2023..SymbolsPolygon b on a.Symbol = b.Symbol and a.Date between b.Date and isnull(b.[To], GetDate()) " +
-                                  "inner join(select symbol, min(date) MinDate from dbQ2023..SymbolsPolygon group by symbol) c on a.Symbol = c.Symbol " +
-                                  "where b.Symbol is null";
-                var recs1 = (int)cmd.ExecuteScalar();
-
-                cmd.CommandText = "select count(*) from dbQ2023..SymbolsPolygon a " +
-                                  "inner join dbQ2023..SymbolsPolygon b on a.Symbol = b.Symbol and b.Date between a.Date and isnull(a.[To], GetDate()) " +
-                                  "where a.Date<>b.Date";
-                var recs2 = (int)cmd.ExecuteScalar();
-
-                if (recs1 != 0 || recs2 != 0)
-                {
-                    MessageBox.Show(
-                        $"There are errors in DayPolygon & DaySymbols tables. Check data using CheckPolygonSymbols.sql",
-                        "", MessageBoxButtons.OK);
-                    return;
-                }
-
-
-                cmd.CommandText = "SELECT Symbol, MIN(date) MinDate, MAX(date) MaxDate FROM dbQ2023..DayPolygon " +
-                                  "WHERE Volume*[Close]>= 5000000 and Date >= DATEADD(day, -14, GetDate()) " +
-                                  "GROUP BY Symbol ORDER BY 1";
+                cmd.CommandTimeout = 300;
+                cmd.CommandText = "select a.Symbol, Min(a.Date) MinDate, MAX(a.Date) MaxDate from dbPolygon2003..DayPolygon a "+
+                                  "inner join(select MinDate, iif(DATEADD(Day,70,MinDate)< GetDate(), DATEADD(Day, 70, MinDate), GetDate()) MaxDate "+
+                                  "from (select DATEADD(day, -5, max(date)) MinDate from dbPolygon2003MinuteLog..MinutePolygonLog) x) b "+
+                                  "on a.Date between b.MinDate and b.MaxDate GROUP BY a.Symbol order by 1";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read())
                     {
@@ -64,7 +45,9 @@ namespace Data.Actions.Polygon2003
                     }
             }
 
-            Start(symbols, from, to);*/
+            Start(symbols, from, to);
+
+            Logger.AddMessage($"Finished!");
         }
 
         public static void StartAll()
@@ -142,6 +125,10 @@ namespace Data.Actions.Polygon2003
             }
 
             task?.Wait();
+
+            Logger.AddMessage($"Create zip file: {Path.GetFileName(zipFileName)}");
+            ZipUtils.CreateZip(folder, zipFileName);
+            Directory.Delete(folder, true);
 
             Logger.AddMessage($"!Finished. No errors. {mySymbols.Count} symbols. Folder: {folder}");
         }

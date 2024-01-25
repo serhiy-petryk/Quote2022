@@ -919,6 +919,7 @@ namespace Quote2022
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
+                cmd.CommandTimeout = 150;
                 cmd.CommandText = "select distinct folder from dbPolygon2003MinuteLog..MinutePolygonLog";
                 using (var rdr = cmd.ExecuteReader())
                     while (rdr.Read()) exists.Add(((string)rdr["Folder"]).ToUpper(), null);
@@ -1154,6 +1155,13 @@ namespace Quote2022
             btnPolygon2003Symbols.Enabled = false;
             await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonSymbolsLoader2003.Start);
             btnPolygon2003Symbols.Enabled = true;
+        }
+
+        private async void btnPolygon2003MinuteLoad_Click(object sender, EventArgs e)
+        {
+            btnPolygon2003MinuteLoad.Enabled = false;
+            await Task.Factory.StartNew(Data.Actions.Polygon2003.PolygonMinuteLoader2003.Start);
+            btnPolygon2003MinuteLoad.Enabled = true;
         }
     }
 }

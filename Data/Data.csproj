@@ -9,6 +9,7 @@
     <PackageReference Include="FastMember" Version="1.5.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SpanJson" Version="3.3.1" />
   </ItemGroup>
 
   <ItemGroup>

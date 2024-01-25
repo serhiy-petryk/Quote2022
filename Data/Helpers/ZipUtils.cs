@@ -13,6 +13,17 @@ namespace Data.Helpers
          *  using (var zipArchive = ZipFile.Open(zipFileName, ZipArchiveMode.Read))
          */
 
+        public static T DeserializeEntry<T>(ZipArchiveEntry entry)
+        {
+            // PolygonCommon.cMinuteRoot oo;
+            using (var stream = entry.Open())
+            using (var memoryStream = new MemoryStream())
+            {
+                stream.CopyTo(memoryStream);
+                return SpanJson.JsonSerializer.Generic.Utf8.Deserialize<T>(memoryStream.ToArray());
+            }
+        }
+
         public static void ReZipFiles(string folderWithZipFiles, bool doesZipFileContainsFolder, Action<string> showStatusAction)
         {
             var zipFiles = Directory.GetFiles(folderWithZipFiles, "*.zip");
@@ -46,7 +57,6 @@ namespace Data.Helpers
             Process x = Process.Start(p);
             x.WaitForExit();
         }
-
 
         public static void ZipVirtualFileEntries(string zipFileName, IEnumerable<VirtualFileEntry> entries)
         {

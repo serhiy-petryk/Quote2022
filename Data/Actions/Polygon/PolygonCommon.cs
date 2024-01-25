@@ -85,7 +85,8 @@ namespace Data.Actions.Polygon
             public string next_url;
             public string request_id;
             public cMinuteItem[] results;
-            public string Symbol => PolygonCommon.GetMyTicker(ticker);
+            private string _symbol;
+            public string Symbol => _symbol ?? (_symbol = PolygonCommon.GetMyTicker(ticker));
         }
         public class cMinuteItem
         {
@@ -94,16 +95,25 @@ namespace Data.Actions.Polygon
             public float h;
             public float l;
             public float c;
-            public long v;
+            public float v;
             public float vw;
             public int n;
+            private DateTime? _date;
+            public DateTime DateTime
+            {
+                get
+                {
+                    if (!_date.HasValue)
+                        _date = CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
+                    return _date.Value;
+                }
+            }
 
-            public DateTime DateTime => CsUtils.GetEstDateTimeFromUnixSeconds(t / 1000);
             public float Open => o;
             public float High => h;
             public float Low => l;
             public float Close => c;
-            public long Volume => v;
+            public float Volume => v;
             public float WeightedVolume => vw;
             public int TradeCount => n;
 

@@ -49,7 +49,7 @@ namespace Data.Actions.Polygon
                     if (cnt % 100 == 0)
                         Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} entries in {Path.GetFileName(zipFileName)}");
 
-                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
+                    var oo = ZipUtils.DeserializeEntry<PolygonCommon.cMinuteRoot>(entry);
                     if (oo.adjusted || !(oo.status == "OK" || oo.status == "DELAYED"))
                         throw new Exception("Check parser");
 
@@ -59,8 +59,8 @@ namespace Data.Actions.Polygon
                         errorLog.Add($"{entry.Name}\tPartial downloading\tNext url: {oo.next_url}");
                     }
 
-                    if (PolygonCommon.IsTestTicker(oo.Symbol))
-                        continue;
+                    //if (PolygonCommon.IsTestTicker(oo.Symbol))
+                      //  continue;
 
                     if (oo.count == 0 && (oo.results == null || oo.results.Length == 0))
                     {
@@ -181,8 +181,8 @@ namespace Data.Actions.Polygon
             public float High;
             public float Low;
             public float Close;
-            public long Volume;
-            public long VolumeFull;
+            public float Volume;
+            public float VolumeFull;
             public int TradeCount;
             public string Position;
             public string Status;

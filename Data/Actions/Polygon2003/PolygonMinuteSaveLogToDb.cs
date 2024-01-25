@@ -6,7 +6,6 @@ using System.IO.Compression;
 using System.Linq;
 using Data.Actions.Polygon;
 using Data.Helpers;
-using Newtonsoft.Json;
 
 namespace Data.Actions.Polygon2003
 {
@@ -52,10 +51,10 @@ namespace Data.Actions.Polygon2003
                 foreach (var entry in zip.Entries.Where(a => a.Name.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase)).ToArray())
                 {
                     cnt++;
-                    if (cnt % 20 == 0)
+                    if (cnt % 100 == 0)
                         Logger.AddMessage($"Processed {cnt} from {zip.Entries.Count} entries in {Path.GetFileName(zipFileName)}");
 
-                    var oo = JsonConvert.DeserializeObject<PolygonCommon.cMinuteRoot>(entry.GetContentOfZipEntry());
+                    var oo = ZipUtils.DeserializeEntry<PolygonCommon.cMinuteRoot>(entry);
                     if (oo.adjusted || oo.status != "OK")
                         throw new Exception("Check parser");
 
@@ -90,7 +89,7 @@ namespace Data.Actions.Polygon2003
                             if (log.Count > 100000)
                                 SaveToDb(log, blankFiles);
 
-                            var position = (logEntry == null ? "F" : "M"); // First, Middle
+                            var position = (logEntry == null ? (byte)2 : (byte)3); // First, Middle
                             logEntry = new LogEntry
                             {
                                 Folder = folderId,
@@ -113,29 +112,29 @@ namespace Data.Actions.Polygon2003
                         if (item.Open > item.High || item.Open < item.Low || item.Close > item.High ||
                             item.Close < item.Low || item.Low < 0)
                         {
-                            errorLog.Add($"{entry.Name}\tBad prices in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tBad prices in {k} item: {item.ToString()}");
                             logEntry._errors++;
                         }
                         if (item.Volume < 0)
                         {
-                            errorLog.Add($"{entry.Name}\tBad volume in {k} item\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tBad volume in {k} item: {item.ToString()}");
                             logEntry._errors++;
                         }
                         if (item.Volume == 0 && item.High != item.Low)
                         {
-                            errorLog.Add($"{entry.Name}\tPrices are not equal when volume=0 in {k} line\tItem date&time: {item.DateTime:yyyy-MM-dd HH:mm}");
+                            errorLog.Add($"{entry.Name}\tPrices are not equal when volume=0 in {k} line. Item: {item.ToString()}");
                             logEntry._errors++;
                         }
 
                         logEntry.CountFull++;
-                        logEntry._volumeFull += item.Volume;
+                        logEntry.VolumeFull += item.Volume;
                         logEntry.TradeCountFull += item.TradeCount;
                         logEntry.MaxTime = item.DateTime.TimeOfDay;
 
                         if (item.DateTime.TimeOfDay >= Settings.MarketStart && item.DateTime.TimeOfDay < endTrading)
                         {
                             logEntry.Count++;
-                            logEntry._volume += item.Volume;
+                            logEntry.Volume += item.Volume;
                             logEntry.TradeCount += item.TradeCount;
                             if (logEntry.Count == 1)
                             {
@@ -154,7 +153,7 @@ namespace Data.Actions.Polygon2003
                         if (item.DateTime.TimeOfDay >= Settings.MarketStart && item.DateTime.TimeOfDay < Settings.MarketStartIn)
                         {
                             logEntry.CountBefore++;
-                            logEntry._volumeBefore += item.Volume;
+                            logEntry.VolumeBefore += item.Volume;
                             logEntry.TradeCountBefore += item.TradeCount;
                             if (logEntry.CountBefore == 1)
                             {
@@ -170,7 +169,7 @@ namespace Data.Actions.Polygon2003
                         if (item.DateTime.TimeOfDay >= Settings.MarketStartIn && item.DateTime.TimeOfDay < endTradingIn)
                         {
                             logEntry.CountIn++;
-                            logEntry._volumeIn += item.Volume;
+                            logEntry.VolumeIn += item.Volume;
                             logEntry.TradeCountIn += item.TradeCount;
                             if (logEntry.CountIn == 1)
                             {
@@ -191,8 +190,11 @@ namespace Data.Actions.Polygon2003
                     }
 
                     if (logEntry != null)
-                        logEntry.Position = oo.next_url == null ? "L" : "X"; // Last, X- partial (?)
-
+                    {
+                        if (oo.next_url != null)
+                            throw new Exception($"Partial loading in {Path.GetFileName(zipFileName)}.{entry.Name}. Please, decrease date range while downloading.");
+                        logEntry.Position = 4;
+                    }
                 }
 
             if (log.Count > 0 || blankFiles.Count > 0)
@@ -206,7 +208,7 @@ namespace Data.Actions.Polygon2003
                 "MinTime", "MaxTime", "Count", "CountFull", "Open", "High", "Low", "Close", "Volume", "VolumeFull",
                 "TradeCount", "TradeCountFull", "HighBefore", "LowBefore", "VolumeBefore", "CountBefore",
                 "TradeCountBefore", "OpenIn", "HighIn", "LowIn", "CloseIn", "FinalIn", "VolumeIn", "CountIn",
-                "TradeCountIn", "Errors", "Created", "TimeStamp", "Position");
+                "TradeCountIn", "Errors", "Position", "RowStatus", "Created", "TimeStamp");
 
             DbUtils.SaveToDbTable(blankFiles, "dbPolygon2003MinuteLog..MinutePolygonLog_BlankFiles", "Folder", "FileName",
                 "FileCreated", "Symbol");
@@ -227,10 +229,6 @@ namespace Data.Actions.Polygon2003
         private class LogEntry
         {
             internal byte _errors;
-            public long _volume;
-            public long _volumeFull;
-            public long _volumeBefore;
-            public long _volumeIn;
 
             public string Folder;
             public string FileName;
@@ -244,13 +242,13 @@ namespace Data.Actions.Polygon2003
             public float High;
             public float Low;
             public float Close;
-            public float Volume => Convert.ToSingle(_volume);
-            public float VolumeFull => Convert.ToSingle(_volumeFull);
+            public float Volume;
+            public float VolumeFull;
             public int TradeCount;
             public int TradeCountFull;
             public float HighBefore;
             public float LowBefore;
-            public float VolumeBefore => Convert.ToSingle(_volumeBefore);
+            public float VolumeBefore;
             public byte CountBefore;
             public int TradeCountBefore;
             public float OpenIn;
@@ -258,13 +256,14 @@ namespace Data.Actions.Polygon2003
             public float LowIn;
             public float CloseIn;
             public float? FinalIn;
-            public float VolumeIn => Convert.ToSingle(_volumeIn);
+            public float VolumeIn;
             public short CountIn;
             public int TradeCountIn;
-            public byte? Errors => _errors == 0 ? (byte?) null : _errors;
+            public byte? Errors => _errors == 0 ? (byte?)null : _errors;
+            public byte Position;
+            public byte RowStatus => 0; // not defined
             public DateTime Created;
             public DateTime TimeStamp => DateTime.Now;
-            public string Position;
         }
         #endregion
 

@@ -39,6 +39,8 @@ namespace Quote2022
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpLoaderNew = new System.Windows.Forms.TabPage();
+            this.btnPolygon2003MinuteLoad = new System.Windows.Forms.Button();
+            this.btnPolygon2003Symbols = new System.Windows.Forms.Button();
             this.btnPolygon2003Daily = new System.Windows.Forms.Button();
             this.btnMinutePolygonUpdateDailyIn = new System.Windows.Forms.Button();
             this.lblEoddataLogged = new System.Windows.Forms.Label();
@@ -158,7 +160,6 @@ namespace Quote2022
             this.btnWA_ParseEoddataSymbols = new System.Windows.Forms.Button();
             this.btnWA_DownloadEoddataSymbols = new System.Windows.Forms.Button();
             this.btnToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnPolygon2003Symbols = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tpLoaderNew.SuspendLayout();
@@ -220,6 +221,7 @@ namespace Quote2022
             // 
             // tpLoaderNew
             // 
+            this.tpLoaderNew.Controls.Add(this.btnPolygon2003MinuteLoad);
             this.tpLoaderNew.Controls.Add(this.btnPolygon2003Symbols);
             this.tpLoaderNew.Controls.Add(this.btnPolygon2003Daily);
             this.tpLoaderNew.Controls.Add(this.btnMinutePolygonUpdateDailyIn);
@@ -245,9 +247,31 @@ namespace Quote2022
             this.tpLoaderNew.Text = "Loader (new)";
             this.tpLoaderNew.UseVisualStyleBackColor = true;
             // 
+            // btnPolygon2003MinuteLoad
+            // 
+            this.btnPolygon2003MinuteLoad.Location = new System.Drawing.Point(416, 247);
+            this.btnPolygon2003MinuteLoad.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnPolygon2003MinuteLoad.Name = "btnPolygon2003MinuteLoad";
+            this.btnPolygon2003MinuteLoad.Size = new System.Drawing.Size(153, 42);
+            this.btnPolygon2003MinuteLoad.TabIndex = 68;
+            this.btnPolygon2003MinuteLoad.Text = "Polygon2003: Load Minute data";
+            this.btnPolygon2003MinuteLoad.UseVisualStyleBackColor = true;
+            this.btnPolygon2003MinuteLoad.Click += new System.EventHandler(this.btnPolygon2003MinuteLoad_Click);
+            // 
+            // btnPolygon2003Symbols
+            // 
+            this.btnPolygon2003Symbols.Location = new System.Drawing.Point(416, 128);
+            this.btnPolygon2003Symbols.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnPolygon2003Symbols.Name = "btnPolygon2003Symbols";
+            this.btnPolygon2003Symbols.Size = new System.Drawing.Size(153, 42);
+            this.btnPolygon2003Symbols.TabIndex = 67;
+            this.btnPolygon2003Symbols.Text = "Polygon2003: Load and Save Symbols data";
+            this.btnPolygon2003Symbols.UseVisualStyleBackColor = true;
+            this.btnPolygon2003Symbols.Click += new System.EventHandler(this.btnPolygon2003Symbols_Click);
+            // 
             // btnPolygon2003Daily
             // 
-            this.btnPolygon2003Daily.Location = new System.Drawing.Point(416, 129);
+            this.btnPolygon2003Daily.Location = new System.Drawing.Point(416, 188);
             this.btnPolygon2003Daily.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnPolygon2003Daily.Name = "btnPolygon2003Daily";
             this.btnPolygon2003Daily.Size = new System.Drawing.Size(153, 42);
@@ -1781,17 +1805,6 @@ namespace Quote2022
             this.btnWA_DownloadEoddataSymbols.UseVisualStyleBackColor = true;
             this.btnWA_DownloadEoddataSymbols.Click += new System.EventHandler(this.btnWA_DownloadEoddataSymbols_Click);
             // 
-            // btnPolygon2003Symbols
-            // 
-            this.btnPolygon2003Symbols.Location = new System.Drawing.Point(416, 188);
-            this.btnPolygon2003Symbols.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnPolygon2003Symbols.Name = "btnPolygon2003Symbols";
-            this.btnPolygon2003Symbols.Size = new System.Drawing.Size(153, 42);
-            this.btnPolygon2003Symbols.TabIndex = 67;
-            this.btnPolygon2003Symbols.Text = "Polygon2003: Load and Save Symbols data";
-            this.btnPolygon2003Symbols.UseVisualStyleBackColor = true;
-            this.btnPolygon2003Symbols.Click += new System.EventHandler(this.btnPolygon2003Symbols_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1962,6 +1975,7 @@ namespace Quote2022
         private System.Windows.Forms.Button btnMinutePolygonUpdateDailyIn;
         private System.Windows.Forms.Button btnPolygon2003Daily;
         private System.Windows.Forms.Button btnPolygon2003Symbols;
+        private System.Windows.Forms.Button btnPolygon2003MinuteLoad;
     }
 }
 

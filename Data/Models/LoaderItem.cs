@@ -17,6 +17,7 @@ namespace Data.Models
 
         public static BindingList<LoaderItem> DataGridLoaderItems = new BindingList<LoaderItem>
         {
+            new LoaderItem {Name = "PolygonMinuteScan (100 secs)", Action = Actions.Polygon.PolygonMinuteScan.Start, Checked = false},
             new LoaderItem {Name = "TradingView Screener", Action = Actions.TradingView.TvScreenerLoader.Start, Checked = false},
             new LoaderItem {Name = "Nasdaq Stock/Etf Screeners", Action = Actions.Nasdaq.NasdaqScreenerLoader.Start, Checked = false},
             new LoaderItem {Name = "Eoddata Symbols", Action = Actions.Eoddata.EoddataSymbolsLoader.Start, Checked = false},

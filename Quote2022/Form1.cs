@@ -22,7 +22,6 @@ namespace Quote2022
 {
     public partial class Form1 : Form
     {
-        private object _lock = new object();
         private ChromiumWebBrowser browser;// = new ChromiumWebBrowser("www.eoddata.com");
         private System.Net.CookieContainer eoddataCookies = new System.Net.CookieContainer();
 
